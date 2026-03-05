@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { AuthInitializer } from "@/components/AuthInitializer";
 import { ThemeProvider } from "@/modules/shared/components/ThemeProvider";
+import { QueryProvider } from "@/modules/shared/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,7 +76,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthInitializer>{children}</AuthInitializer>
+          <QueryProvider>
+            <AuthInitializer>{children}</AuthInitializer>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

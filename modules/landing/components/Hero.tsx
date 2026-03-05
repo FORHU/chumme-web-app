@@ -1,27 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@/modules/shared/components/Button";
-import { landingApi, LandingStats } from "@/modules/landing/api/landing-api";
+import { cn } from "@/modules/shared/utils";
+import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
+import { LandingStats } from "@/modules/landing/api/landing-api";
 
 export const Hero = () => {
-  const [stats, setStats] = useState<LandingStats>({
+  const { data, isLoading } = useApiQuery<LandingStats>(
+    ["landing-stats"],
+    "/landing/stats",
+  );
+
+  const stats: LandingStats = data || {
     activeMembers: "100K+",
     circles: "500+",
     liveEvents: "24/7",
     satisfaction: "99%",
-  });
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      const response = await landingApi.getStats();
-      if (response.ok && response.data?.success) {
-        setStats(response.data.data);
-      }
-    };
-
-    fetchStats();
-  }, []);
+  };
 
   return (
     <section className="relative flex flex-col items-center justify-center pt-48 pb-32 px-6 text-center overflow-hidden">
@@ -49,7 +45,14 @@ export const Hero = () => {
           </Button>
         </div>
 
-        <div className="pt-24 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40 grayscale transition-all duration-700 hover:grayscale-0 hover:opacity-100">
+        <div
+          className={cn(
+            "pt-24 grid grid-cols-2 md:grid-cols-4 gap-8 transition-all duration-700",
+            isLoading
+              ? "opacity-20 animate-pulse pointer-events-none"
+              : "opacity-40 grayscale hover:grayscale-0 hover:opacity-100",
+          )}
+        >
           <div className="flex flex-col items-center">
             <span className="text-3xl font-bold">{stats.activeMembers}</span>
             <span className="text-xs uppercase tracking-widest">

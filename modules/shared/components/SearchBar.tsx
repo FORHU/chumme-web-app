@@ -6,13 +6,33 @@ import { cn } from "@/modules/shared/utils";
 export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
   onClear?: () => void;
+  onSearch?: (value: string) => void;
 }
 
 export const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
   (
-    { className, containerClassName, value, onChange, onClear, ...props },
+    {
+      className,
+      containerClassName,
+      value,
+      onChange,
+      onClear,
+      onSearch,
+      ...props
+    },
     ref,
   ) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && onSearch) {
+        onSearch(String(value || ""));
+      }
+      if (props.onKeyDown) props.onKeyDown(e);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChange) onChange(e);
+      if (onSearch) onSearch(e.target.value);
+    };
     const hasValue =
       value !== undefined && value !== null && String(value).length > 0;
 
@@ -37,12 +57,12 @@ export const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </div>
-
         {/* Input Field */}
         <input
           ref={ref}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
           className={cn(
             "w-full bg-background-secondary border border-border-default rounded-2xl py-3 pl-11 pr-11 text-text-primary placeholder:text-text-tertiary outline-none focus:border-brand-vibrant focus:bg-background-tertiary transition-all",
             className,
