@@ -1,5 +1,8 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import {
   tabs,
 } from "@/modules/discover/constants/mock-data";
@@ -14,7 +17,9 @@ interface DiscoverPageProps {
   isDarkMode: boolean;
 }
 
-export function DiscoverPage({ isDarkMode }: DiscoverPageProps) {
+export function DiscoverPage() {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   const [activeTab, setActiveTab] = useState("overview");
 
   return (

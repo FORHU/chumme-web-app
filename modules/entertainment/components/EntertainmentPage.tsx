@@ -1,5 +1,7 @@
+"use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Film,
   Music,
@@ -27,7 +29,9 @@ import {
   tabs 
 } from "@/modules/entertainment/constants/mock-data";
 
-export function EntertainmentPage({ isDarkMode }: EntertainmentPageProps) {
+export function EntertainmentPage() {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 

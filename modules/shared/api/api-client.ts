@@ -1,3 +1,4 @@
+"use client";
 import { create } from "apisauce";
 import {
   ACCESS_TOKEN,

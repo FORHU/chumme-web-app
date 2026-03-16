@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, type ComponentType } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "next-themes";
 import {
   Plus,
   Edit,
@@ -58,7 +61,9 @@ const samplePrompts = [
   "Latest K-pop trends",
 ];
 
-export function ChummeAIChatPage({ isDarkMode }: { isDarkMode: boolean }) {
+export function ChummeAIChatPage() {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   const [activeTab, setActiveTab] = useState<TabId>("artists");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [aiChatEnabled, setAiChatEnabled] = useState(true);

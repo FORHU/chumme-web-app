@@ -2,6 +2,7 @@
 
 import { useState, type ComponentType } from "react";
 import { AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 import {
   Music,
   Users,
@@ -32,7 +33,9 @@ import {
   mockRecordings 
 } from "@/modules/collaboration/constants/mock-data";
 
-export function CollaborationManager({ isDarkMode }: { isDarkMode: boolean }) {
+export function CollaborationManager() {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   const [activeTab, setActiveTab] = useState<TabId>("rooms");
   const [showCreateModal, setShowCreateModal] = useState(false);
 
