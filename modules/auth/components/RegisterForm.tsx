@@ -80,7 +80,7 @@ export function RegisterForm() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
         >
-          <AuthCard tone="light">
+          <AuthCard>
             <button
               type="button"
               onClick={() => router.push("/auth")}

@@ -65,20 +65,18 @@ export function LoginForm() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
         >
-          <AuthCard tone="auto">
+          <AuthCard>
             <div className="mb-8 flex items-start justify-between">
               <div className="flex-1">
                 <h2
-                  className={`text-2xl font-bold mb-2 ${
-                    isDarkMode ? "text-white" : "text-gray-900"
-                  }`}
+                  className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
                 >
                   Sign In
                 </h2>
                 <p
-                  className={`text-sm ${
-                    isDarkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
+                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
                 >
                   Welcome back! Please enter your details
                 </p>
@@ -86,11 +84,10 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className={`p-2 rounded-lg transition-all ${
-                  isDarkMode
+                className={`p-2 rounded-lg transition-all ${isDarkMode
                     ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                  }`}
                 title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {mounted ? (
@@ -250,7 +247,7 @@ export function LoginForm() {
                   Don&apos;t have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => router.push("/onboarding/welcome")}
+                    onClick={() => router.push("/register")}
                     className="text-[#A53860] hover:text-[#670D2F] font-semibold transition-colors"
                   >
                     Sign Up

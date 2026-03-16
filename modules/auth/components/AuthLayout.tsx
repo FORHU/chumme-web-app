@@ -7,6 +7,9 @@ import { motion } from "framer-motion";
 import { ChevronDown, Globe } from "lucide-react";
 import { cn } from "@/modules/shared/utils";
 
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+
 interface AuthLayoutProps {
   children: React.ReactNode;
   headline?: string[];
@@ -20,6 +23,10 @@ export function AuthLayout({
   tagline = "Connect with fans around the world and share your passion in a vibrant community",
   className,
 }: AuthLayoutProps) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted ? resolvedTheme === "dark" : true;
 
   return (
     <div
@@ -27,7 +34,10 @@ export function AuthLayout({
     >
       <div
         className={cn(
-          "absolute inset-0 transition-all duration-300 bg-gradient-to-br from-[#fce7f3] via-[#fce1ed] to-[#e9d5fd] dark:from-[#1a0510] dark:via-[#0a0a0a] dark:to-[#1a0510]",
+          "absolute inset-0 transition-all duration-300 bg-gradient-to-br",
+          isDark
+            ? "from-[#1a0510] via-[#0a0a0a] to-[#1a0510]"
+            : "from-[#fce7f3] via-[#fce1ed] to-[#e9d5fd]"
         )}
       />
 
@@ -113,7 +123,10 @@ export function AuthLayout({
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <h1 className="font-['Poppins',sans-serif] text-5xl xl:text-6xl font-bold mb-5 leading-tight text-gray-900 dark:text-white">
+            <h1 className={cn(
+              "font-['Poppins',sans-serif] text-5xl xl:text-6xl font-bold mb-5 leading-tight",
+              isDark ? "text-white" : "text-gray-900"
+            )}>
               {headline.map((line, i) => (
                 <span key={i}>
                   {line}
@@ -121,7 +134,10 @@ export function AuthLayout({
                 </span>
               ))}
             </h1>
-            <p className="font-['Poppins',sans-serif] text-lg leading-relaxed max-w-md text-gray-600 dark:text-gray-400">
+            <p className={cn(
+              "font-['Poppins',sans-serif] text-lg leading-relaxed max-w-md",
+              isDark ? "text-gray-400" : "text-gray-600"
+            )}>
               {tagline}
             </p>
           </motion.div>
@@ -135,7 +151,10 @@ export function AuthLayout({
             <button
               type="button"
               className={cn(
-                "flex items-center gap-2 transition-colors text-gray-700 hover:text-[#A53860] dark:text-gray-400 dark:hover:text-[#EF88AD]",
+                "flex items-center gap-2 transition-colors",
+                isDark
+                  ? "text-gray-400 hover:text-[#EF88AD]"
+                  : "text-gray-700 hover:text-[#A53860]"
               )}
             >
               <Globe className="w-5 h-5" />

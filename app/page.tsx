@@ -66,7 +66,7 @@ export default function LandingPage() {
               </button>
 
               <button
-                onClick={() => router.push('/register')}
+                onClick={() => router.push('/auth')}
                 className="bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-medium px-6 py-2 rounded-lg transition-all"
               >
                 Get Started
@@ -112,7 +112,7 @@ export default function LandingPage() {
                 className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
               >
                 <button
-                  onClick={() => router.push('/register')}
+                  onClick={() => router.push('/auth')}
                   className="bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-medium text-base px-10 py-4 rounded-xl transition-all"
                 >
                   Start Your Journey
@@ -304,7 +304,7 @@ export default function LandingPage() {
                 {/* whileHover scales button up to 105%, whileTap scales down to 95% */}
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <button
-                    onClick={() => router.push('/register')}
+                    onClick={() => router.push('/auth')}
                     className="bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:from-[#EF88AD] hover:to-[#A53860] text-white font-medium text-lg px-12 py-5 rounded-xl transition-all shadow-2xl shadow-[#A53860]/40"
                   >
                     Start Your Journey

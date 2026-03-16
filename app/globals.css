@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
 @theme inline {
   /* Colors from Chumme v3 (Pink-toned) */
   --color-brand-core: var(--brand-core);
