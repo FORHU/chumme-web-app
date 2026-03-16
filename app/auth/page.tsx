@@ -1,6 +1,15 @@
 "use client";
 
-import { LoginForm } from "@/modules/auth/components/LoginForm";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { RouteGuard } from "@/modules/shared/components/RouteGuard";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { motion } from "framer-motion";
+import { Apple, Eye, EyeOff, Lock, Mail, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -271,5 +280,4 @@ export default function LoginPage() {
       </AuthLayout>
     </RouteGuard>
   );
-  return <LoginForm />;
 }

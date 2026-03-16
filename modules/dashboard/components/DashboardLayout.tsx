@@ -20,7 +20,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 const pathname = usePathname();
 const router = useRouter();
 const logout = useAuthStore((s) => s.logout);
-const [isDark, setIsDark] = useState(false);
 const { resolvedTheme, setTheme } = useTheme();
 const isDark = resolvedTheme === "dark";
 
