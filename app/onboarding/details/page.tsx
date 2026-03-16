@@ -4,8 +4,8 @@ import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, User } from "lucide-react";
-import { AuthLayout } from "@/modules/shared/components/AuthLayout";
-import { AuthCard } from "@/modules/shared/components/AuthCard";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { AuthCard } from "@/modules/auth/components/AuthCard";
 
 export default function OnboardingDetailsPage() {
   const router = useRouter();

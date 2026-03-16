@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "./Button";
-import { ThemeToggle } from "./ThemeToggle";
+import { Button } from "@/modules/shared/components/Button";
+import { ThemeToggle } from "@/modules/shared/components/ThemeToggle";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-import { Dropdown, DropdownItem } from "./Dropdown";
+import { Dropdown, DropdownItem } from "@/modules/shared/components/Dropdown";
 import { useRouter } from "next/navigation";
 
 export const Navbar = () => {

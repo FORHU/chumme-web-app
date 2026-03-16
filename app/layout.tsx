@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
-import { AuthInitializer } from "@/components/AuthInitializer";
+import { AuthInitializer } from "@/modules/shared/components/AuthInitializer";
 import { ThemeProvider } from "@/modules/shared/components/ThemeProvider";
 import { QueryProvider } from "@/modules/shared/providers/QueryProvider";
 

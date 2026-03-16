@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/modules/shared/components/Button";
-import { Navbar } from "@/modules/shared/components/Navbar";
+import { Navbar } from "@/modules/landing/components/Navbar";
 
 export default function NotFound() {
   return (

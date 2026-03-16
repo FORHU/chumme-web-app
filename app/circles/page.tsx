@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navbar } from "@/modules/shared/components/Navbar";
+import { Navbar } from "@/modules/landing/components/Navbar";
 import { CircleList } from "@/modules/circles/components/CircleList";
 import { useCirclesQuery } from "@/modules/circles/hooks/useCircles";
 import { FlexBox } from "@/modules/shared/components/FlexBox";

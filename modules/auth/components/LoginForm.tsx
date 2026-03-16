@@ -1,8 +1,25 @@
 "use client";
 
-import { LoginForm } from "@/modules/auth/components/LoginForm";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { RouteGuard } from "@/modules/shared/components/RouteGuard";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { motion } from "framer-motion";
+import {
+  Apple,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { useTheme } from "next-themes";
 
-export default function LoginPage() {
+export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,33 +45,8 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     try {
-      const res = await (login as unknown as (
-        email: string,
-        password: string,
-      ) => Promise<unknown>)(email, password);
-
-      if (res && typeof res === "object") {
-        const result = res as {
-          requiresVerification?: boolean;
-          error?: unknown;
-          message?: unknown;
-          accessToken?: unknown;
-        };
-
-        if (result.requiresVerification) {
-          router.push("/verify-email");
-          return;
-        }
-
-        const message = typeof result.message === "string" ? result.message : "";
-        const accessToken =
-          typeof result.accessToken === "string" ? result.accessToken : "";
-
-        if (result.error || (message && !accessToken)) {
-          setError(message || "Invalid credentials");
-          return;
-        }
-      }
+      await login(email, password);
+      router.replace("/dashboard");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Invalid credentials";
@@ -271,5 +263,4 @@ export default function LoginPage() {
       </AuthLayout>
     </RouteGuard>
   );
-  return <LoginForm />;
 }
