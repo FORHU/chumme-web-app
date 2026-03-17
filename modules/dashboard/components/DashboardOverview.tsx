@@ -1,11 +1,13 @@
 "use client";
-import type { ComponentType } from "react";
+
 import { motion } from "framer-motion";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
 import { Users, TrendingUp, Star, Activity } from "lucide-react";
+
+import type { ComponentType, FC } from "react";
 
 const engagementData = [
   { name: "Jan 1",  moments: 20 },
@@ -40,36 +42,34 @@ const topCommunities = [
   { name: "Marvel Universe",   members: "6k"  },
 ];
 
-type StatCardProps = {
+interface StatCardProps {
   label: string;
   value: string;
   delta: string;
   icon: ComponentType<{ className?: string }>;
   color: string;
   index: number;
-};
-
-function StatCard({ label, value, delta, icon: Icon, color, index }: StatCardProps) {
-  return (
-    <motion.div
-      initial={{ y: 24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.1 + index * 0.07 }}
-      className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
-          <Icon className="w-5 h-5 text-white" />
-        </div>
-      </div>
-      <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
-      <p className="mt-2 text-xs text-green-600 font-medium">{delta} this month</p>
-    </motion.div>
-  );
 }
 
-export function DashboardOverview() {
+const StatCard: FC<StatCardProps> = ({ label, value, delta, icon: Icon, color, index }) => (
+  <motion.div
+    initial={{ y: 24, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ delay: 0.1 + index * 0.07 }}
+    className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6"
+  >
+    <div className="flex items-center justify-between mb-4">
+      <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center`}>
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+    </div>
+    <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+    <p className="mt-2 text-xs text-green-600 font-medium">{delta} this month</p>
+  </motion.div>
+);
+
+export const DashboardOverview = () => {
   return (
     <>
       {/* Greeting */}
@@ -158,4 +158,4 @@ export function DashboardOverview() {
       </motion.div>
     </>
   );
-}
+};

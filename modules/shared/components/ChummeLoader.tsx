@@ -4,19 +4,19 @@ import React from "react";
 import Image from "next/image";
 import { cn } from "@/modules/shared/utils";
 
-interface ChummeLoaderProps {
+export interface ChummeLoaderProps {
   isLoading?: boolean;
   isError?: boolean;
   fullScreen?: boolean;
   className?: string;
 }
 
-export const ChummeLoader: React.FC<ChummeLoaderProps> = ({
+export const ChummeLoader = ({
   isLoading = true,
   isError = false,
   fullScreen = false,
   className,
-}) => {
+}: ChummeLoaderProps) => {
   if (!isLoading && !isError) return null;
 
   return (

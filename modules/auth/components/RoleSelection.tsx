@@ -1,15 +1,16 @@
 "use client";
 
+import React from "react";
+import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Shield, Users } from "lucide-react";
-import { useTheme } from "next-themes";
 
 interface RoleSelectionProps {
   onSelectRole: (role: "admin" | "user") => void;
   onSignIn: () => void;
 }
 
-export function RoleSelection({ onSelectRole, onSignIn }: RoleSelectionProps) {
+export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -71,6 +72,7 @@ export function RoleSelection({ onSelectRole, onSignIn }: RoleSelectionProps) {
           </p>
 
           <button
+            type="button"
             onClick={() => onSelectRole("admin")}
             className="w-full h-12 bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold text-sm rounded-xl transition-all"
           >
@@ -107,6 +109,7 @@ export function RoleSelection({ onSelectRole, onSignIn }: RoleSelectionProps) {
           </p>
 
           <button
+            type="button"
             onClick={() => onSelectRole("user")}
             className="w-full h-12 bg-gradient-to-r from-[#EF88AD] to-[#A53860] hover:opacity-90 text-white font-semibold text-sm rounded-xl transition-all"
           >
@@ -124,6 +127,7 @@ export function RoleSelection({ onSelectRole, onSignIn }: RoleSelectionProps) {
         }`}>
           Already have an account?{" "}
           <button
+            type="button"
             onClick={onSignIn}
             className="text-[#A53860] hover:text-[#670D2F] font-semibold transition-colors"
           >
@@ -133,4 +137,4 @@ export function RoleSelection({ onSelectRole, onSignIn }: RoleSelectionProps) {
       </div>
     </motion.div>
   );
-}
+};

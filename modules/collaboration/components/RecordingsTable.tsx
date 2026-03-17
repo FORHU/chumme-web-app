@@ -1,14 +1,15 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Star, Play, Download, Trash2 } from "lucide-react";
 import type { Recording } from "@/modules/collaboration/types";
 
-interface RecordingsTableProps {
+export interface RecordingsTableProps {
   isDarkMode: boolean;
   recordings: Recording[];
 }
 
-export function RecordingsTable({ isDarkMode, recordings }: RecordingsTableProps) {
+export const RecordingsTable = ({ isDarkMode, recordings }: RecordingsTableProps) => {
   return (
     <motion.div
       key="recordings"
@@ -150,4 +151,4 @@ export function RecordingsTable({ isDarkMode, recordings }: RecordingsTableProps
       </div>
     </motion.div>
   );
-}
+};

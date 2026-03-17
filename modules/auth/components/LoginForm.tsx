@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { RouteGuard } from "@/modules/shared/components/RouteGuard";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
-import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import {
   Apple,
@@ -17,22 +13,29 @@ import {
   Moon,
   Sun,
 } from "lucide-react";
-import { useTheme } from "next-themes";
+import { RouteGuard } from "@/modules/shared/components/RouteGuard";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { AuthCard } from "@/modules/auth/components/AuthCard";
 
-export function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export const LoginForm = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   const { login, isLoading, isAuthenticated } = useAuthStore();
   const router = useRouter();
   const { setTheme, resolvedTheme } = useTheme();
 
-  React.useEffect(() => setMounted(true), []);
-  React.useEffect(() => {
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+  useEffect(() => {
     if (isAuthenticated) {
       router.replace("/dashboard");
     }
@@ -41,7 +44,7 @@ export function LoginForm() {
   const isDarkMode = mounted ? resolvedTheme === "dark" : true;
   const toggleTheme = () => setTheme(isDarkMode ? "light" : "dark");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     try {
@@ -121,7 +124,7 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -140,7 +143,7 @@ export function LoginForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     className="w-full h-12 pl-12 pr-12 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -165,7 +168,7 @@ export function LoginForm() {
                   <input
                     type="checkbox"
                     checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
                     className="h-4 w-4 rounded border-2 border-gray-300 dark:border-gray-600 accent-[#A53860]"
                   />
                   Remember me
@@ -260,4 +263,4 @@ export function LoginForm() {
       </AuthLayout>
     </RouteGuard>
   );
-}
+};

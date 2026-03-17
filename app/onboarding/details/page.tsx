@@ -1,11 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-export default function OnboardingDetailsPage() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace("/onboarding/welcome");
-  }, [router]);
-  return null;
-}
+import { DetailsRedirect } from "@/modules/auth/components/DetailsRedirect";
+
+const OnboardingDetailsPage = () => <DetailsRedirect />;
+
+export default OnboardingDetailsPage;

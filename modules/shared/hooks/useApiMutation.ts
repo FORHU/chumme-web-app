@@ -16,12 +16,12 @@ export interface ApiMutationArgs<TVariables> {
  * A generic wrapper hook around React Query's `useMutation` to handle data
  * mutations (CREATE, UPDATE, DELETE) through our Apisauce client.
  */
-export function useApiMutation<TData, TError = Error, TVariables = unknown>(
+export const useApiMutation = <TData, TError = Error, TVariables = unknown>(
   options?: Omit<
     UseMutationOptions<TData, TError, ApiMutationArgs<TVariables>>,
     "mutationFn"
   >,
-): UseMutationResult<TData, TError, ApiMutationArgs<TVariables>> {
+): UseMutationResult<TData, TError, ApiMutationArgs<TVariables>> => {
   return useMutation<TData, TError, ApiMutationArgs<TVariables>>({
     mutationFn: async ({ endpoint, method = "POST", data }): Promise<TData> => {
       let response: ApiResponse<TData>;
@@ -56,4 +56,4 @@ export function useApiMutation<TData, TError = Error, TVariables = unknown>(
     },
     ...options,
   });
-}
+};

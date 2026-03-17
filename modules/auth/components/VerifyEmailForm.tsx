@@ -1,28 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail } from "lucide-react";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { AuthCard } from "@/modules/auth/components/AuthCard";
 
-export function VerifyEmailForm() {
+const OTP_LENGTH = 6;
+
+export const VerifyEmailForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "your email";
 
-  const OTP_LENGTH = 6;
-  const [otp, setOtp] = React.useState(Array.from({ length: OTP_LENGTH }, () => ""));
-  const inputRefs = React.useRef<Array<HTMLInputElement | null>>([]);
-  const [timer, setTimer] = React.useState(147);
-  const [canResend, setCanResend] = React.useState(false);
+  const [otp, setOtp] = useState<string[]>(Array.from({ length: OTP_LENGTH }, () => ""));
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const [timer, setTimer] = useState<number>(147);
+  const [canResend, setCanResend] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (timer > 0) {
       const timeout = window.setTimeout(() => setTimer((t) => t - 1), 1000);
       return () => window.clearTimeout(timeout);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCanResend(true);
   }, [timer]);
 
@@ -50,7 +52,7 @@ export function VerifyEmailForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (otp.join("").length === OTP_LENGTH) {
       router.push(`/onboarding/details?email=${encodeURIComponent(email)}`);
@@ -64,7 +66,7 @@ export function VerifyEmailForm() {
     setOtp(Array.from({ length: OTP_LENGTH }, () => ""));
   };
 
-  function handlePaste(e: React.ClipboardEvent) {
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     const paste = e.clipboardData
       .getData("text")
@@ -77,7 +79,7 @@ export function VerifyEmailForm() {
     setOtp(next);
     const idx = Math.min(paste.length, OTP_LENGTH - 1);
     inputRefs.current[idx]?.focus();
-  }
+  };
 
   const minutes = Math.floor(timer / 60);
   const seconds = timer % 60;
@@ -123,8 +125,8 @@ export function VerifyEmailForm() {
                   type="text"
                   inputMode="numeric"
                   value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value)}
-                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleOtpKeyDown(index, e)}
                   ref={(el) => {
                     inputRefs.current[index] = el;
                   }}
@@ -162,4 +164,4 @@ export function VerifyEmailForm() {
       </motion.div>
     </AuthLayout>
   );
-}
+};

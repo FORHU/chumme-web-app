@@ -1,11 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
-export default function WelcomePage() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace("/auth");
-  }, [router]);
-  return null;
-}
+import { WelcomeRedirect } from "@/modules/auth/components/WelcomeRedirect";
+
+const WelcomePage = () => <WelcomeRedirect />;
+
+export default WelcomePage;

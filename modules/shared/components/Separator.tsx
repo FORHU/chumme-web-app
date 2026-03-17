@@ -7,11 +7,11 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
 }
 
-export function Separator({
+export const Separator = ({
   className,
   orientation = "horizontal",
   ...props
-}: SeparatorProps) {
+}: SeparatorProps) => {
   return (
     <div
       role="separator"
@@ -24,4 +24,4 @@ export function Separator({
       {...props}
     />
   );
-}
+};

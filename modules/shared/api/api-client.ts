@@ -12,15 +12,17 @@ import {
 } from "@/modules/shared/utils/storage";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002";
 
 // In-memory token cache to avoid hitting localStorage on every request
 let _cachedAccessToken: string | null = null;
 
-export function setCachedAccessToken(token: string | null) {
+export const setCachedAccessToken = (token: string | null) => {
   _cachedAccessToken = token;
-}
+};
 
 export const api = create({
   baseURL: API_BASE_URL,
@@ -32,7 +34,7 @@ export const api = create({
 });
 
 // Request interceptor — attach auth token
-api.axiosInstance.interceptors.request.use(async (config) => {
+api.axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   if (!_cachedAccessToken && typeof window !== "undefined") {
     _cachedAccessToken = await getStorageData<string>(ACCESS_TOKEN);
   }
@@ -45,10 +47,10 @@ api.axiosInstance.interceptors.request.use(async (config) => {
 // Response interceptor — handle 401 with token refresh
 api.axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  async (error: AxiosError & { config?: InternalAxiosRequestConfig & { _retry?: boolean } }) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const rt = await getStorageData<string>(REFRESH_TOKEN);

@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
-export function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const initialized = useRef(false);
+export interface AuthInitializerProps {
+  children: React.ReactNode;
+}
+
+export const AuthInitializer = ({ children }: AuthInitializerProps) => {
+  const initialized = useRef<boolean>(false);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -13,4 +17,4 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
   }, []);
 
   return <>{children}</>;
-}
+};

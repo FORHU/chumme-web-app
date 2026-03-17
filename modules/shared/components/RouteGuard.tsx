@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-import { ChummeLoader } from "./ChummeLoader";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 
-interface RouteGuardProps {
+export interface RouteGuardProps {
   children: React.ReactNode;
   requireAuth?: boolean;
 }
 
-export function RouteGuard({ children, requireAuth = true }: RouteGuardProps) {
+export const RouteGuard = ({ children, requireAuth = true }: RouteGuardProps) => {
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -45,4 +45,4 @@ export function RouteGuard({ children, requireAuth = true }: RouteGuardProps) {
   }
 
   return <>{children}</>;
-}
+};

@@ -2,6 +2,6 @@
 
 import { VerifyEmailForm } from "@/modules/auth/components/VerifyEmailForm";
 
-export default function VerifyEmailPage() {
-  return <VerifyEmailForm />;
-}
+const VerifyEmailPage = () => <VerifyEmailForm />;
+
+export default VerifyEmailPage;

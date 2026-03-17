@@ -1,6 +1,6 @@
 import React from "react";
 
-interface CardProps {
+export interface CardProps {
   children: React.ReactNode;
   className?: string;
   variant?: "glass" | "glass-light" | "solid";

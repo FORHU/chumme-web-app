@@ -6,7 +6,7 @@ interface ReportsTabProps {
   isDarkMode: boolean;
 }
 
-export function ReportsTab({ isDarkMode }: ReportsTabProps) {
+export const ReportsTab = ({ isDarkMode }: ReportsTabProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -141,4 +141,4 @@ export function ReportsTab({ isDarkMode }: ReportsTabProps) {
       </div>
     </div>
   );
-}
+};

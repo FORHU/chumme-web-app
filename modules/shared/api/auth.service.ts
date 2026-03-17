@@ -1,10 +1,5 @@
-import { api } from "./api-client";
-import { AuthResponse, RegisterRequest, User } from "./api.types";
-
-type ApiEnvelope<T> = {
-  message?: string;
-  data: T;
-};
+import { api } from "@/modules/shared/api/api-client";
+import type { AuthResponse, RegisterRequest, User, ApiEnvelope } from "@/modules/shared/api/api.types";
 
 export const authService = {
   login: async (email: string, password: string): Promise<AuthResponse> => {

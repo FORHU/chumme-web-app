@@ -21,3 +21,22 @@ export const topics = [
   { id: 4, name: "Lakers", category: "Sports", subcategory: "Basketball", type: "Team", followers: "890K" },
   { id: 5, name: "Barcelona", category: "Sports", subcategory: "Football", type: "Team", followers: "1.5M" },
 ];
+
+export const tabs = [
+  { id: "overview", name: "Overview" },
+  { id: "categories", name: "Categories" },
+  { id: "subcategories", name: "Subcategories" },
+  { id: "topics", name: "Topics" },
+];
+
+export const overviewStats = [
+  { label: "Total Categories", value: "10" },
+  { label: "Total Subcategories", value: "45" },
+  { label: "Total Topics", value: "320" },
+  { label: "Active Topics", value: "210" },
+];
+
+export const entertainmentTree: Record<string, Record<string, string[]>> = {
+  Music: { "K-Pop": ["BTS", "BLACKPINK", "EXO"], "Hip-Hop": ["Travis Scott"] },
+  Sports: { Basketball: ["Lakers", "Warriors"] },
+};

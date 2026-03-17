@@ -6,7 +6,7 @@ interface LinksTabProps {
   isDarkMode: boolean;
 }
 
-export function LinksTab({ isDarkMode }: LinksTabProps) {
+export const LinksTab = ({ isDarkMode }: LinksTabProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -160,4 +160,4 @@ export function LinksTab({ isDarkMode }: LinksTabProps) {
       </div>
     </div>
   );
-}
+};

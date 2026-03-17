@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   PieChart,
   Pie,
@@ -13,26 +12,23 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { analyticsData, fandomActivityData } from "@/modules/discover/constants/mock-data";
+import { motion } from "framer-motion";
+
+import {
+  analyticsData,
+  fandomActivityData,
+  overviewStats,
+} from "@/modules/discover/constants/mock-data";
 
 interface OverviewTabProps {
   isDarkMode: boolean;
 }
 
-export function OverviewTab({ isDarkMode }: OverviewTabProps) {
-  const stats = [
-    { label: "Total Fandom Filters", value: "6" },
-    { label: "Total Discover Posts", value: "12,540" },
-    { label: "Featured Posts", value: "3" },
-    { label: "Pending Reports", value: "18" },
-    { label: "Most Active Fandom", value: "BTS" },
-    { label: "Daily Engagement", value: "45.2k" },
-  ];
-
+export const OverviewTab = ({ isDarkMode }: OverviewTabProps) => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
+        {overviewStats.map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ y: 20, opacity: 0 }}
@@ -125,4 +121,4 @@ export function OverviewTab({ isDarkMode }: OverviewTabProps) {
       </div>
     </div>
   );
-}
+};

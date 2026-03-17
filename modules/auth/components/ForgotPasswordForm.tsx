@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail } from "lucide-react";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { AuthCard } from "@/modules/auth/components/AuthCard";
 
-export function ForgotPasswordForm() {
+export const ForgotPasswordForm = () => {
   const router = useRouter();
-  const [email, setEmail] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
   };
@@ -75,7 +75,7 @@ export function ForgotPasswordForm() {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900"
                     required
                   />
@@ -94,4 +94,4 @@ export function ForgotPasswordForm() {
       </motion.div>
     </AuthLayout>
   );
-}
+};

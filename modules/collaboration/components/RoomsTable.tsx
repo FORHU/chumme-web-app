@@ -1,14 +1,15 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Eye, Ban, Trash2 } from "lucide-react";
 import type { CollabRoom } from "@/modules/collaboration/types";
 
-interface RoomsTableProps {
+export interface RoomsTableProps {
   isDarkMode: boolean;
   rooms: CollabRoom[];
 }
 
-export function RoomsTable({ isDarkMode, rooms }: RoomsTableProps) {
+export const RoomsTable = ({ isDarkMode, rooms }: RoomsTableProps) => {
   return (
     <motion.div
       key="rooms"
@@ -153,4 +154,4 @@ export function RoomsTable({ isDarkMode, rooms }: RoomsTableProps) {
       </div>
     </motion.div>
   );
-}
+};

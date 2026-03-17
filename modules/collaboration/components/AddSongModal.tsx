@@ -4,21 +4,21 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 
-interface AddSongModalProps {
+export interface AddSongModalProps {
   isDarkMode: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (title: string, artist: string) => void;
 }
 
-export function AddSongModal({
+export const AddSongModal = ({
   isDarkMode,
   isOpen,
   onClose,
   onSubmit,
-}: AddSongModalProps) {
-  const [songTitle, setSongTitle] = useState("");
-  const [songArtist, setSongArtist] = useState("");
+}: AddSongModalProps) => {
+  const [songTitle, setSongTitle] = useState<string>("");
+  const [songArtist, setSongArtist] = useState<string>("");
 
   const handleSubmit = () => {
     onSubmit(songTitle, songArtist);
@@ -124,4 +124,4 @@ export function AddSongModal({
       )}
     </AnimatePresence>
   );
-}
+};

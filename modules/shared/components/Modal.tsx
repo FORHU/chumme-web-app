@@ -10,12 +10,12 @@ export interface ModalProps {
   className?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({
+export const Modal = ({
   isOpen,
   onClose,
   children,
   className,
-}) => {
+}: ModalProps) => {
   // Prevent scrolling on the body when the modal is open
   useEffect(() => {
     if (isOpen) {

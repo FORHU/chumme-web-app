@@ -11,6 +11,11 @@ export type ApiResult<T> = ApiResponse<
   StandardResponse<null>
 >;
 
+export interface ApiEnvelope<T> {
+  message?: string;
+  data: T;
+}
+
 export interface User {
   id: string;
   email: string;

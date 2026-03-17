@@ -1,11 +1,13 @@
 "use client";
-import { motion } from "framer-motion";
 
-interface ReportsPanelProps {
+import { motion } from "framer-motion";
+import { mockReports } from "@/modules/collaboration/constants/mock-data";
+
+export interface ReportsPanelProps {
   isDarkMode: boolean;
 }
 
-export function ReportsPanel({ isDarkMode }: ReportsPanelProps) {
+export const ReportsPanel = ({ isDarkMode }: ReportsPanelProps) => {
   return (
     <motion.div
       key="reports"
@@ -27,26 +29,7 @@ export function ReportsPanel({ isDarkMode }: ReportsPanelProps) {
           Reports & Moderation
         </h3>
         <div className="space-y-4">
-          {[
-            {
-              type: "Inappropriate chat",
-              room: "Kpop Night Room",
-              user: "user_456",
-              date: "1 hour ago",
-            },
-            {
-              type: "Abusive user",
-              room: "BTS Sing Along",
-              user: "baduser123",
-              date: "3 hours ago",
-            },
-            {
-              type: "Spam collaboration",
-              room: "Fan Singing PH",
-              user: "spammer99",
-              date: "5 hours ago",
-            },
-          ].map((report, index) => (
+          {mockReports.map((report, index) => (
             <div
               key={index}
               className={`p-4 rounded-xl border ${
@@ -103,4 +86,4 @@ export function ReportsPanel({ isDarkMode }: ReportsPanelProps) {
       </div>
     </motion.div>
   );
-}
+};

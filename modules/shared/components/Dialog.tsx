@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Modal } from "./Modal";
-import { Button } from "./Button";
+import { Modal } from "@/modules/shared/components/Modal";
+import { Button } from "@/modules/shared/components/Button";
 import { cn } from "@/modules/shared/utils";
 
 export interface DialogProps {
@@ -17,7 +17,7 @@ export interface DialogProps {
   isDestructive?: boolean;
 }
 
-export const Dialog: React.FC<DialogProps> = ({
+export const Dialog = ({
   isOpen,
   title,
   message,
@@ -27,7 +27,7 @@ export const Dialog: React.FC<DialogProps> = ({
   onCancel,
   isLoading = false,
   isDestructive = false,
-}) => {
+}: DialogProps) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -94,8 +94,8 @@ export const Dialog: React.FC<DialogProps> = ({
           <Button
             variant={isDestructive ? "secondary" : "primary"}
             className={cn(
-              "flex-1 font-bold",
-              isDestructive && "bg-red-500 hover:bg-red-600 border-none",
+               "flex-1 font-bold",
+               isDestructive && "bg-red-500 hover:bg-red-600 border-none"
             )}
             onClick={onConfirm}
             disabled={isLoading}

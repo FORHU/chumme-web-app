@@ -1,15 +1,20 @@
 "use client";
 
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { cn } from "@/modules/shared/utils";
 
-export function ThemeToggle({ className }: { className?: string }) {
+export interface ThemeToggleProps {
+  className?: string;
+}
+
+export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   // Avoid hydration mismatch by only rendering after mount
-  React.useEffect(() => {
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -62,7 +67,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         <path d="M20 12h2"></path>
         <path d="m6.34 17.66-1.41 1.41"></path>
         <path d="m19.07 4.93-1.41 1.41"></path>
-      </svg>
+       </svg>
 
       {/* Moon Icon (Dark Mode) */}
       <svg
@@ -84,4 +89,4 @@ export function ThemeToggle({ className }: { className?: string }) {
       </svg>
     </button>
   );
-}
+};

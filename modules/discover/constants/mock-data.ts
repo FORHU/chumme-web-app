@@ -1,3 +1,5 @@
+import type { DiscoverTabId } from "@/modules/discover/types";
+
 export const discoverLinks = [
   {
     id: 1,
@@ -119,9 +121,18 @@ export const fandomActivityData = [
   { id: "fandom-5", fandom: "TWICE", posts: 650 },
 ];
 
-export const tabs = [
+export const tabs: { id: DiscoverTabId; name: string }[] = [
   { id: "overview", name: "Overview" },
   { id: "links", name: "Discover Links" },
   { id: "featured", name: "Featured" },
   { id: "reports", name: "Reports" },
+];
+
+export const overviewStats = [
+  { label: "Total Fandom Filters", value: "6" },
+  { label: "Total Discover Posts", value: "12,540" },
+  { label: "Featured Posts", value: "3" },
+  { label: "Pending Reports", value: "18" },
+  { label: "Most Active Fandom", value: "BTS" },
+  { label: "Daily Engagement", value: "45.2k" },
 ];

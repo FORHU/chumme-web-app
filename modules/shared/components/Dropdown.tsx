@@ -24,7 +24,7 @@ export const Dropdown = ({
   align = "right",
   className,
 }: DropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close when clicking outside

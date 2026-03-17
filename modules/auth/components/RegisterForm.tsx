@@ -2,11 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { RouteGuard } from "@/modules/shared/components/RouteGuard";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
-import { AuthCard } from "@/modules/auth/components/AuthCard";
 import { motion } from "framer-motion";
 import {
   Apple,
@@ -17,23 +12,28 @@ import {
   Mail,
   User,
 } from "lucide-react";
+import { RouteGuard } from "@/modules/shared/components/RouteGuard";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { AuthCard } from "@/modules/auth/components/AuthCard";
 
-export function RegisterForm() {
+export const RegisterForm = () => {
   const searchParams = useSearchParams();
   const initialEmail = searchParams.get("email") ?? "";
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>(initialEmail);
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(true);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [agreeTerms, setAgreeTerms] = useState<boolean>(true);
 
   const { register, isLoading } = useAuthStore();
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     try {
@@ -116,7 +116,7 @@ export function RegisterForm() {
                     type="text"
                     placeholder="Enter your full name"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullName(e.target.value)}
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -133,7 +133,7 @@ export function RegisterForm() {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -150,7 +150,7 @@ export function RegisterForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     className="w-full h-12 pl-12 pr-12 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -178,7 +178,7 @@ export function RegisterForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -189,7 +189,7 @@ export function RegisterForm() {
                 <input
                   type="checkbox"
                   checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAgreeTerms(e.target.checked)}
                   className="mt-1 h-4 w-4 rounded border-2 border-gray-300 accent-[#A53860]"
                 />
                 <span className="text-sm text-gray-600 font-['Poppins',sans-serif]">
@@ -285,4 +285,4 @@ export function RegisterForm() {
       </AuthLayout>
     </RouteGuard>
   );
-}
+};

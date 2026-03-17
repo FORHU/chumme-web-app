@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/modules/shared/utils";
 
 export interface SwitchProps
@@ -10,15 +10,15 @@ export interface SwitchProps
   onCheckedChange?: (checked: boolean) => void;
 }
 
-export function Switch({
+export const Switch = ({
   className,
   checked,
   defaultChecked,
   onCheckedChange,
   disabled,
   ...props
-}: SwitchProps) {
-  const [uncontrolledChecked, setUncontrolledChecked] = React.useState(
+}: SwitchProps) => {
+  const [uncontrolledChecked, setUncontrolledChecked] = useState<boolean>(
     defaultChecked ?? false,
   );
 
@@ -56,4 +56,4 @@ export function Switch({
       />
     </button>
   );
-}
+};

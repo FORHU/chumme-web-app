@@ -36,4 +36,41 @@ export interface Recording {
   featured: boolean;
 }
 
+export interface MusicSong {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  duration: string;
+  status: "Active" | "Inactive";
+}
+
+export interface KaraokeSong {
+  id: string;
+  title: string;
+  artist: string;
+  lyrics: string;
+  duration: string;
+  status: "Active" | "Inactive";
+}
+
+export interface KaraokeRecording {
+  id: string;
+  user: string;
+  song: string;
+  room: string;
+  date: string;
+  views: number;
+}
+
 export type TabId = "monitor" | "rooms" | "public" | "private" | "songs" | "recordings" | "reports";
+export type CollabPage = "rooms" | "music" | "karaoke";
+export type KaraokeTabId = "songs" | "recordings";
+
+export interface Report {
+  type: string;
+  room: string;
+  user: string;
+  date: string;
+}

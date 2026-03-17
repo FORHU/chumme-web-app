@@ -4,10 +4,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
-export function QueryProvider({ children }: { children: React.ReactNode }) {
+export interface QueryProviderProps {
+  children: React.ReactNode;
+}
+
+export const QueryProvider = ({ children }: QueryProviderProps) => {
   // Use state to ensure a new QueryClient is created per request/session
   // and isn't shared across users if SSR is ever reintroduced.
-  const [queryClient] = useState(
+  const [queryClient] = useState<QueryClient>(
     () =>
       new QueryClient({
         defaultOptions: {
@@ -27,4 +31,4 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
-}
+};

@@ -1,15 +1,16 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Plus, Edit, VolumeX, Volume2, Trash2 } from "lucide-react";
 import type { Song } from "@/modules/collaboration/types";
 
-interface SongLibraryProps {
+export interface SongLibraryProps {
   isDarkMode: boolean;
   songs: Song[];
   onAddSong: () => void;
 }
 
-export function SongLibrary({ isDarkMode, songs, onAddSong }: SongLibraryProps) {
+export const SongLibrary = ({ isDarkMode, songs, onAddSong }: SongLibraryProps) => {
   return (
     <motion.div
       key="songs"
@@ -140,4 +141,4 @@ export function SongLibrary({ isDarkMode, songs, onAddSong }: SongLibraryProps) 
       </div>
     </motion.div>
   );
-}
+};

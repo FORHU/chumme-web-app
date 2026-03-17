@@ -1,12 +1,13 @@
 "use client";
+
 import type { CollabRoom } from "@/modules/collaboration/types";
 
-interface LiveMonitorProps {
+export interface LiveMonitorProps {
   isDarkMode: boolean;
   rooms: CollabRoom[];
 }
 
-export function LiveMonitor({ isDarkMode, rooms }: LiveMonitorProps) {
+export const LiveMonitor = ({ isDarkMode, rooms }: LiveMonitorProps) => {
   return (
     <div
       className={`rounded-xl p-6 mb-8 border ${
@@ -70,4 +71,4 @@ export function LiveMonitor({ isDarkMode, rooms }: LiveMonitorProps) {
       </div>
     </div>
   );
-}
+};

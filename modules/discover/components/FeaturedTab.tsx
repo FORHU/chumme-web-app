@@ -1,13 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+
 import { featuredContent } from "@/modules/discover/constants/mock-data";
 
 interface FeaturedTabProps {
   isDarkMode: boolean;
 }
 
-export function FeaturedTab({ isDarkMode }: FeaturedTabProps) {
+export const FeaturedTab = ({ isDarkMode }: FeaturedTabProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -105,4 +106,4 @@ export function FeaturedTab({ isDarkMode }: FeaturedTabProps) {
       </div>
     </div>
   );
-}
+};

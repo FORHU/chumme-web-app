@@ -12,11 +12,11 @@ import { ApiResponse } from "apisauce";
  * from the Apisauce response and throws an error if the request fails,
  * enabling React Query's error boundaries and retries.
  */
-export function useApiQuery<TData, TError = Error>(
+export const useApiQuery = <TData, TError = Error>(
   queryKey: unknown[],
   endpoint: string,
   options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">,
-): UseQueryResult<TData, TError> {
+): UseQueryResult<TData, TError> => {
   return useQuery<TData, TError>({
     queryKey,
     queryFn: async (): Promise<TData> => {
@@ -42,4 +42,4 @@ export function useApiQuery<TData, TError = Error>(
     },
     ...options,
   });
-}
+};

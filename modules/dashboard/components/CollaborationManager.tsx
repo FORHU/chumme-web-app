@@ -1,20 +1,9 @@
 "use client";
 
-import { useState, type ComponentType } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { useTheme } from "next-themes";
-import {
-  Music,
-  Users,
-  Video,
-  AlertTriangle,
-  Eye,
-} from "lucide-react";
-
-// Types
-import type { TabId } from "@/modules/collaboration/types";
-
-// Components
+import { AnimatePresence } from "framer-motion";
+import { Music, Users, Video, AlertTriangle, Eye } from "lucide-react";
 import { RoomsTable } from "@/modules/collaboration/components/RoomsTable";
 import { PublicCollabsTable } from "@/modules/collaboration/components/PublicCollabsTable";
 import { PrivateRoomsTable } from "@/modules/collaboration/components/PrivateRoomsTable";
@@ -24,20 +13,14 @@ import { ReportsPanel } from "@/modules/collaboration/components/ReportsPanel";
 import { LiveMonitor } from "@/modules/collaboration/components/LiveMonitor";
 import { AddSongModal } from "@/modules/collaboration/components/AddSongModal";
 import { CollabStats } from "@/modules/collaboration/components/CollabStats";
+import { mockRooms, mockPublicCollabs, mockSongs, mockRecordings } from "@/modules/collaboration/constants/mock-data";
+import type { TabId } from "@/modules/collaboration/types";
 
-// Mock Data
-import { 
-  mockRooms, 
-  mockPublicCollabs, 
-  mockSongs, 
-  mockRecordings 
-} from "@/modules/collaboration/constants/mock-data";
-
-export function CollaborationManager() {
+export const CollaborationManager = () => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
   const [activeTab, setActiveTab] = useState<TabId>("rooms");
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   const handleCreate = (title: string, artist: string) => {
     console.log("Creating song:", { title, artist });
@@ -118,5 +101,4 @@ export function CollaborationManager() {
       />
     </div>
   );
-}
-
+};

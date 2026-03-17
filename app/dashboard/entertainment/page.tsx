@@ -1,5 +1,5 @@
 import { EntertainmentPage } from "@/modules/entertainment/components/EntertainmentPage";
 
-export default function Page() {
-  return <EntertainmentPage />;
-}
+const Page = () => <EntertainmentPage />;
+
+export default Page;

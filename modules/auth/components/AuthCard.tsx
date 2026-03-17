@@ -2,16 +2,18 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/modules/shared/utils";
 import { useTheme } from "next-themes";
+import { cn } from "@/modules/shared/utils";
 
-export function AuthCard({
-  children,
-  className,
-}: {
+interface AuthCardProps {
   children: React.ReactNode;
   className?: string;
-}) {
+}
+
+export const AuthCard = ({
+  children,
+  className,
+}: AuthCardProps) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -32,4 +34,4 @@ export function AuthCard({
       {children}
     </motion.div>
   );
-}
+};

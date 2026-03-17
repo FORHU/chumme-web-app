@@ -1,14 +1,15 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import type { PublicCollab } from "@/modules/collaboration/types";
 
-interface PublicCollabsTableProps {
+export interface PublicCollabsTableProps {
   isDarkMode: boolean;
   collabs: PublicCollab[];
 }
 
-export function PublicCollabsTable({ isDarkMode, collabs }: PublicCollabsTableProps) {
+export const PublicCollabsTable = ({ isDarkMode, collabs }: PublicCollabsTableProps) => {
   return (
     <motion.div
       key="public"
@@ -141,4 +142,4 @@ export function PublicCollabsTable({ isDarkMode, collabs }: PublicCollabsTablePr
       </div>
     </motion.div>
   );
-}
+};

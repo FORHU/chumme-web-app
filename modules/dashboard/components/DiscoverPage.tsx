@@ -1,26 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useTheme } from "next-themes";
-import {
-  tabs,
-} from "@/modules/discover/constants/mock-data";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Components
+import { tabs } from "@/modules/discover/constants/mock-data";
 import { OverviewTab } from "@/modules/discover/components/OverviewTab";
 import { LinksTab } from "@/modules/discover/components/LinksTab";
 import { FeaturedTab } from "@/modules/discover/components/FeaturedTab";
 import { ReportsTab } from "@/modules/discover/components/ReportsTab";
 
-interface DiscoverPageProps {
-  isDarkMode: boolean;
-}
+import type { DiscoverTabId } from "@/modules/discover/types";
 
-export function DiscoverPage() {
+export const DiscoverPage = () => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState<DiscoverTabId>("overview");
 
   return (
     <div>
@@ -69,17 +64,20 @@ export function DiscoverPage() {
         </div>
       </motion.div>
 
-      <motion.div
-        key={activeTab}
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {activeTab === "overview" && <OverviewTab isDarkMode={isDarkMode} />}
-        {activeTab === "links" && <LinksTab isDarkMode={isDarkMode} />}
-        {activeTab === "featured" && <FeaturedTab isDarkMode={isDarkMode} />}
-        {activeTab === "reports" && <ReportsTab isDarkMode={isDarkMode} />}
-      </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -20, opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {activeTab === "overview" && <OverviewTab isDarkMode={isDarkMode} />}
+          {activeTab === "links" && <LinksTab isDarkMode={isDarkMode} />}
+          {activeTab === "featured" && <FeaturedTab isDarkMode={isDarkMode} />}
+          {activeTab === "reports" && <ReportsTab isDarkMode={isDarkMode} />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
-}
+};

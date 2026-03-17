@@ -3,12 +3,11 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, Globe } from "lucide-react";
-import { cn } from "@/modules/shared/utils";
-
 import { useTheme } from "next-themes";
-import { useSyncExternalStore } from "react";
+import { cn } from "@/modules/shared/utils";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -17,12 +16,12 @@ interface AuthLayoutProps {
   className?: string;
 }
 
-export function AuthLayout({
+export const AuthLayout = ({
   children,
   headline = ["Where fan moments", "become shared experiences"],
   tagline = "Connect with fans around the world and share your passion in a vibrant community",
   className,
-}: AuthLayoutProps) {
+}: AuthLayoutProps) => {
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -216,4 +215,4 @@ export function AuthLayout({
       </div>
     </div>
   );
-}
+};
