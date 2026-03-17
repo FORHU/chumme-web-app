@@ -5,6 +5,9 @@ import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus, Edit, Trash2, X, MapPin, Users, Grid3x3, Activity, AlertTriangle, TrendingUp, Search } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useGetCommunitiesCategories, useCreateCommunitiesCategory, useCreateSubCategory, communitiesKeys } from "@/modules/communities/hooks/useCommunities";
+import { useQueryClient } from "@tanstack/react-query";
+import type { ChummeCategory } from "@/modules/community/api/communities-api";
 
 interface Country {
   id: string;
@@ -12,15 +15,6 @@ interface Country {
   categories: number;
   communities: number;
   status: "Active" | "Disabled";
-}
-
-interface Category {
-  id: string;
-  name: string;
-  country: string;
-  communities: number;
-  color: string;
-  icon: string;
 }
 
 interface Community {
@@ -39,14 +33,6 @@ const mockCountries: Country[] = [
   { id: "3", name: "Japan", categories: 10, communities: 95, status: "Active" },
   { id: "4", name: "USA", categories: 15, communities: 180, status: "Active" },
   { id: "5", name: "Thailand", categories: 8, communities: 75, status: "Active" },
-];
-
-const mockCategories: Category[] = [
-  { id: "1", name: "Fan Polls", country: "Philippines", communities: 25, color: "#A53860", icon: "" },
-  { id: "2", name: "Fan Meets", country: "Korea", communities: 40, color: "#EF88AD", icon: "" },
-  { id: "3", name: "Merch", country: "Japan", communities: 18, color: "#670D2F", icon: "" },
-  { id: "4", name: "Events", country: "USA", communities: 32, color: "#F4C2A0", icon: "" },
-  { id: "5", name: "News", country: "Thailand", communities: 15, color: "#8B3A52", icon: "" },
 ];
 
 const mockCommunities: Community[] = [
@@ -74,22 +60,83 @@ export function CommunityControlCenter() {
   // Form states
   const [countryName, setCountryName] = useState("");
   const [categoryName, setCategoryName] = useState("");
-  const [categoryColor, setCategoryColor] = useState("#A53860");
+  const [categoryColor, setCategoryColor] = useState("");
   const [communityName, setCommunityName] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
 
+  const queryClient = useQueryClient();
+  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError } = useGetCommunitiesCategories();
+  const categoriesDataShape = categoriesData as unknown as {
+    data?: unknown;
+    categories?: unknown;
+  };
+  const communitiesCategories = Array.isArray(categoriesData)
+    ? (categoriesData as ChummeCategory[])
+    : Array.isArray(categoriesDataShape?.data)
+    ? (categoriesDataShape.data as ChummeCategory[])
+    : Array.isArray(categoriesDataShape?.categories)
+    ? (categoriesDataShape.categories as ChummeCategory[])
+    : [];
+  console.log("[communities] raw categoriesData:", categoriesData);
+  const { mutate: createCommunitiesCategory, isPending: creatingCategory } = useCreateCommunitiesCategory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...communitiesKeys.categories()] });
+      setShowCreateModal(false);
+      resetForm();
+    },
+  });
+  const { mutate: createSubcategory, isPending: creatingSubcategory } = useCreateSubCategory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...communitiesKeys.categories()] });
+      setShowCreateModal(false);
+      resetForm();
+    },
+  });
+  const isSubmitting = creatingCategory || creatingSubcategory;
+
+  const filteredCategories = communitiesCategories.filter((cat) =>
+    cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleCreate = () => {
-    console.log("Creating:", modalType, { countryName, categoryName, communityName });
-    setShowCreateModal(false);
-    resetForm();
+    if (modalType === "country") {
+      if (!countryName.trim()) return;
+      createCommunitiesCategory({
+        endpoint: "/api/v1/chumme-categories/create",
+        method: "POST",
+        data: { name: countryName },
+      });
+    } else if (modalType === "category") {
+      if (!categoryName.trim()) return;
+      createCommunitiesCategory({
+        endpoint: "/api/v1/chumme-categories/create",
+        method: "POST",
+        data: { name: categoryName },
+      });
+    } else if (modalType === "community") {
+      if (!communityName.trim() || !selectedCategory) return;
+      const parentCategory = communitiesCategories.find((c) => c.name === selectedCategory);
+      createSubcategory({
+        endpoint: "/api/v1/chumme-subcategories/create",
+        method: "POST",
+        data: {
+          name: communityName,
+          description: communityDescription || undefined,
+          categoryId: parentCategory?.id ?? selectedCategory,
+        },
+      });
+    } else {
+      setShowCreateModal(false);
+      resetForm();
+    }
   };
 
   const resetForm = () => {
     setCountryName("");
     setCategoryName("");
-    setCategoryColor("#A53860");
+    setCategoryColor("");
     setCommunityName("");
     setSelectedCountry("");
     setSelectedCategory("");
@@ -141,7 +188,9 @@ export function CommunityControlCenter() {
               Categories
             </span>
           </div>
-          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>120</p>
+          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            {categoriesLoading ? <span className="inline-block w-12 h-8 bg-gray-600/30 rounded animate-pulse" /> : (categoriesData?.length ?? 0)}
+          </p>
           <p className="text-sm text-green-600 mt-1">+8 this month</p>
         </div>
 
@@ -228,40 +277,33 @@ export function CommunityControlCenter() {
                 <table className="w-full">
                   <thead className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}>
                     <tr>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Country Name</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Categories</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Communities</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Status</th>
+                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Name</th>
+                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Traits</th>
                       <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {mockCountries.map((country) => (
-                      <tr key={country.id} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>{country.name}</td>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{country.categories}</td>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{country.communities}</td>
-                        <td className="px-6 py-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            country.status === "Active"
-                              ? "bg-green-500/20 text-green-600"
-                              : "bg-gray-500/20 text-gray-600"
-                          }`}>
-                            {country.status}
-                          </span>
-                        </td>
+                    {categoriesLoading && Array.from({ length: 4 }).map((_, i) => (
+                      <tr key={i} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
+                        {Array.from({ length: 3 }).map((_, j) => (
+                          <td key={j} className="px-6 py-4"><div className="h-4 rounded bg-gray-600/20 animate-pulse" /></td>
+                        ))}
+                      </tr>
+                    ))}
+                    {categoriesError && !categoriesLoading && (
+                      <tr><td colSpan={3} className="px-6 py-8 text-center text-red-400 text-sm">Failed to load categories. Please try again.</td></tr>
+                    )}
+                    {!categoriesLoading && !categoriesError && communitiesCategories.length === 0 && (
+                      <tr><td colSpan={3} className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>No countries yet.</td></tr>
+                    )}
+                    {!categoriesLoading && communitiesCategories.map((category) => (
+                      <tr key={category.id} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
+                        <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>{category.name}</td>
+                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.chummeTraits ?? <span className="italic opacity-40">—</span>}</td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button className={`p-2 rounded-lg transition-colors ${
-                              isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                            }`}>
-                              <Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                            </button>
-                            <button className={`p-2 rounded-lg transition-colors ${
-                              isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"
-                            }`}>
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </button>
+                            <button className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}><Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} /></button>
+                            <button className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}><Trash2 className="w-4 h-4 text-red-500" /></button>
                           </div>
                         </td>
                       </tr>
@@ -317,43 +359,37 @@ export function CommunityControlCenter() {
                   <thead className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}>
                     <tr>
                       <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Category Name</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Country</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Communities</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Color</th>
+                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Description</th>
+                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Trait</th>
                       <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {mockCategories.map((category) => (
+                    {categoriesLoading && Array.from({ length: 4 }).map((_, i) => (
+                      <tr key={i} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
+                        {Array.from({ length: 4 }).map((_, j) => (
+                          <td key={j} className="px-6 py-4"><div className="h-4 rounded bg-gray-600/20 animate-pulse" /></td>
+                        ))}
+                      </tr>
+                    ))}
+
+                    {categoriesError && !categoriesLoading && (
+                      <tr><td colSpan={4} className="px-6 py-8 text-center text-red-400 text-sm">Failed to load categories. Please try again.</td></tr>
+                    )}
+
+                    {!categoriesLoading && !categoriesError && filteredCategories.length === 0 && (
+                      <tr><td colSpan={4} className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>{searchQuery ? "No categories match your search." : "No categories yet."}</td></tr>
+                    )}
+
+                    {!categoriesLoading && filteredCategories.map((category) => (
                       <tr key={category.id} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>
-                          {category.name}
-                        </td>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.country}</td>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.communities}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                              style={{ backgroundColor: category.color }}
-                            />
-                            <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                              {category.color}
-                            </span>
-                          </div>
-                        </td>
+                        <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>{category.name}</td>
+                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"} max-w-xs truncate`}>{category.description ?? <span className="italic opacity-40">—</span>}</td>
+                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.chummeTraits ?? <span className="italic opacity-40">—</span>}</td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button className={`p-2 rounded-lg transition-colors ${
-                              isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                            }`}>
-                              <Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                            </button>
-                            <button className={`p-2 rounded-lg transition-colors ${
-                              isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"
-                            }`}>
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </button>
+                            <button className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}><Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} /></button>
+                            <button className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}><Trash2 className="w-4 h-4 text-red-500" /></button>
                           </div>
                         </td>
                       </tr>
@@ -526,36 +562,19 @@ export function CommunityControlCenter() {
               {modalType === "country" && (
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                    Country Name
+                    Country / Community Name
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    placeholder="e.g., Philippines, Korea, Anime Fans"
                     value={countryName}
                     onChange={(e) => setCountryName(e.target.value)}
                     className={`w-full h-12 px-4 rounded-xl text-sm transition-all ${
                       isDarkMode
-                        ? "bg-gray-800 border-gray-700 text-white"
-                        : "bg-gray-50 border-gray-200 text-gray-900"
+                        ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                        : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                     } border focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
-                  >
-                    <option value="">Select Country</option>
-                    <option value="Philippines">Philippines</option>
-                    <option value="Korea">Korea</option>
-                    <option value="Japan">Japan</option>
-                    <option value="United States">United States</option>
-                    <option value="China">China</option>
-                    <option value="Thailand">Thailand</option>
-                    <option value="Vietnam">Vietnam</option>
-                    <option value="Indonesia">Indonesia</option>
-                    <option value="Malaysia">Malaysia</option>
-                    <option value="Singapore">Singapore</option>
-                    <option value="Taiwan">Taiwan</option>
-                    <option value="India">India</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Brazil">Brazil</option>
-                    <option value="Mexico">Mexico</option>
-                  </select>
+                  />
                 </div>
               )}
 
@@ -598,13 +617,18 @@ export function CommunityControlCenter() {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Color
+                      Trait <span className="opacity-60">(optional)</span>
                     </label>
                     <input
-                      type="color"
+                      type="text"
+                      placeholder="e.g., music, sports, entertainment"
                       value={categoryColor}
                       onChange={(e) => setCategoryColor(e.target.value)}
-                      className="w-full h-12 rounded-xl cursor-pointer"
+                      className={`w-full h-12 px-4 rounded-xl text-sm transition-all ${
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                      } border focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
                 </div>
@@ -630,26 +654,7 @@ export function CommunityControlCenter() {
                   </div>
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Country
-                    </label>
-                    <select
-                      value={selectedCountry}
-                      onChange={(e) => setSelectedCountry(e.target.value)}
-                      className={`w-full h-12 px-4 rounded-xl text-sm transition-all ${
-                        isDarkMode
-                          ? "bg-gray-800 border-gray-700 text-white"
-                          : "bg-gray-50 border-gray-200 text-gray-900"
-                      } border focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
-                    >
-                      <option value="">Select Country</option>
-                      {mockCountries.map((country) => (
-                        <option key={country.id} value={country.name}>{country.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Category
+                      Parent Category
                     </label>
                     <select
                       value={selectedCategory}
@@ -661,7 +666,7 @@ export function CommunityControlCenter() {
                       } border focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     >
                       <option value="">Select Category</option>
-                      {mockCategories.map((category) => (
+                      {communitiesCategories.map((category) => (
                         <option key={category.id} value={category.name}>{category.name}</option>
                       ))}
                     </select>
@@ -688,7 +693,8 @@ export function CommunityControlCenter() {
               {/* Action Buttons */}
               <div className="flex gap-3 mt-6">
                 <button
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={() => { setShowCreateModal(false); resetForm(); }}
+                  disabled={isSubmitting}
                   className={`flex-1 h-12 rounded-xl font-semibold transition-colors ${
                     isDarkMode
                       ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -699,9 +705,15 @@ export function CommunityControlCenter() {
                 </button>
                 <button
                   onClick={handleCreate}
-                  className="flex-1 h-12 bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white rounded-xl font-semibold hover:shadow-lg transition-shadow"
+                  disabled={isSubmitting}
+                  className="flex-1 h-12 bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white rounded-xl font-semibold hover:shadow-lg transition-shadow disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Create
+                  {isSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Creating...
+                    </>
+                  ) : "Create"}
                 </button>
               </div>
             </motion.div>

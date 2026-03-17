@@ -8,7 +8,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import { cn } from "@/modules/shared/utils";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -24,8 +24,11 @@ export function AuthLayout({
   className,
 }: AuthLayoutProps) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const isDark = mounted ? resolvedTheme === "dark" : true;
 
   return (
