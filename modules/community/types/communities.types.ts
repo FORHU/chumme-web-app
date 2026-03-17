@@ -5,7 +5,7 @@ export interface ChummeCategory {
   name: string;
   description?: string | null;
   imageUrl?: string | null;
-  trait?: string | null;
+  chummeTrait?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +32,7 @@ export interface CreateCategoryPayload {
   name: string;
   description?: string;
   imageUrl?: string;
-  trait?: string;
+  chummeTrait?: string;
 }
 
 export interface CreateSubcategoryPayload {
@@ -40,6 +40,7 @@ export interface CreateSubcategoryPayload {
   description?: string;
   imageUrl?: string;
   categoryId: string;
+  chummeTrait?: string;
 }
 
 // ─── API responses ───────────────────────────────────────────────────────────

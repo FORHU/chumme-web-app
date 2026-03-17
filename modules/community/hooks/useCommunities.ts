@@ -19,63 +19,59 @@ export const communitiesKeys = {
 // ─── View hooks ───────────────────────────────────────────────────────────────
 
 /**
- * Fetches the communities categories list.
- * GET /api/v1/chumme-categories/communities
- *
- * @example
- * const { data, isLoading, error } = useGetCommunitiesCategories();
+ * Fetches all Communities categories (the "Countries" in the UI).
+ * GET /api/v1/chumme-categories/specialized/COMMUNITIES
+ * Response: { categories: ChummeCategory[] }
  */
 export const useGetCommunitiesCategories = () => {
-  return useApiQuery<{ data: ChummeCategory[] }>(
+  return useApiQuery<{ categories: ChummeCategory[] }>(
     [...communitiesKeys.categories()],
-    "/api/v1/chumme-categories"
+    "/api/v1/chumme-categories/COMMUNITIES"
   );
 };
 
 /**
- * Fetches subcategories by parent category id.
+ * Fetches subcategories under a given Communities category.
  * GET /api/v1/chumme-subcategories/category/:categoryId
- *
- * @example
- * const { data } = useGetSubcategoriesByCategoryId(categoryId);
+ * Response: { subCategories: ChummeSubCategory[] }
  */
 export const useGetSubcategoriesByCategoryId = (
   categoryId: string,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean }
 ) => {
-  return useApiQuery<ChummeSubCategory[]>(
+  return useApiQuery<{ subCategories: ChummeSubCategory[] }>(
     [...communitiesKeys.subcategories(categoryId)],
     `/api/v1/chumme-subcategories/category/${categoryId}`,
-    { enabled: !!categoryId && (options?.enabled ?? true) },
+    { enabled: !!categoryId && (options?.enabled ?? true) }
   );
 };
 
 // ─── Mutation hooks ───────────────────────────────────────────────────────────
 
 /**
- * Creates a new top-level community category.
+ * Creates a new top-level Communities category ("Add Country" in the UI).
  * POST /api/v1/chumme-categories/create
- *
- * @example
- * const { mutate, isPending } = useCreateCommunitiesCategory();
- * mutate({ endpoint: "/api/v1/chumme-categories/create", method: "POST", data: { name: "K-Pop" } });
  */
 export const useCreateCommunitiesCategory = (
-  options?: Parameters<typeof useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>>[0]
+  options?: Parameters<
+    typeof useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>
+  >[0]
 ) => {
-  return useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>(options);
+  return useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>(
+    options
+  );
 };
 
 /**
- * Creates a new subcategory inside an existing community.
+ * Creates a subcategory under a Communities category ("Create Category" in the UI).
  * POST /api/v1/chumme-subcategories/create
- *
- * @example
- * const { mutate, isPending } = useCreateSubCategory();
- * mutate({ endpoint: "/api/v1/chumme-subcategories/create", method: "POST", data: { name: "BTS", categoryId: "abc-123" } });
  */
 export const useCreateSubCategory = (
-  options?: Parameters<typeof useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>>[0]
+  options?: Parameters<
+    typeof useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>
+  >[0]
 ) => {
-  return useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>(options);
+  return useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>(
+    options
+  );
 };
