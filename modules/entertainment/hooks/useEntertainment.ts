@@ -4,86 +4,90 @@ import type { EntertainmentCategory } from "@/modules/entertainment/types/api.ty
 
 const QUERY_KEY = ["entertainment-categories"];
 
-export function useEntertainmentCategories() {
+export const useEntertainmentCategories = () => {
   return useQuery<EntertainmentCategory[]>({
     queryKey: QUERY_KEY,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryFn: entertainmentService.getEntertainmentCategories as any,
     staleTime: 5 * 60 * 1000,
   });
-}
+};
 
-export function useCreateCategory() {
+export const useCreateCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.createCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useUpdateCategory() {
+export const useUpdateCategory = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { name?: string; note?: string } }) =>
-      entertainmentService.updateCategory(id, data),
+    mutationFn: ({ id, data }: {
+      id: string;
+      data: { name?: string; note?: string; discoveryKeywords?: string[] }
+    }) => entertainmentService.updateCategory(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useDeleteCategory() {
+export const useDeleteCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.deleteCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useCreateSubCategory() {
+export const useCreateSubCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.createSubCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useUpdateSubCategory() {
+export const useUpdateSubCategory = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { name?: string; note?: string } }) =>
-      entertainmentService.updateSubCategory(id, data),
+    mutationFn: ({ id, data }: {
+      id: string;
+      data: { name?: string; note?: string; discoveryKeywords?: string[] }
+    }) => entertainmentService.updateSubCategory(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useDeleteSubCategory() {
+export const useDeleteSubCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.deleteSubCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useCreateTopicCategory() {
+export const useCreateTopicCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.createTopicCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useUpdateTopicCategory() {
+export const useUpdateTopicCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: { name?: string; note?: string } }) =>
       entertainmentService.updateTopicCategory(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};
 
-export function useDeleteTopicCategory() {
+export const useDeleteTopicCategory = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: entertainmentService.deleteTopicCategory,
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
-}
+};

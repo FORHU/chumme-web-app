@@ -24,9 +24,19 @@ export const entertainmentService = {
     return res.data;
   },
 
-  updateCategory: async (id: string, data: { name?: string; note?: string }) => {
-    const res = await api.put(`/api/v1/chumme-categories/${id}`, data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateCategory: async (id: string, data: {
+    name?: string;
+    note?: string;
+    discoveryKeywords?: string[];
+  }) => {
+    const payload = {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.note !== undefined && { note: data.note }),
+      ...(data.discoveryKeywords !== undefined && {
+        discoveryKeywords: data.discoveryKeywords,
+      }),
+    };
+    const res = await api.put(`/api/v1/chumme-categories/${id}`, payload);
     if (!res.ok) throw new Error((res.data as any)?.message || "Failed to update category");
     return res.data;
   },
@@ -53,9 +63,19 @@ export const entertainmentService = {
     return res.data;
   },
 
-  updateSubCategory: async (id: string, data: { name?: string; note?: string }) => {
-    const res = await api.put(`/api/v1/chumme-subcategories/${id}`, data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateSubCategory: async (id: string, data: {
+    name?: string;
+    note?: string;
+    discoveryKeywords?: string[];
+  }) => {
+    const payload = {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.note !== undefined && { note: data.note }),
+      ...(data.discoveryKeywords !== undefined && {
+        discoveryKeywords: data.discoveryKeywords,
+      }),
+    };
+    const res = await api.put(`/api/v1/chumme-subcategories/${id}`, payload);
     if (!res.ok) throw new Error((res.data as any)?.message || "Failed to update subcategory");
     return res.data;
   },
