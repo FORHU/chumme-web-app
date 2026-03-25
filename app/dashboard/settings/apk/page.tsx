@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { SettingsPage } from "@/modules/dashboard/components/SettingsPage";
+import { APKDownloadPage } from "@/modules/dashboard/components/APKDownloadPage";
 
-const SettingsPageRoute = () => {
+const APKPage = () => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,7 +14,7 @@ const SettingsPageRoute = () => {
 
   const isDark = mounted ? resolvedTheme === "dark" : true;
 
-  return <SettingsPage isDark={isDark} />;
+  return <APKDownloadPage isDark={isDark} />;
 };
 
-export default SettingsPageRoute;
+export default APKPage;
