@@ -5,6 +5,7 @@ import { Button } from "@/modules/shared/components/Button";
 import { cn } from "@/modules/shared/utils";
 import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
 import { LandingStats } from "@/modules/landing/api/landing-api";
+import { Download } from "lucide-react";
 
 export const Hero = () => {
   const { data, isLoading } = useApiQuery<LandingStats>(
@@ -40,9 +41,28 @@ export const Hero = () => {
           <Button size="lg" className="w-full sm:w-auto">
             Start Journey
           </Button>
-          <Button variant="outline" size="lg" className="w-full sm:w-auto">
-            Explore Communities
-          </Button>
+
+
+          <a
+            href="/chumme.apk"
+            download="chumme.apk"
+            className="w-full sm:w-auto"
+          >
+            <Button
+              variant="ghost"
+              size="lg"
+              className={`w-full flex items-center justify-center gap-2 border border-dashed 
+                border-brand-vibrant/50 hover:border-brand-vibrant hover:bg-brand-vibrant/10 
+                transition-all duration-300 group`}
+            >
+              <Download className="w-4 h-4 text-brand-vibrant group-hover:animate-bounce" />
+              <span>Download APK</span>
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-brand-vibrant/20 
+                text-brand-vibrant font-mono">
+                Android
+              </span>
+            </Button>
+          </a>
         </div>
 
         <div
