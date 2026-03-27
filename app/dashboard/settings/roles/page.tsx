@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { SettingsPage } from "@/modules/dashboard/components/SettingsPage";
+import { RolesPermissionsPage } from "@/modules/dashboard/components/RolesPermissionsPage";
 
-const SettingsPageRoute = () => {
+const RolesPage = () => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,7 +14,7 @@ const SettingsPageRoute = () => {
 
   const isDark = mounted ? resolvedTheme === "dark" : true;
 
-  return <SettingsPage isDark={isDark} />;
+  return <RolesPermissionsPage />;
 };
 
-export default SettingsPageRoute;
+export default RolesPage;

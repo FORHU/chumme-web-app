@@ -41,5 +41,4 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Collaborations", href: "/dashboard/collaborations", icon: UserPlus },
   { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
   { label: "Profile", href: "/dashboard/profile", icon: User },
-  { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
