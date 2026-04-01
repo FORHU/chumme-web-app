@@ -39,6 +39,12 @@ export function CommunityControlCenter() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
+  const [countryNote, setCountryNote] = useState("");
+  const [countryEmoji, setCountryEmoji] = useState("🌍");
+  const [countryTrait, setCountryTrait] = useState<"NONE" | "COMMUNITIES" | "ENTERTAINMENT">("COMMUNITIES");
+  const [countryColorPrimary, setCountryColorPrimary] = useState("#A53860");
+  const [countryColorSecondary, setCountryColorSecondary] = useState("#670D2F");
+  const [countryColorGradient, setCountryColorGradient] = useState(["#A53860", "#670D2F"]);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<{ id: string; name: string } | null>(null);
@@ -182,13 +188,35 @@ export function CommunityControlCenter() {
         updateCategory({
           endpoint: `/api/v1/chumme-categories/${editTarget.id}`,
           method: "PUT",
-          data: { id: editTarget.id, name: countryName, chummeTrait: "COMMUNITIES" },
+          data: {
+            id: editTarget.id,
+            name: countryName,
+            traits: countryTrait,
+            note: countryNote || undefined,
+            emojiIcon: countryEmoji || undefined,
+            colorSet: {
+              primary: countryColorPrimary,
+              secondary: countryColorSecondary,
+              gradient: countryColorGradient,
+            },
+          },
         });
       } else {
         createCommunitiesCategory({
           endpoint: "/api/v1/chumme-categories/create",
           method: "POST",
-          data: { name: countryName, isAd: false, chummeTrait: "COMMUNITIES" },
+          data: {
+            name: countryName,
+            isAd: false,
+            traits: countryTrait,
+            note: countryNote || undefined,
+            emojiIcon: countryEmoji || undefined,
+            colorSet: {
+              primary: countryColorPrimary,
+              secondary: countryColorSecondary,
+              gradient: countryColorGradient,
+            },
+          },
         });
       }
     } else if (modalType === "category") {
@@ -241,6 +269,12 @@ export function CommunityControlCenter() {
     setSelectedCountry("");
     setSelectedCategory("");
     setCommunityDescription("");
+    setCountryNote("");
+    setCountryEmoji("🌍");
+    setCountryTrait("COMMUNITIES");
+    setCountryColorPrimary("#A53860");
+    setCountryColorSecondary("#670D2F");
+    setCountryColorGradient(["#A53860", "#670D2F"]);
     setEditTarget(null);
     setEditSubTarget(null);
   };
@@ -666,19 +700,141 @@ export function CommunityControlCenter() {
 
               {/* Country form */}
               {modalType === "country" && (
-                <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                    Country Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Philippines, Korea"
-                    value={countryName}
-                    onChange={(e) => setCountryName(e.target.value)}
-                    className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                      isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
-                    } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
-                  />
+                <div className="space-y-4">
+                  {/* Name */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Country Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Philippines, Korea"
+                      value={countryName}
+                      onChange={(e) => setCountryName(e.target.value)}
+                      maxLength={100}
+                      className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
+                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                      } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                    />
+                  </div>
+
+                  {/* Type */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Type
+                    </label>
+                    <div className="flex gap-2">
+                      {(["NONE", "COMMUNITIES", "ENTERTAINMENT"] as const).map((trait) => (
+                        <button
+                          key={trait}
+                          type="button"
+                          onClick={() => setCountryTrait(trait)}
+                          className={`flex-1 h-10 rounded-xl text-sm font-medium transition-all border ${
+                            countryTrait === trait
+                              ? "bg-[#A53860]/20 border-[#A53860] text-[#EF88AD]"
+                              : isDarkMode
+                                ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
+                                : "bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {trait === "NONE" ? "None" : trait === "COMMUNITIES" ? "Communities" : "Entertainment"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Emoji */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Emoji Icon
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl border ${
+                        isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+                      }`}>
+                        {countryEmoji}
+                      </div>
+                      <input
+                        type="text"
+                        value={countryEmoji}
+                        onChange={(e) => setCountryEmoji(e.target.value)}
+                        placeholder="🌍"
+                        className={`flex-1 h-12 px-4 rounded-xl text-sm transition-all border ${
+                          isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Color */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Colors
+                    </label>
+                    <div className="flex gap-2 flex-wrap">
+                      {[
+                        { primary: "#A53860", secondary: "#670D2F", gradient: ["#A53860", "#670D2F"] },
+                        { primary: "#D3427B", secondary: "#A53860", gradient: ["#D3427B", "#A53860"] },
+                        { primary: "#6366F1", secondary: "#4F46E5", gradient: ["#6366F1", "#4F46E5"] },
+                        { primary: "#10B981", secondary: "#059669", gradient: ["#10B981", "#059669"] },
+                        { primary: "#F59E0B", secondary: "#D97706", gradient: ["#F59E0B", "#D97706"] },
+                        { primary: "#EF4444", secondary: "#DC2626", gradient: ["#EF4444", "#DC2626"] },
+                        { primary: "#8B5CF6", secondary: "#7C3AED", gradient: ["#8B5CF6", "#7C3AED"] },
+                        { primary: "#06B6D4", secondary: "#0891B2", gradient: ["#06B6D4", "#0891B2"] },
+                      ].map((color) => (
+                        <button
+                          key={color.primary}
+                          type="button"
+                          onClick={() => {
+                            setCountryColorPrimary(color.primary);
+                            setCountryColorSecondary(color.secondary);
+                            setCountryColorGradient(color.gradient);
+                          }}
+                          className={`w-10 h-10 rounded-xl transition-all ${
+                            countryColorPrimary === color.primary
+                              ? "ring-2 ring-white ring-offset-2 ring-offset-gray-900 scale-110"
+                              : "hover:scale-105"
+                          }`}
+                          style={{ background: `linear-gradient(135deg, ${color.gradient[0]}, ${color.gradient[1]})` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Description <span className={isDarkMode ? "text-gray-500" : "text-gray-400"}>(optional)</span>
+                    </label>
+                    <textarea
+                      placeholder="What's this category about?"
+                      value={countryNote}
+                      onChange={(e) => setCountryNote(e.target.value)}
+                      maxLength={500}
+                      rows={3}
+                      className={`w-full px-4 py-3 rounded-xl text-sm transition-all border resize-none ${
+                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                      } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Preview
+                    </label>
+                    <div className="flex justify-center py-4">
+                      <div
+                        className="w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-lg"
+                        style={{ background: `linear-gradient(135deg, ${countryColorGradient[0]}, ${countryColorGradient[1]})` }}
+                      >
+                        <span className="text-3xl">{countryEmoji}</span>
+                        <span className="text-white text-[11px] font-bold mt-1 text-center px-2 truncate max-w-[80px]">
+                          {countryName || "Name"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 

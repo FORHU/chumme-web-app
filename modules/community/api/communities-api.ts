@@ -34,6 +34,13 @@ export interface CreateCommunitiesCategoryParams {
   name: string;
   isAd: boolean;
   chummeTrait: ChummeTrait;
+  note?: string;
+  emojiIcon?: string;
+  colorSet?: {
+    primary: string;
+    secondary: string;
+    gradient: string[];
+  };
 }
 
 export interface CreateSubCategoryParams {
@@ -48,6 +55,12 @@ export interface UpdateCommunitiesCategoryParams {
   note?: string;
   isAd?: boolean;
   chummeTrait?: ChummeTrait;
+  emojiIcon?: string;
+  colorSet?: {
+    primary: string;
+    secondary: string;
+    gradient: string[];
+  };
 }
 
 export interface UpdateSubCategoryParams {
@@ -66,7 +79,7 @@ export const communitiesApi = {
    */
   getCommunitiesCategories: (): Promise<
     ApiResponse<{ categories: ChummeCategory[] }>
-  > => api.get("/api/v1/chumme-categories/COMMUNITIES"),
+  > => api.get("/api/v1/chumme-categories/communities"),
 
   /**
    * GET /api/v1/chumme-subcategories/category/:categoryId

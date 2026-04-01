@@ -26,7 +26,7 @@ export const communitiesKeys = {
 export const useGetCommunitiesCategories = () => {
   return useApiQuery<{ categories: ChummeCategory[] }>(
     [...communitiesKeys.categories()],
-    "/api/v1/chumme-categories/COMMUNITIES"
+    "/api/v1/chumme-categories/communities"
   );
 };
 
