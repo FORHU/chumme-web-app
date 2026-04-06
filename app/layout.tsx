@@ -69,6 +69,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-background-primary text-text-primary`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"

@@ -5,6 +5,10 @@ import { useTheme } from 'next-themes'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { Heart, Brain, Users, MessageCircle, Sparkles, Globe, TrendingUp, Moon, Sun, Download } from 'lucide-react'
+import { Snackbar } from '@/modules/shared/components/Snackbar'
+import { useSnackbar } from '@/modules/shared/hooks/useSnackbar'
+import { useLatestAPK } from "@/modules/dashboard/hooks/useAPK";
+import { apkService } from "@/modules/dashboard/api/apk.service";
 
 export default function LandingPage() {
   // HYDRATION GUARD
@@ -13,6 +17,38 @@ export default function LandingPage() {
   // Without this, the server and browser disagree on what to render → crash.
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const { messages, dismiss, showDownload } = useSnackbar()
+  const { data: latestAPK } = useLatestAPK();
+
+  const handleDownloadAPK = async () => {
+    if (!latestAPK?.id) {
+      // fallback if no latest APK is set
+      window.open("/chumme.apk", "_blank", "noopener,noreferrer");
+      return;
+    }
+    try {
+      setIsDownloading(true);
+      const url = await apkService.getDownloadUrl(latestAPK.id);
+      // Create a temporary anchor and click it to trigger download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `chumme-v${latestAPK.versionName}.apk`;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showDownload(`chumme-v${latestAPK.versionName}.apk`);
+    } catch (err) {
+      // fallback to direct fileUrl if presigned URL fails
+      if (latestAPK?.fileUrl) {
+        window.open(latestAPK.fileUrl, "_blank", "noopener,noreferrer");
+      }
+    } finally {
+      setIsDownloading(false);
+    }
+  };
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setMounted(true), 0)
     return () => window.clearTimeout(timeoutId)
@@ -57,16 +93,16 @@ export default function LandingPage() {
                     {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </button>
 
-                  <a
-                    href="/chumme.apk"
-                    download="chumme.apk"
-                    className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 
+                  <button
+                    onClick={handleDownloadAPK}
+                    disabled={isDownloading}
+                    className={`hidden md:flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 
                       rounded-full border border-dashed ${isDark ? 'border-[#A53860]/40 text-gray-400' : 'border-[#A53860]/40 text-gray-600'} 
-                      hover:border-[#A53860] hover:bg-[#A53860]/10 hover:text-[#A53860] transition-all duration-200`}
+                      hover:border-[#A53860] hover:bg-[#A53860]/10 hover:text-[#A53860] transition-all duration-200 disabled:opacity-50`}
                   >
                     <Download className="w-3 h-3" />
-                    APK
-                  </a>
+                    {isDownloading ? "Preparing..." : (latestAPK ? `v${latestAPK.versionName}` : "Android")}
+                  </button>
                 </>
               )}
               <button
@@ -139,21 +175,23 @@ export default function LandingPage() {
                 Get Started
               </button>
 
-              <a
-                href="/chumme.apk"
-                download="chumme.apk"
+              <button
+                onClick={handleDownloadAPK}
+                disabled={isDownloading}
                 className={`flex items-center justify-center gap-2 w-full border border-dashed 
                   border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
-                  px-4 py-2.5 rounded-lg text-sm transition-all ${
+                  px-4 py-2.5 rounded-lg text-sm transition-all disabled:opacity-50 ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}
               >
                 <Download className="w-4 h-4 text-[#A53860]" />
-                Download APK
-                <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#A53860]/20 text-[#A53860] font-mono">
-                  Android
-                </span>
-              </a>
+                {isDownloading ? "Preparing..." : "Download APK"}
+                {latestAPK && (
+                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#A53860]/20 text-[#A53860] font-mono">
+                    v{latestAPK.versionName}
+                  </span>
+                )}
+              </button>
             </motion.div>
           )}
         </motion.nav>
@@ -198,17 +236,23 @@ export default function LandingPage() {
                 >
                   Start Journey
                 </button>
-                <a href="/chumme.apk" download="chumme.apk" className="w-full sm:w-auto">
-                  <button className={`w-full flex items-center justify-center gap-2 border border-dashed 
+                <button 
+                  onClick={handleDownloadAPK}
+                  disabled={isDownloading}
+                  className={`w-full sm:w-auto flex items-center justify-center gap-2 border border-dashed 
                     border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
-                    px-6 sm:px-8 py-3.5 rounded-xl transition-all duration-300 group text-sm sm:text-base`}>
-                    <Download className="w-4 h-4 text-[#A53860] group-hover:animate-bounce" />
-                    <span className={isDark ? 'text-white' : 'text-gray-900'}>Download APK</span>
+                    px-6 sm:px-8 py-3.5 rounded-xl transition-all duration-300 group text-sm sm:text-base disabled:opacity-50`}
+                >
+                  <Download className={`w-4 h-4 text-[#A53860] ${!isDownloading && 'group-hover:animate-bounce'}`} />
+                  <span className={isDark ? 'text-white' : 'text-gray-900'}>
+                    {isDownloading ? "Preparing..." : "Download APK"}
+                  </span>
+                  {latestAPK && (
                     <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#A53860]/20 text-[#A53860] font-mono">
-                      Android
+                      v{latestAPK.versionName}
                     </span>
-                  </button>
-                </a>
+                  )}
+                </button>
               </motion.div>
 
               <motion.div
@@ -411,6 +455,7 @@ export default function LandingPage() {
           </div>
         </footer>
 
+      <Snackbar messages={messages} onDismiss={dismiss} />
       </div>
     </div>
   )

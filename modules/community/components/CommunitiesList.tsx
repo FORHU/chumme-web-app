@@ -29,9 +29,8 @@ const CommunityCard = ({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.05 * index }}
-      className={`p-6 rounded-lg border ${
-        isDarkMode ? "bg-gray-900 border-gray-700" : "bg-gray-50 border-gray-200"
-      }`}
+      className={`p-6 rounded-lg border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-gray-50 border-gray-200"
+        }`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
@@ -61,22 +60,20 @@ const CommunityCard = ({
 
         <div className="flex items-center gap-2">
           <span
-            className={`px-2 py-1 text-xs rounded-full ${
-              community.engagement === "Very High"
+            className={`px-2 py-1 text-xs rounded-full ${community.engagement === "Very High"
                 ? "bg-purple-100 text-purple-800"
                 : community.engagement === "High"
                   ? "bg-green-100 text-green-800"
                   : "bg-yellow-100 text-yellow-800"
-            }`}
+              }`}
           >
             {community.engagement}
           </span>
           <button
-            className={`p-2 rounded-lg transition-colors ${
-              isDarkMode
+            className={`p-2 rounded-lg transition-colors ${isDarkMode
                 ? "text-gray-400 hover:bg-gray-800 hover:text-white"
                 : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-            }`}
+              }`}
           >
             <MoreHorizontal className="w-4 h-4" />
           </button>
@@ -116,11 +113,11 @@ export const CommunitiesList = ({ isDarkMode, searchTerm }: CommunitiesListProps
   return (
     <div className="space-y-4">
       {filteredCommunities.map((community, index) => (
-        <CommunityCard 
-          key={community.id} 
-          community={community} 
-          index={index} 
-          isDarkMode={isDarkMode} 
+        <CommunityCard
+          key={community.id}
+          community={community}
+          index={index}
+          isDarkMode={isDarkMode}
         />
       ))}
     </div>
