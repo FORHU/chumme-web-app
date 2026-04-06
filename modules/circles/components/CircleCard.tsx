@@ -25,6 +25,7 @@ export const CircleCard = ({ circle, className }: CircleCardProps) => {
     });
   };
 
+
   return (
     <Card
       variant="glass"
