@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { entertainmentService } from "@/modules/entertainment/api/entertainment.service";
 import type { EntertainmentCategory } from "@/modules/entertainment/types/api.types";
 

@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Navbar } from "@/modules/landing/components/Navbar";
+
 import { CircleList } from "@/modules/circles/components/CircleList";
 import { useCirclesQuery } from "@/modules/circles/hooks/useCircles";
-import { FlexBox } from "@/modules/shared/components/FlexBox";
+import { Navbar } from "@/modules/landing/components/Navbar";
 import { Box } from "@/modules/shared/components/Box";
+import { FlexBox } from "@/modules/shared/components/FlexBox";
 import { SearchBar } from "@/modules/shared/components/SearchBar";
 
 export default function CirclesPage() {

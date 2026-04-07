@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
 import process from "node:process";
+
+import type { Metadata } from "next";
 
 export const sharedMetadata: Metadata = {
   title: {

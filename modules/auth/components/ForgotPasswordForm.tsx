@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail } from "lucide-react";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+
 import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 
 export const ForgotPasswordForm = () => {
   const router = useRouter();

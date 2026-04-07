@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+
+import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
 import { FloatingBubble } from "@/modules/community/components/FloatingBubble";
 
 interface BubblePosition {
@@ -13,8 +15,6 @@ interface BubblePosition {
   isDragging?: boolean;
   isManuallyPlaced?: boolean;
 }
-
-import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
 
 export interface BubbleData {
   id: string;

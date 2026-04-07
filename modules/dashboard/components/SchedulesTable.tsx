@@ -1,6 +1,7 @@
 "use client";
 
 import { Play, Trash2, Clock, ToggleLeft, ToggleRight } from "lucide-react";
+
 import type { SocialIngestionSchedule } from "@/modules/platform-ingestion/api/ingestion-api";
 
 interface Props {

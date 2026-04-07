@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useTheme } from "next-themes";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Plus,
@@ -16,7 +15,10 @@ import {
   TrendingUp,
   Search,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
 import {
   useGetCommunitiesCategories,
   useGetSubcategoriesByCategoryId,
@@ -27,7 +29,6 @@ import {
   useDeleteSubCategory,
   useUpdateSubCategory,
 } from "@/modules/communities/hooks/useCommunities";
-import { useQueryClient } from "@tanstack/react-query";
 
 const communityAnalytics = [
   { id: "p1", name: "Philippines", value: 35, color: "#A53860" },

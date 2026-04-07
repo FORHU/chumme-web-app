@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Edit, Trash2 } from "lucide-react";
+
 import type { ModalData } from "@/modules/entertainment/types";
 import type { TopicCategory } from "@/modules/entertainment/types/api.types";
 

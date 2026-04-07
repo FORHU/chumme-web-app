@@ -17,9 +17,8 @@ import {
   Plus,
   Upload,
 } from "lucide-react";
-import { useState, type ComponentType } from "react";
 import { useTheme } from "next-themes";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, type ComponentType } from "react";
 import {
   PieChart,
   Pie,
@@ -32,6 +31,8 @@ import {
   LineChart,
   Line,
 } from "recharts";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -616,7 +617,10 @@ function UsersTab({
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-10 h-10 border-2 border-[#A53860]">
-                        <AvatarImage src={user.profilePhoto || undefined} />
+                        <AvatarImage
+                          src={user.profilePhoto || ""}
+                          alt={user.username}
+                        />
                         <AvatarFallback className="bg-linear-to-br from-[#A53860] to-[#670D2F] text-white font-semibold">
                           {user.username
                             .split(" ")
@@ -1227,7 +1231,7 @@ function CreateUserModal({
   });
 
   const handleSubmit = () => {
-    console.log("Creating user:", formData);
+    console.warn("Creating user:", formData);
     onClose();
   };
 
@@ -1257,7 +1261,7 @@ function CreateUserModal({
           {/* Profile Photo Upload */}
           <div className="flex items-center gap-6">
             <Avatar className="w-20 h-20 border-2 border-[#A53860]">
-              <AvatarImage src="" />
+              <AvatarImage src="" alt="Profile Photo" />
               <AvatarFallback className="bg-linear-to-br from-[#A53860] to-[#670D2F] text-white text-2xl font-semibold">
                 {formData.fullName
                   ? formData.fullName

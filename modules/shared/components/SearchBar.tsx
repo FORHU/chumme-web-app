@@ -1,6 +1,7 @@
 "use client";
 
 import React, { InputHTMLAttributes } from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {

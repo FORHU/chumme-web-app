@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import React, { useState, useEffect } from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 export interface ThemeToggleProps {

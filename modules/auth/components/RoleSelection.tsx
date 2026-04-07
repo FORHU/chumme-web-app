@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Shield, Users } from "lucide-react";
+import { useTheme } from "next-themes";
+import React from "react";
 
 interface RoleSelectionProps {
   onSelectRole: (role: "admin" | "user") => void;

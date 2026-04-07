@@ -1,4 +1,3 @@
-import type React from "react";
 import {
   Home,
   Compass,
@@ -10,6 +9,7 @@ import {
   Activity,
   LayoutGrid,
 } from "lucide-react";
+import type React from "react";
 
 export interface NavItem {
   label: string;

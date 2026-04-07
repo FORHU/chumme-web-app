@@ -1,5 +1,6 @@
-import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
 import { useApiMutation } from "@/modules/shared/hooks/useApiMutation";
+import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
+
 import type {
   SocialIngestionSchedule,
   ChainStatus,

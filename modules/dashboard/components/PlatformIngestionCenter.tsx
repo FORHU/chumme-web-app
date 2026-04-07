@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useTheme } from "next-themes";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { RefreshCw, Zap, AlertTriangle, X } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 
 import {
   useGetPipelineStatus,
@@ -21,11 +21,11 @@ import {
   ingestionKeys,
 } from "@/modules/platform-ingestion/hooks/useIngestion";
 
-import { PipelineStatusCards } from "./PipelineStatusCards";
-import { WorkerHealthPanel } from "./WorkerHealthPanel";
-import { ChainStatusPanel } from "./ChainStatusPanel";
 import { AnalyticsTrendsPanel } from "./AnalyticsTrendsPanel";
+import { ChainStatusPanel } from "./ChainStatusPanel";
+import { PipelineStatusCards } from "./PipelineStatusCards";
 import { SchedulesTable } from "./SchedulesTable";
+import { WorkerHealthPanel } from "./WorkerHealthPanel";
 
 // NOTE: SocialIngestionTarget has no dedicated list endpoint — targets are created
 // automatically via the auto-sync flow. To browse schedules, you query by targetId.

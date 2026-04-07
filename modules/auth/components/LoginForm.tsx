@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Apple, Eye, EyeOff, Lock, Mail, Moon, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import React, { useState, useEffect } from "react";
+
+import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
-import { AuthCard } from "@/modules/auth/components/AuthCard";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState<string>("");

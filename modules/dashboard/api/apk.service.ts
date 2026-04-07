@@ -26,10 +26,12 @@ export interface APKUploadMeta {
 
 export const apkService = {
   getAll: async (): Promise<APKRelease[]> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res = await api.get<any>("/api/v1/apk");
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to fetch APK releases",
+        (res.data as { message?: string })?.message ||
+          "Failed to fetch APK releases",
       );
     const data = res.data;
     const releases = Array.isArray(data?.releases)
@@ -39,18 +41,8 @@ export const apkService = {
         : Array.isArray(data)
           ? data
           : [];
-    console.log(
-      "[APK getAll] count:",
-      releases.length,
-      "releases:",
-      releases.map((r: APKRelease) => ({
-        id: r.id,
-        versionName: r.versionName,
-        isLatest: r.isLatest,
-        isStable: r.isStable,
-      })),
-    );
-    return releases;
+
+    return releases as APKRelease[];
   },
 
   upload: async (file: File, meta: APKUploadMeta): Promise<APKRelease> => {
@@ -98,7 +90,10 @@ export const apkService = {
     meta: Partial<APKUploadMeta>,
   ): Promise<APKRelease> => {
     const res = await api.put<{ data: APKRelease }>(`/api/v1/apk/${id}`, meta);
-    if (!res.ok) throw new Error((res.data as any)?.message || "Update failed");
+    if (!res.ok)
+      throw new Error(
+        (res.data as { message?: string })?.message || "Update failed",
+      );
     return (res.data as { data: APKRelease }).data;
   },
 
@@ -174,7 +169,11 @@ export const apkService = {
   },
 
   remove: async (id: string): Promise<void> => {
-    const res = await api.delete<void>(`/api/v1/apk/${id}`);
-    if (!res.ok) throw new Error((res.data as any)?.message || "Delete failed");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await api.delete<any>(`/api/v1/apk/${id}`);
+    if (!res.ok)
+      throw new Error(
+        (res.data as { message?: string })?.message || "Delete failed",
+      );
   },
 };

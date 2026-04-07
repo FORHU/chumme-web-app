@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import React, { useState, useEffect } from "react";
+
 import { SettingsPage } from "@/modules/dashboard/components/SettingsPage";
 
 const SettingsPageRoute = () => {
@@ -9,6 +10,7 @@ const SettingsPageRoute = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

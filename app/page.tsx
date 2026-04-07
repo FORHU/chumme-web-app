@@ -1,9 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import {
   Heart,
   Brain,
@@ -16,10 +13,14 @@ import {
   Sun,
   Download,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
+
+import { apkService } from "@/modules/dashboard/api/apk.service";
+import { useLatestAPK } from "@/modules/dashboard/hooks/useAPK";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
-import { useLatestAPK } from "@/modules/dashboard/hooks/useAPK";
-import { apkService } from "@/modules/dashboard/api/apk.service";
 
 export default function LandingPage() {
   // HYDRATION GUARD

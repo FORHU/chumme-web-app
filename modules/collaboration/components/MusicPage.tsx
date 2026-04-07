@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit, Trash2, Volume2, VolumeX, X } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+
 import { mockMusicSongs } from "@/modules/collaboration/constants/mock-data";
 
 export const MusicPage = () => {

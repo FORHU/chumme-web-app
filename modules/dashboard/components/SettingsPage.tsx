@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield,
@@ -12,6 +11,7 @@ import {
   X,
   Check,
 } from "lucide-react";
+import React, { useState } from "react";
 
 interface SettingsPageProps {
   isDark: boolean;
@@ -137,7 +137,7 @@ const AddRoleModal = ({
   const [description, setDescription] = useState("");
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
-  const togglePermission = (p: string) => {
+  const _togglePermission = (p: string) => {
     setSelectedPermissions((prev) =>
       prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p],
     );

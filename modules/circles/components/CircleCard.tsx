@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
-import { Circle, useJoinCircleMutation } from "../hooks/useCircles";
-import { Card } from "@/modules/shared/components/Card";
+import React from "react";
+
 import { Button } from "@/modules/shared/components/Button";
+import { Card } from "@/modules/shared/components/Card";
 import { FlexBox } from "@/modules/shared/components/FlexBox";
 import { cn } from "@/modules/shared/utils";
+
+import { Circle, useJoinCircleMutation } from "../hooks/useCircles";
 
 interface CircleCardProps {
   circle: Circle;

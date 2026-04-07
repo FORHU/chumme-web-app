@@ -3,14 +3,11 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
+
 import { api } from "@/modules/shared/api/api-client";
-import type {
-  ChummeCategory,
-  ChummeSubCategory,
-  CreateCommunitiesCategoryParams,
-  CreateSubCategoryParams,
-} from "../api/communities-api";
+import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
+
+import type { ChummeCategory, ChummeSubCategory } from "../api/communities-api";
 
 // ─── Query keys ───────────────────────────────────────────────────────────────
 
@@ -71,7 +68,7 @@ export const useCreateCommunitiesCategory = (options?: {
       chummeTrait?: string;
       traits?: string;
       isAd: boolean;
-      [key: string]: any;
+      [key: string]: unknown;
     }) => {
       // TODO: re-add color to payload once backend Joi schema is updated
       // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
@@ -81,7 +78,9 @@ export const useCreateCommunitiesCategory = (options?: {
         isAd: params.isAd,
       });
       if (!res.ok)
-        throw new Error((res.data as any)?.message || "Create failed");
+        throw new Error(
+          (res.data as { message?: string })?.message || "Create failed",
+        );
       return res.data as ChummeCategory;
     },
     onSuccess: () => {
@@ -103,7 +102,7 @@ export const useCreateSubCategory = (options?: { onSuccess?: () => void }) => {
       chummeCategoryId: string;
       isAd: boolean;
       note?: string;
-      [key: string]: any;
+      [key: string]: unknown;
     }) => {
       // TODO: re-add color to payload once backend Joi schema is updated
       // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
@@ -114,7 +113,9 @@ export const useCreateSubCategory = (options?: { onSuccess?: () => void }) => {
         note: params.note,
       });
       if (!res.ok)
-        throw new Error((res.data as any)?.message || "Create failed");
+        throw new Error(
+          (res.data as { message?: string })?.message || "Create failed",
+        );
       return res.data as ChummeSubCategory;
     },
     onSuccess: () => {

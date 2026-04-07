@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+
 import { mockReports } from "@/modules/collaboration/constants/mock-data";
 
 export interface ReportsPanelProps {

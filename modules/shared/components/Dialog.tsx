@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Modal } from "@/modules/shared/components/Modal";
+
 import { Button } from "@/modules/shared/components/Button";
+import { Modal } from "@/modules/shared/components/Modal";
 import { cn } from "@/modules/shared/utils";
 
 export interface DialogProps {

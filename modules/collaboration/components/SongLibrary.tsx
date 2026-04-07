@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Plus, Edit, VolumeX, Volume2, Trash2 } from "lucide-react";
+
 import type { Song } from "@/modules/collaboration/types";
 
 export interface SongLibraryProps {

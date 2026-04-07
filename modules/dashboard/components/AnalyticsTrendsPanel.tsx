@@ -1,6 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
+
 import type { AnalyticsTrends } from "@/modules/platform-ingestion/api/ingestion-api";
 
 interface Props {
@@ -55,8 +56,8 @@ export function AnalyticsTrendsPanel({ data, isLoading, isDarkMode }: Props) {
     ? Math.max(...data.trend.map((t) => t.count), 1)
     : 1;
 
-  console.log("[trends] raw platforms:", platforms);
-  console.log(
+  console.warn("[trends] raw platforms:", platforms);
+  console.warn(
     "[trends] platforms[0]:",
     Array.isArray(platforms) ? platforms[0] : undefined,
   );

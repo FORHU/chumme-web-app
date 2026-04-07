@@ -1,11 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import {
   Bell,
   Search,
@@ -15,9 +10,15 @@ import {
   ChevronDown,
   Settings,
 } from "lucide-react";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
+
 import { NAV_ITEMS } from "@/modules/dashboard/constants/nav-items";
 import { useDashboardStore } from "@/modules/dashboard/store/useDashboardStore";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

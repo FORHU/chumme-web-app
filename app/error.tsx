@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+
+import { Navbar } from "@/modules/landing/components/Navbar";
 import { Button } from "@/modules/shared/components/Button";
 import { Card } from "@/modules/shared/components/Card";
-import { Navbar } from "@/modules/landing/components/Navbar";
 
 export default function Error({
   error,

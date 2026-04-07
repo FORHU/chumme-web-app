@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
 import { motion } from "framer-motion";
+import { useRef } from "react";
+
 import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
 
 interface FloatingBubbleProps {

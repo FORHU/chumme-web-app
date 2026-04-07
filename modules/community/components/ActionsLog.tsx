@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Ban, XCircle, AlertTriangle, Shield } from "lucide-react";
+
 import { actionLog } from "@/modules/community/constants/mock-data";
 import { ActionLogItem as ActionLogItemType } from "@/modules/community/types";
 

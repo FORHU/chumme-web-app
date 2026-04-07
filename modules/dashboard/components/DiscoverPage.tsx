@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 
-import { tabs } from "@/modules/discover/constants/mock-data";
-import { OverviewTab } from "@/modules/discover/components/OverviewTab";
-import { LinksTab } from "@/modules/discover/components/LinksTab";
 import { FeaturedTab } from "@/modules/discover/components/FeaturedTab";
+import { LinksTab } from "@/modules/discover/components/LinksTab";
+import { OverviewTab } from "@/modules/discover/components/OverviewTab";
 import { ReportsTab } from "@/modules/discover/components/ReportsTab";
-
+import { tabs } from "@/modules/discover/constants/mock-data";
 import type { DiscoverTabId } from "@/modules/discover/types";
 
 export const DiscoverPage = () => {

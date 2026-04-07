@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import { useState } from "react";
+
 import type { EntertainmentCategory } from "@/modules/entertainment/types/api.types";
 
 export interface OverviewTabProps {
@@ -22,7 +23,7 @@ export const OverviewTab = ({
   categories,
 }: OverviewTabProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  console.log(categories);
+  console.warn(categories);
   const filteredCategories = categories.filter((cat) => {
     const term = searchTerm.toLowerCase();
     if (!term) return true;

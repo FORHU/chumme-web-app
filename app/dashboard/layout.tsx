@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
+
 import { DashboardLayout } from "@/modules/dashboard/components/DashboardLayout";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
-import type { ReactNode } from "react";
 
 interface LayoutProps {
   children: ReactNode;

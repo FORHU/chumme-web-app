@@ -18,10 +18,11 @@ export const entertainmentService = {
     chummeTrait: "ENTERTAINMENT";
   }) => {
     const res = await api.post("/api/v1/chumme-categories/create", data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to create category",
+        (res.data as { message?: string })?.message ||
+          "Failed to create category",
       );
     return res.data;
   },
@@ -44,17 +45,19 @@ export const entertainmentService = {
     const res = await api.put(`/api/v1/chumme-categories/${id}`, payload);
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to update category",
+        (res.data as { message?: string })?.message ||
+          "Failed to update category",
       );
     return res.data;
   },
 
   deleteCategory: async (id: string) => {
     const res = await api.delete(`/api/v1/chumme-categories/${id}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to delete category",
+        (res.data as { message?: string })?.message ||
+          "Failed to delete category",
       );
     return res.data;
   },
@@ -68,10 +71,11 @@ export const entertainmentService = {
     isAd: boolean;
   }) => {
     const res = await api.post("/api/v1/chumme-subcategories/create", data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to create subcategory",
+        (res.data as { message?: string })?.message ||
+          "Failed to create subcategory",
       );
     return res.data;
   },
@@ -94,17 +98,19 @@ export const entertainmentService = {
     const res = await api.put(`/api/v1/chumme-subcategories/${id}`, payload);
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to update subcategory",
+        (res.data as { message?: string })?.message ||
+          "Failed to update subcategory",
       );
     return res.data;
   },
 
   deleteSubCategory: async (id: string) => {
     const res = await api.delete(`/api/v1/chumme-subcategories/${id}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
       throw new Error(
-        (res.data as any)?.message || "Failed to delete subcategory",
+        (res.data as { message?: string })?.message ||
+          "Failed to delete subcategory",
       );
     return res.data;
   },
@@ -118,9 +124,11 @@ export const entertainmentService = {
     isAd: boolean;
   }) => {
     const res = await api.post("/api/v1/chumme-topic-categories", data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
-      throw new Error((res.data as any)?.message || "Failed to create topic");
+      throw new Error(
+        (res.data as { message?: string })?.message || "Failed to create topic",
+      );
     return res.data;
   },
 
@@ -129,17 +137,21 @@ export const entertainmentService = {
     data: { name?: string; note?: string },
   ) => {
     const res = await api.patch(`/api/v1/chumme-topic-categories/${id}`, data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
-      throw new Error((res.data as any)?.message || "Failed to update topic");
+      throw new Error(
+        (res.data as { message?: string })?.message || "Failed to update topic",
+      );
     return res.data;
   },
 
   deleteTopicCategory: async (id: string) => {
     const res = await api.delete(`/api/v1/chumme-topic-categories/${id}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     if (!res.ok)
-      throw new Error((res.data as any)?.message || "Failed to delete topic");
+      throw new Error(
+        (res.data as { message?: string })?.message || "Failed to delete topic",
+      );
     return res.data;
   },
 };

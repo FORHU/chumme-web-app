@@ -9,8 +9,9 @@ import {
   Eye,
   MessageSquare,
 } from "lucide-react";
-import { CommunityReport } from "@/modules/community/types";
+
 import { communityReports } from "@/modules/community/constants/mock-data";
+import { CommunityReport } from "@/modules/community/types";
 
 interface ReportsPanelProps {
   isDarkMode: boolean;

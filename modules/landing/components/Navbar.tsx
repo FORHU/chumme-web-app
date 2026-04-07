@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 
 import { Button } from "@/modules/shared/components/Button";
-import { ThemeToggle } from "@/modules/shared/components/ThemeToggle";
 import { Dropdown } from "@/modules/shared/components/Dropdown";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-
 import type { DropdownItem } from "@/modules/shared/components/Dropdown";
+import { ThemeToggle } from "@/modules/shared/components/ThemeToggle";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);

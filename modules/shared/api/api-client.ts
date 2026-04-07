@@ -1,18 +1,18 @@
 "use client";
 import { create } from "apisauce";
+import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+
 import {
   ACCESS_TOKEN,
   REFRESH_TOKEN,
   USER,
 } from "@/modules/shared/constants/storage-keys";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 import {
   getStorageData,
   setStorageData,
   removeStorageData,
 } from "@/modules/shared/utils/storage";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
-
-import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002";
@@ -113,6 +113,6 @@ api.axiosInstance.interceptors.response.use(
 
 api.addMonitor((response) => {
   if (process.env.NODE_ENV === "development") {
-    console.log(`API Call: ${response.config?.url} [${response.status}]`);
+    console.warn(`API Call: ${response.config?.url} [${response.status}]`);
   }
 });

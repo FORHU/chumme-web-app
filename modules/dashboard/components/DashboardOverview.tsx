@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Users, TrendingUp, Star, Activity } from "lucide-react";
+import type { ComponentType, FC } from "react";
 import {
   LineChart,
   Line,
@@ -13,9 +15,6 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Users, TrendingUp, Star, Activity } from "lucide-react";
-
-import type { ComponentType, FC } from "react";
 
 const engagementData = [
   { name: "Jan 1", moments: 20 },

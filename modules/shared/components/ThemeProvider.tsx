@@ -1,14 +1,18 @@
 "use client";
 
-import React from "react";
 import {
   ThemeProvider as NextThemesProvider,
   type ThemeProviderProps as NextThemeProviderProps,
 } from "next-themes";
+import React from "react";
 
 export const ThemeProvider = ({
   children,
   ...props
 }: NextThemeProviderProps) => {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+  return (
+    <NextThemesProvider enableColorScheme={false} {...props}>
+      {children}
+    </NextThemesProvider>
+  );
 };

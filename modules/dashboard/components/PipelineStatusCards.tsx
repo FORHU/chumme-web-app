@@ -1,6 +1,7 @@
 "use client";
 
 import { Activity, Database, Radio, Zap } from "lucide-react";
+
 import type { PipelineStatus } from "@/modules/platform-ingestion/api/ingestion-api";
 
 interface Props {

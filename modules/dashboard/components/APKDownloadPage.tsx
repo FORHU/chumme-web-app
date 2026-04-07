@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Download,
@@ -10,6 +9,9 @@ import {
   AlertCircle,
   Upload,
 } from "lucide-react";
+import { useState } from "react";
+
+import APKUploadModal from "@/modules/dashboard/components/APKUploadModal";
 import { INSTALL_STEPS } from "@/modules/dashboard/constants/apk-versions";
 import {
   useAPKReleases,
@@ -21,7 +23,6 @@ import {
 } from "@/modules/dashboard/hooks/useAPK";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
-import APKUploadModal from "@/modules/dashboard/components/APKUploadModal";
 
 interface APKDownloadPageProps {
   isDark: boolean;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 export interface AuthInitializerProps {

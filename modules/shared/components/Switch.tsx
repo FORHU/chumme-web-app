@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 export interface SwitchProps extends Omit<

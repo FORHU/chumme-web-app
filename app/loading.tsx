@@ -1,4 +1,5 @@
 import React from "react";
+
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 
 export default function Loading() {

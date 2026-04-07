@@ -3,8 +3,9 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { api } from "@/modules/shared/api/api-client";
 import { ApiResponse } from "apisauce";
+
+import { api } from "@/modules/shared/api/api-client";
 
 export interface ApiMutationArgs<TVariables> {
   endpoint: string;

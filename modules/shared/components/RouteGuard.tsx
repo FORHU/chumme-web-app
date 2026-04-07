@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+import React, { useEffect } from "react";
+
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 export interface RouteGuardProps {
   children: React.ReactNode;

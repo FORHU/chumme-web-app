@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import {
   Plus,
   Edit,
@@ -16,6 +14,9 @@ import {
   Users,
   Upload,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import type { ComponentType } from "react";
 import {
   LineChart,
   Line,
@@ -25,8 +26,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-import type { ComponentType } from "react";
 
 type TabId = "artists" | "chat" | "voice" | "avatar" | "analytics";
 type ArtistType = "Chat" | "Voice Chat" | "AI Avatar";
@@ -90,7 +89,7 @@ export const ChummeAIChatPage = () => {
   const [voiceModel, setVoiceModel] = useState<string>("");
 
   const handleCreateArtist = () => {
-    console.log("Creating AI Artist:", {
+    console.warn("Creating AI Artist:", {
       artistName,
       artistType,
       personality,

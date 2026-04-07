@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle, Download, Upload, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export type SnackbarType = "success" | "error" | "download" | "upload";
 

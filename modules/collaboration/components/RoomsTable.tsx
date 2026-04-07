@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Eye, Ban, Trash2 } from "lucide-react";
+
 import type { CollabRoom } from "@/modules/collaboration/types";
 
 export interface RoomsTableProps {

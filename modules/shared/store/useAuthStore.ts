@@ -1,5 +1,13 @@
 "use client";
 import { create } from "zustand";
+
+import { setCachedAccessToken } from "@/modules/shared/api/api-client";
+import {
+  AuthResponse,
+  User,
+  RegisterRequest,
+} from "@/modules/shared/api/api.types";
+import { authService } from "@/modules/shared/api/auth.service";
 import {
   ACCESS_TOKEN,
   REFRESH_TOKEN,
@@ -10,13 +18,6 @@ import {
   setStorageData,
   removeStorageData,
 } from "@/modules/shared/utils/storage";
-import { authService } from "@/modules/shared/api/auth.service";
-import {
-  AuthResponse,
-  User,
-  RegisterRequest,
-} from "@/modules/shared/api/api.types";
-import { setCachedAccessToken } from "@/modules/shared/api/api-client";
 
 type VerificationRequiredResult = {
   requiresVerification: true;

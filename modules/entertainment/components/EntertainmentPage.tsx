@@ -1,16 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useMemo } from "react";
 import { useTheme } from "next-themes";
-import { OverviewTab } from "./OverviewTab";
+import { useState, useMemo } from "react";
+
+import { useEntertainmentCategories } from "@/modules/entertainment/hooks/useEntertainment";
+import type { ModalData } from "@/modules/entertainment/types";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+
 import { CategoriesTab } from "./CategoriesTab";
+import { EntertainmentModal } from "./EntertainmentModal";
+import { OverviewTab } from "./OverviewTab";
 import { SubcategoriesTab } from "./SubcategoriesTab";
 import { TopicsTab } from "./TopicsTab";
-import { EntertainmentModal } from "./EntertainmentModal";
-import type { ModalData } from "@/modules/entertainment/types";
-import { useEntertainmentCategories } from "@/modules/entertainment/hooks/useEntertainment";
-import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 
 const tabs = [
   { id: "overview", name: "Overview" },

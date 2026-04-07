@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 export type AvatarProps = React.HTMLAttributes<HTMLDivElement>;
@@ -22,20 +24,29 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
 Avatar.displayName = "Avatar";
 
-export type AvatarImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+export type AvatarImageProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Image>,
+  "alt"
+> & {
+  alt?: string;
+};
 
-export const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
-  ({ className, alt, ...props }, ref) => {
-    return (
-      <img
-        ref={ref}
-        alt={alt || ""}
-        className={cn("aspect-square h-full w-full object-cover", className)}
-        {...props}
-      />
-    );
-  },
-);
+export const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof Image>,
+  AvatarImageProps
+>(({ className, alt = "", ...props }, ref) => {
+  return (
+    <Image
+      ref={ref}
+      alt={alt}
+      className={cn("aspect-square h-full w-full object-cover", className)}
+      unoptimized
+      width={40}
+      height={40}
+      {...props}
+    />
+  );
+});
 
 AvatarImage.displayName = "AvatarImage";
 

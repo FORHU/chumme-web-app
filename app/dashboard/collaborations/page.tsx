@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useTheme } from "next-themes";
-import { CollaborationManager } from "@/modules/dashboard/components/CollaborationManager";
-import { MusicPage } from "@/modules/collaboration/components/MusicPage";
+import { useState } from "react";
+
 import { KaraokePage } from "@/modules/collaboration/components/KaraokePage";
+import { MusicPage } from "@/modules/collaboration/components/MusicPage";
 import type { CollabPage } from "@/modules/collaboration/types";
+import { CollaborationManager } from "@/modules/dashboard/components/CollaborationManager";
 
 const CollaborationsPage = () => {
   const { resolvedTheme } = useTheme();

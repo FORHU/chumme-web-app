@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { useTheme } from "next-themes";
 import { AnimatePresence } from "framer-motion";
 import { Music, Users, Video, AlertTriangle, Eye } from "lucide-react";
-import { RoomsTable } from "@/modules/collaboration/components/RoomsTable";
-import { PublicCollabsTable } from "@/modules/collaboration/components/PublicCollabsTable";
-import { PrivateRoomsTable } from "@/modules/collaboration/components/PrivateRoomsTable";
-import { SongLibrary } from "@/modules/collaboration/components/SongLibrary";
-import { RecordingsTable } from "@/modules/collaboration/components/RecordingsTable";
-import { ReportsPanel } from "@/modules/collaboration/components/ReportsPanel";
-import { LiveMonitor } from "@/modules/collaboration/components/LiveMonitor";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+
 import { AddSongModal } from "@/modules/collaboration/components/AddSongModal";
 import { CollabStats } from "@/modules/collaboration/components/CollabStats";
+import { LiveMonitor } from "@/modules/collaboration/components/LiveMonitor";
+import { PrivateRoomsTable } from "@/modules/collaboration/components/PrivateRoomsTable";
+import { PublicCollabsTable } from "@/modules/collaboration/components/PublicCollabsTable";
+import { RecordingsTable } from "@/modules/collaboration/components/RecordingsTable";
+import { ReportsPanel } from "@/modules/collaboration/components/ReportsPanel";
+import { RoomsTable } from "@/modules/collaboration/components/RoomsTable";
+import { SongLibrary } from "@/modules/collaboration/components/SongLibrary";
 import {
   mockRooms,
   mockPublicCollabs,
@@ -28,7 +29,7 @@ export const CollaborationManager = () => {
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   const handleCreate = (title: string, artist: string) => {
-    console.log("Creating song:", { title, artist });
+    console.warn("Creating song:", { title, artist });
     setShowCreateModal(false);
   };
 

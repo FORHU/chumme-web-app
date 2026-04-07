@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Users, MessageSquare, Crown, MoreHorizontal } from "lucide-react";
+
 import { activeCommunities } from "@/modules/community/constants/mock-data";
 import { ActiveCommunity } from "@/modules/community/types";
 

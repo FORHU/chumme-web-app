@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useEffect, useState, useMemo } from "react";
+
+import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
+
 import {
   updatePhysics,
   drawConnection,
   distributeBubbles,
   type BubbleInstance,
 } from "../utils/bubble-physics";
-
-import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
 
 interface BubbleData {
   id: string;

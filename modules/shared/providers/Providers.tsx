@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
+
+import { AuthInitializer } from "@/modules/shared/components/AuthInitializer";
 import { ThemeProvider } from "@/modules/shared/components/ThemeProvider";
 import { QueryProvider } from "@/modules/shared/providers/QueryProvider";
-import { AuthInitializer } from "@/modules/shared/components/AuthInitializer";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (

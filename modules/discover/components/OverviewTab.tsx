@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   PieChart,
   Pie,
@@ -12,7 +13,6 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { motion } from "framer-motion";
 
 import {
   analyticsData,

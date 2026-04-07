@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, Play, Download, Trash2 } from "lucide-react";
+
 import type { Recording } from "@/modules/collaboration/types";
 
 export interface RecordingsTableProps {

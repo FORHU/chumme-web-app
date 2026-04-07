@@ -1,6 +1,7 @@
 "use client";
 
 import { Play, SkipForward, RefreshCw } from "lucide-react";
+
 import type { ChainStatus } from "@/modules/platform-ingestion/api/ingestion-api";
 
 const PLATFORM_COLORS: Record<

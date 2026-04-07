@@ -1,13 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Hash } from "lucide-react";
-import type { ModalData } from "@/modules/entertainment/types";
-import type {
-  EntertainmentCategory,
-  SubCategory,
-} from "@/modules/entertainment/types/api.types";
+import { useState, useEffect } from "react";
+
 import {
   useCreateCategory,
   useUpdateCategory,
@@ -19,6 +15,11 @@ import {
   useUpdateTopicCategory,
   useDeleteTopicCategory,
 } from "@/modules/entertainment/hooks/useEntertainment";
+import type { ModalData } from "@/modules/entertainment/types";
+import type {
+  EntertainmentCategory,
+  SubCategory,
+} from "@/modules/entertainment/types/api.types";
 
 interface EntertainmentModalProps {
   isDark: boolean;
@@ -102,6 +103,7 @@ export const EntertainmentModal = ({
     modalData.type === "edit-subcategory";
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (modalData.item) {
       setName((modalData.item.name as string) || "");
       setDescription((modalData.item.description as string) || "");
@@ -118,6 +120,7 @@ export const EntertainmentModal = ({
       setKeywords([]);
     }
     setKeywordInput("");
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [modalData, categories, subcategories]);
 
   const addKeyword = () => {

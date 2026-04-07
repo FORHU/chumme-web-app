@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
-import { api } from "@/modules/shared/api/api-client";
+
 import type {
   ChummeCategory,
   ChummeSubCategory,
@@ -11,6 +10,8 @@ import {
   useCreateSubCategory,
   useGetSubcategoriesByCategoryId,
 } from "@/modules/community/hooks/useCommunities";
+import { api } from "@/modules/shared/api/api-client";
+import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
 
 export {
   communitiesKeys,

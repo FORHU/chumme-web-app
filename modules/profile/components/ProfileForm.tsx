@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useProfileQuery, useUpdateProfileMutation } from "../hooks/useProfile";
+
+import { Alert } from "@/modules/shared/components/Alert";
 import { Button } from "@/modules/shared/components/Button";
 import { Card } from "@/modules/shared/components/Card";
 import { FlexBox } from "@/modules/shared/components/FlexBox";
-import { Alert } from "@/modules/shared/components/Alert";
+
+import { useProfileQuery, useUpdateProfileMutation } from "../hooks/useProfile";
 
 export const ProfileForm = () => {
   const { data: profile, isLoading, isError } = useProfileQuery();

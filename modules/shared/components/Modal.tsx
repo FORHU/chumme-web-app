@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 export interface ModalProps {

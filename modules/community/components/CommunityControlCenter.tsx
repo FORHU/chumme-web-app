@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -13,14 +13,9 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useTheme } from "next-themes";
-import { useQueryClient } from "@tanstack/react-query";
-
-import InteractiveBubbleCanvas from "@/modules/community/components/InteractiveBubbleCanvas";
-import { ColorPicker } from "@/modules/community/components/ColorPicker";
-import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
-import { Snackbar } from "@/modules/shared/components/Snackbar";
+import { useState, useMemo, useCallback } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 import {
   useGetCommunitiesCategories,
@@ -33,11 +28,10 @@ import {
   useDeleteSubCategory,
   communitiesKeys,
 } from "@/modules/communities/hooks/useCommunities";
-
-import type {
-  ChummeCategory,
-  ChummeSubCategory,
-} from "@/modules/community/api/communities-api";
+import { ColorPicker } from "@/modules/community/components/ColorPicker";
+import InteractiveBubbleCanvas from "@/modules/community/components/InteractiveBubbleCanvas";
+import { Snackbar } from "@/modules/shared/components/Snackbar";
+import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 
 // ─── Constants & Types ─────────────────────────────────────────────────────────
 
@@ -114,14 +108,18 @@ export const CommunityControlCenter = ({
 
   // ─── Data Fetching ──────────────────────────────────────────────────────────
 
-  const { data: categoriesData, isLoading: loadingCountries } = useGetCommunitiesCategories();
-  const countries = useMemo(() => categoriesData?.categories ?? [], [categoriesData]);
+  const { data: categoriesData, isLoading: loadingCountries } =
+    useGetCommunitiesCategories();
+  const countries = useMemo(
+    () => categoriesData?.categories ?? [],
+    [categoriesData],
+  );
 
-  const { data: subData, isLoading: loadingSub } = useGetSubcategoriesByCategoryId(selectedCountryId, {
-    enabled: !!selectedCountryId,
-  });
+  const { data: subData, isLoading: loadingSub } =
+    useGetSubcategoriesByCategoryId(selectedCountryId, {
+      enabled: !!selectedCountryId,
+    });
   const subcategories = useMemo(() => subData?.subCategories ?? [], [subData]);
-
 
   // Adjust state when countries load to select the first one automatically
   const [prevCountries, setPrevCountries] = useState(countries);
@@ -165,7 +163,6 @@ export const CommunityControlCenter = ({
     updatingSub ||
     deletingSub;
 
-
   // ─── Form State ─────────────────────────────────────────────────────────────
 
   const openCreate = useCallback(
@@ -179,6 +176,7 @@ export const CommunityControlCenter = ({
   );
 
   const openEdit = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (type: ModalType, item: any) => {
       setModalType(type);
       setIsEdit(true);
@@ -209,7 +207,7 @@ export const CommunityControlCenter = ({
         },
         {
           onSuccess: () => showSuccess("Country created successfully"),
-          onError: (err: any) =>
+          onError: (err: { message?: string }) =>
             showError(err?.message || "Failed to create country"),
         },
       );
@@ -227,7 +225,7 @@ export const CommunityControlCenter = ({
         },
         {
           onSuccess: () => showSuccess("Category created successfully"),
-          onError: (err: any) =>
+          onError: (err: { message?: string }) =>
             showError(err?.message || "Failed to create category"),
         },
       );
@@ -250,12 +248,14 @@ export const CommunityControlCenter = ({
     if (modalType === "country") {
       updateCountry(payload, {
         onSuccess: () => showSuccess("Country updated successfully"),
-        onError: (err: any) => showError(err?.message || "Update failed"),
+        onError: (err: { message?: string }) =>
+          showError(err?.message || "Update failed"),
       });
     } else {
       updateSub(payload, {
         onSuccess: () => showSuccess("Category updated successfully"),
-        onError: (err: any) => showError(err?.message || "Update failed"),
+        onError: (err: { message?: string }) =>
+          showError(err?.message || "Update failed"),
       });
     }
   }, [
@@ -313,7 +313,6 @@ export const CommunityControlCenter = ({
       }));
   }, [subcategories, searchQuery, openEdit]);
 
-
   // ─── Styles ─────────────────────────────────────────────────────────────────
 
   const cardBase = `rounded-2xl border backdrop-blur-xl transition-all ${
@@ -322,7 +321,11 @@ export const CommunityControlCenter = ({
       : "bg-white/80 border-gray-200/50"
   }`;
 
-  const tabs: { id: TabId; label: string; icon: any }[] = [
+  const tabs: {
+    id: TabId;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }[] = [
     { id: "countries", label: "Countries", icon: MapPin },
     { id: "categories", label: "Categories", icon: Grid3x3 },
     { id: "analytics", label: "Analytics", icon: TrendingUp },

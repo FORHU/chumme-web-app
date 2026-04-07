@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
+import React from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 interface AuthCardProps {

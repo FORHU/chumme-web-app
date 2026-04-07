@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+
+import { Alert } from "@/modules/shared/components/Alert";
+import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
+
 import { CircleCard } from "./CircleCard";
 import { Circle } from "../hooks/useCircles";
-import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
-import { Alert } from "@/modules/shared/components/Alert";
 
 interface CircleListProps {
   circles: Circle[] | undefined;

@@ -3,8 +3,9 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import { api } from "@/modules/shared/api/api-client";
 import { ApiResponse } from "apisauce";
+
+import { api } from "@/modules/shared/api/api-client";
 
 /**
  * A generic wrapper hook around React Query's `useQuery` specifically designed

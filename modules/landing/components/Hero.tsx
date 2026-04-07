@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
-import { Button } from "@/modules/shared/components/Button";
-import { cn } from "@/modules/shared/utils";
-import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
-import { LandingStats } from "@/modules/landing/api/landing-api";
 import { Download } from "lucide-react";
+import React from "react";
+
+import { LandingStats } from "@/modules/landing/api/landing-api";
+import { Button } from "@/modules/shared/components/Button";
+import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
+import { cn } from "@/modules/shared/utils";
 
 export const Hero = () => {
   const { data, isLoading } = useApiQuery<LandingStats>(

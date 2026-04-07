@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail } from "lucide-react";
-import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
+
 import { AuthCard } from "@/modules/auth/components/AuthCard";
+import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 
 const OTP_LENGTH = 6;
 

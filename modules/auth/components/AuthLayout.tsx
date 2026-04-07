@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, Globe } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useSyncExternalStore } from "react";
+import React from "react";
+
 import { cn } from "@/modules/shared/utils";
 
 interface AuthLayoutProps {

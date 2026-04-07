@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Edit, Trash2, ChevronDown, Hash, Tag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Edit, Trash2, ChevronDown, Hash, Tag } from "lucide-react";
+import { useState } from "react";
+
 import type { ModalData } from "@/modules/entertainment/types";
 import type { EntertainmentCategory } from "@/modules/entertainment/types/api.types";
 

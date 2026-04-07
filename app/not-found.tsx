@@ -1,6 +1,3 @@
-"use client";
-import Link from "next/link";
-
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white p-6 text-center">
@@ -13,15 +10,15 @@ export default function NotFound() {
           Lost in Space
         </h2>
         <p className="text-gray-400 max-w-md mx-auto">
-          We couldn't find the page you're looking for.
+          We couldn&apos;t find the page you&apos;re looking for.
         </p>
 
         <div className="pt-8">
-          <Link href="/">
+          <a href="/">
             <button className="px-8 py-4 bg-[#d3427b] text-white font-semibold rounded-xl hover:opacity-90 transition-opacity">
               Return Home
             </button>
-          </Link>
+          </a>
         </div>
       </div>
     </div>
