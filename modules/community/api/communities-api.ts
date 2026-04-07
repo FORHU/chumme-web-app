@@ -5,6 +5,13 @@ import { ApiResponse } from "apisauce";
 
 export type ChummeTrait = "NONE" | "COMMUNITIES" | "ENTERTAINMENT";
 
+export interface ChummeVisualDesign {
+  colorSet?: {
+    primary?: string;
+    glow?: string;
+  };
+}
+
 export interface ChummeCategory {
   id: string;
   name: string;
@@ -12,7 +19,13 @@ export interface ChummeCategory {
   isAd?: boolean;
   keyPassword?: string | null;
   chummeTraits: ChummeTrait;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
   populationCount?: number;
+  chummeVisualDesign?: ChummeVisualDesign | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,11 +36,23 @@ export interface ChummeSubCategory {
   note?: string | null;
   chummeCategoryId: string;
   ownerId?: string | null;
-  isAd?: boolean;
   keyPassword?: string | null;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
   populationCount?: number;
+  chummeVisualDesign?: ChummeVisualDesign | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface BubbleItem {
+  id: string;
+  label: string;
+  count: number;
+  chummeVisualDesign?: ChummeVisualDesign | null;
 }
 
 export interface CreateCommunitiesCategoryParams {
@@ -35,6 +60,11 @@ export interface CreateCommunitiesCategoryParams {
   isAd: boolean;
   chummeTrait: ChummeTrait;
   note?: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
   emojiIcon?: string;
   colorSet?: {
     primary: string;
@@ -48,6 +78,11 @@ export interface CreateSubCategoryParams {
   chummeCategoryId: string;
   isAd: boolean;
   note?: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
 }
 
 export interface UpdateCommunitiesCategoryParams {
@@ -55,6 +90,11 @@ export interface UpdateCommunitiesCategoryParams {
   note?: string;
   isAd?: boolean;
   chummeTrait?: ChummeTrait;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
   emojiIcon?: string;
   colorSet?: {
     primary: string;
@@ -67,6 +107,11 @@ export interface UpdateSubCategoryParams {
   name?: string;
   note?: string;
   isAd?: boolean;
+  description?: string;
+  color?: string;
+  icon?: string;
+  emoji?: string;
+  imageUrl?: string;
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -87,7 +132,7 @@ export const communitiesApi = {
    * Response shape: { subCategories: ChummeSubCategory[] }
    */
   getSubcategoriesByCategoryId: (
-    categoryId: string
+    categoryId: string,
   ): Promise<ApiResponse<{ subCategories: ChummeSubCategory[] }>> =>
     api.get(`/api/v1/chumme-subcategories/category/${categoryId}`),
 
@@ -97,18 +142,18 @@ export const communitiesApi = {
    * Sends traits field — backend service maps it to chummeTraits.
    */
   createCommunitiesCategory: (
-    params: CreateCommunitiesCategoryParams
+    params: CreateCommunitiesCategoryParams,
   ): Promise<ApiResponse<ChummeCategory>> =>
     api.post("/api/v1/chumme-categories/create", params),
 
   deleteCommunitiesCategory: (
-    id: string
+    id: string,
   ): Promise<ApiResponse<{ message: string }>> =>
     api.delete(`/api/v1/chumme-categories/${id}`),
 
   updateCommunitiesCategory: (
     id: string,
-    params: UpdateCommunitiesCategoryParams
+    params: UpdateCommunitiesCategoryParams,
   ): Promise<ApiResponse<ChummeCategory>> =>
     api.put(`/api/v1/chumme-categories/${id}`, params),
 
@@ -117,7 +162,7 @@ export const communitiesApi = {
 
   updateSubCategory: (
     id: string,
-    params: UpdateSubCategoryParams
+    params: UpdateSubCategoryParams,
   ): Promise<ApiResponse<ChummeSubCategory>> =>
     api.put(`/api/v1/chumme-subcategories/${id}`, params),
 
@@ -126,7 +171,7 @@ export const communitiesApi = {
    * Creates a new subcategory ("Create Category" in UI) under a Communities category.
    */
   createSubCategory: (
-    params: CreateSubCategoryParams
+    params: CreateSubCategoryParams,
   ): Promise<ApiResponse<ChummeSubCategory>> =>
     api.post("/api/v1/chumme-subcategories/create", params),
 };

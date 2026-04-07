@@ -45,7 +45,9 @@ export interface CreateSubcategoryPayload {
 
 // ─── API responses ───────────────────────────────────────────────────────────
 
-export type GetCommunitiesCategoriesResponse = ChummeCategory[] | ChummeCategoryWithSubcategories[];
+export type GetCommunitiesCategoriesResponse =
+  | ChummeCategory[]
+  | ChummeCategoryWithSubcategories[];
 
 export type CreateCategoryResponse = ChummeCategory;
 

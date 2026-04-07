@@ -12,7 +12,11 @@ interface CategoriesTabProps {
   categories: EntertainmentCategory[];
 }
 
-export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTabProps) => {
+export const CategoriesTab = ({
+  isDark,
+  setModalData,
+  categories,
+}: CategoriesTabProps) => {
   const [expandedKeywords, setExpandedKeywords] = useState<string | null>(null);
 
   const toggleKeywords = (id: string) => {
@@ -20,9 +24,7 @@ export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTa
   };
 
   const cardClass = `rounded-xl border transition-all ${
-    isDark
-      ? "bg-gray-800/50 border-gray-700/50"
-      : "bg-white border-gray-200"
+    isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-white border-gray-200"
   }`;
 
   return (
@@ -30,10 +32,14 @@ export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTa
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+          <h2
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+          >
             Categories
           </h2>
-          <p className={`text-sm mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+          <p
+            className={`text-sm mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+          >
             {categories.length} entertainment categories
           </p>
         </div>
@@ -63,25 +69,33 @@ export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTa
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1">
-                  <h3 className={`font-bold text-base ${isDark ? "text-white" : "text-gray-900"}`}>
+                  <h3
+                    className={`font-bold text-base ${isDark ? "text-white" : "text-gray-900"}`}
+                  >
                     {cat.name}
                   </h3>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    isDark
-                      ? "bg-green-900/30 text-green-400"
-                      : "bg-green-100 text-green-700"
-                  }`}>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      isDark
+                        ? "bg-green-900/30 text-green-400"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
                     Active
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    isDark
-                      ? "bg-gray-700 text-gray-400"
-                      : "bg-gray-100 text-gray-600"
-                  }`}>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      isDark
+                        ? "bg-gray-700 text-gray-400"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
                     {cat.chummeSubCategories?.length ?? 0} subcategories
                   </span>
                 </div>
-                <p className={`text-sm truncate ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                <p
+                  className={`text-sm truncate ${isDark ? "text-gray-400" : "text-gray-600"}`}
+                >
                   {cat.note ?? "—"}
                 </p>
               </div>
@@ -94,43 +108,57 @@ export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTa
                     expandedKeywords === cat.id
                       ? "bg-[#A53860]/20 text-[#EF88AD] border border-[#A53860]/30"
                       : isDark
-                      ? "bg-gray-700/50 text-gray-400 border border-gray-700 hover:border-[#A53860]/40 hover:text-[#EF88AD]"
-                      : "bg-gray-100 text-gray-500 border border-gray-200 hover:border-[#A53860]/40 hover:text-[#A53860]"
+                        ? "bg-gray-700/50 text-gray-400 border border-gray-700 hover:border-[#A53860]/40 hover:text-[#EF88AD]"
+                        : "bg-gray-100 text-gray-500 border border-gray-200 hover:border-[#A53860]/40 hover:text-[#A53860]"
                   }`}
                 >
                   <Hash className="w-3 h-3" />
                   {cat.discoveryKeywords.length} keywords
-                  <ChevronDown className={`w-3 h-3 transition-transform ${
-                    expandedKeywords === cat.id ? "rotate-180" : ""
-                  }`} />
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${
+                      expandedKeywords === cat.id ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
               )}
 
               {/* Actions */}
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setModalData({
-                    type: "edit-category",
-                    item: {
-                      id: cat.id,
-                      name: cat.name,
-                      description: cat.note ?? "",
-                      discoveryKeywords: cat.discoveryKeywords ?? [],
-                    },
-                  })}
+                  onClick={() =>
+                    setModalData({
+                      type: "edit-category",
+                      item: {
+                        id: cat.id,
+                        name: cat.name,
+                        description: cat.note ?? "",
+                        discoveryKeywords: cat.discoveryKeywords ?? [],
+                      },
+                    })
+                  }
                   className={`p-2 rounded-lg transition-colors ${
-                    isDark ? "hover:bg-gray-700 text-gray-400" : "hover:bg-gray-100 text-gray-600"
+                    isDark
+                      ? "hover:bg-gray-700 text-gray-400"
+                      : "hover:bg-gray-100 text-gray-600"
                   }`}
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => setModalData({
-                    type: "delete-confirm",
-                    item: { id: cat.id, name: cat.name, itemType: "category" },
-                  })}
+                  onClick={() =>
+                    setModalData({
+                      type: "delete-confirm",
+                      item: {
+                        id: cat.id,
+                        name: cat.name,
+                        itemType: "category",
+                      },
+                    })
+                  }
                   className={`p-2 rounded-lg transition-colors ${
-                    isDark ? "hover:bg-red-900/20 text-red-400" : "hover:bg-red-50 text-red-500"
+                    isDark
+                      ? "hover:bg-red-900/20 text-red-400"
+                      : "hover:bg-red-50 text-red-500"
                   }`}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -148,17 +176,25 @@ export const CategoriesTab = ({ isDark, setModalData, categories }: CategoriesTa
                   transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
-                  <div className={`px-5 pb-4 border-t ${
-                    isDark ? "border-gray-700/50" : "border-gray-100"
-                  }`}>
+                  <div
+                    className={`px-5 pb-4 border-t ${
+                      isDark ? "border-gray-700/50" : "border-gray-100"
+                    }`}
+                  >
                     <div className="flex items-center gap-2 mt-3 mb-3">
-                      <Tag className={`w-3.5 h-3.5 ${isDark ? "text-[#EF88AD]" : "text-[#A53860]"}`} />
-                      <span className={`text-xs font-semibold uppercase tracking-wider ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}>
+                      <Tag
+                        className={`w-3.5 h-3.5 ${isDark ? "text-[#EF88AD]" : "text-[#A53860]"}`}
+                      />
+                      <span
+                        className={`text-xs font-semibold uppercase tracking-wider ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
                         Discovery Keywords
                       </span>
-                      <span className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+                      <span
+                        className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}
+                      >
                         — used by the discovery algorithm to find content
                       </span>
                     </div>

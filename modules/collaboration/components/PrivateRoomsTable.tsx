@@ -9,7 +9,10 @@ export interface PrivateRoomsTableProps {
   rooms: CollabRoom[];
 }
 
-export const PrivateRoomsTable = ({ isDarkMode, rooms }: PrivateRoomsTableProps) => {
+export const PrivateRoomsTable = ({
+  isDarkMode,
+  rooms,
+}: PrivateRoomsTableProps) => {
   return (
     <motion.div
       key="private"

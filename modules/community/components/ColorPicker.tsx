@@ -1,12 +1,42 @@
 "use client";
 
 const PRESET_COLORS = [
-  "#3A0519","#4A0920","#5A0D28","#670D2F","#740E35","#82103C",
-  "#8B1144","#9A134D","#A53860","#B03D6B","#BB4276","#C64881",
-  "#D14D8C","#DC5397","#E658A2","#EF5EAD","#F563B8","#FA69C3",
-  "#EF88AD","#F292B6","#F59CBF","#F8A6C8","#FBB0D1","#FEBADA",
-  "#FFC4E3","#FFCEEC","#FFD8F0","#FFE2F4","#FFECF8","#FFF6FC",
-  "#FFDAB9","#FFCBA4","#FFBC8F","#FFAD7A","#FF9E65","#FF8F50",
+  "#3A0519",
+  "#4A0920",
+  "#5A0D28",
+  "#670D2F",
+  "#740E35",
+  "#82103C",
+  "#8B1144",
+  "#9A134D",
+  "#A53860",
+  "#B03D6B",
+  "#BB4276",
+  "#C64881",
+  "#D14D8C",
+  "#DC5397",
+  "#E658A2",
+  "#EF5EAD",
+  "#F563B8",
+  "#FA69C3",
+  "#EF88AD",
+  "#F292B6",
+  "#F59CBF",
+  "#F8A6C8",
+  "#FBB0D1",
+  "#FEBADA",
+  "#FFC4E3",
+  "#FFCEEC",
+  "#FFD8F0",
+  "#FFE2F4",
+  "#FFECF8",
+  "#FFF6FC",
+  "#FFDAB9",
+  "#FFCBA4",
+  "#FFBC8F",
+  "#FFAD7A",
+  "#FF9E65",
+  "#FF8F50",
 ];
 
 interface ColorPickerProps {
@@ -15,7 +45,11 @@ interface ColorPickerProps {
   isDark?: boolean;
 }
 
-export const ColorPicker = ({ value, onChange, isDark = false }: ColorPickerProps) => (
+export const ColorPicker = ({
+  value,
+  onChange,
+  isDark = false,
+}: ColorPickerProps) => (
   <div>
     <div className="flex items-center gap-3 mb-4">
       <div
@@ -23,18 +57,24 @@ export const ColorPicker = ({ value, onChange, isDark = false }: ColorPickerProp
         style={{ backgroundColor: value }}
       />
       <div>
-        <div className={`text-xs font-medium mb-1 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+        <div
+          className={`text-xs font-medium mb-1 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+        >
           Selected
         </div>
-        <div className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>
+        <div
+          className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"}`}
+        >
           {value.toUpperCase()}
         </div>
       </div>
     </div>
 
-    <div className={`rounded-xl p-4 border ${
-      isDark ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-200"
-    }`}>
+    <div
+      className={`rounded-xl p-4 border ${
+        isDark ? "bg-gray-800/50 border-gray-700" : "bg-gray-50 border-gray-200"
+      }`}
+    >
       <div className="grid grid-cols-6 gap-2">
         {PRESET_COLORS.map((color) => (
           <button

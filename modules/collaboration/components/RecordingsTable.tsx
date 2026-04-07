@@ -9,7 +9,10 @@ export interface RecordingsTableProps {
   recordings: Recording[];
 }
 
-export const RecordingsTable = ({ isDarkMode, recordings }: RecordingsTableProps) => {
+export const RecordingsTable = ({
+  isDarkMode,
+  recordings,
+}: RecordingsTableProps) => {
   return (
     <motion.div
       key="recordings"
@@ -127,7 +130,9 @@ export const RecordingsTable = ({ isDarkMode, recordings }: RecordingsTableProps
                       </button>
                       <button
                         className={`p-2 rounded-lg transition-colors ${
-                          isDarkMode ? "hover:bg-blue-500/20" : "hover:bg-blue-50"
+                          isDarkMode
+                            ? "hover:bg-blue-500/20"
+                            : "hover:bg-blue-50"
                         }`}
                         title="Download"
                       >

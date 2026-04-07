@@ -2,7 +2,16 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Bell, Users, Plus, Edit, Trash2, X, Check } from "lucide-react";
+import {
+  Shield,
+  Bell,
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  X,
+  Check,
+} from "lucide-react";
 
 interface SettingsPageProps {
   isDark: boolean;
@@ -44,7 +53,12 @@ const INITIAL_ROLES: Role[] = [
     name: "Admin",
     description: "Manage users, content, and settings",
     userCount: 5,
-    permissions: ["Manage Users", "Manage Content", "View Reports", "Manage Communities"],
+    permissions: [
+      "Manage Users",
+      "Manage Content",
+      "View Reports",
+      "Manage Communities",
+    ],
   },
   {
     id: "3",
@@ -84,10 +98,14 @@ const ToggleRow = ({
 }) => (
   <div className="flex items-center justify-between py-3">
     <div className="flex-1 pr-4">
-      <p className={`font-semibold text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>
+      <p
+        className={`font-semibold text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}
+      >
         {label}
       </p>
-      <p className={`text-xs mt-0.5 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+      <p
+        className={`text-xs mt-0.5 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+      >
         {description}
       </p>
     </div>
@@ -121,14 +139,18 @@ const AddRoleModal = ({
 
   const togglePermission = (p: string) => {
     setSelectedPermissions((prev) =>
-      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]
+      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p],
     );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    onAdd({ name: name.trim(), description: description.trim(), permissions: selectedPermissions });
+    onAdd({
+      name: name.trim(),
+      description: description.trim(),
+      permissions: selectedPermissions,
+    });
     onClose();
   };
 
@@ -153,11 +175,15 @@ const AddRoleModal = ({
           exit={{ scale: 0.9, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
           className={`w-full max-w-lg rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto ${
-            isDark ? "bg-gray-900 border border-gray-700" : "bg-white border border-gray-200"
+            isDark
+              ? "bg-gray-900 border border-gray-700"
+              : "bg-white border border-gray-200"
           }`}
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+            <h3
+              className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               Add New Role
             </h3>
             <button
@@ -166,13 +192,17 @@ const AddRoleModal = ({
                 isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
               }`}
             >
-              <X className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-600"}`} />
+              <X
+                className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+              />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className={`block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+              <label
+                className={`block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+              >
                 Role Name
               </label>
               <input
@@ -187,7 +217,9 @@ const AddRoleModal = ({
             </div>
 
             <div>
-              <label className={`block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+              <label
+                className={`block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+              >
                 Description
               </label>
               <textarea
@@ -200,7 +232,9 @@ const AddRoleModal = ({
             </div>
 
             <div>
-              <label className={`block text-sm font-medium mb-3 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+              <label
+                className={`block text-sm font-medium mb-3 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+              >
                 Permissions
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -215,8 +249,8 @@ const AddRoleModal = ({
                             ? "bg-[#A53860]/20 border-[#A53860] text-[#EF88AD]"
                             : "bg-[#A53860]/10 border-[#A53860] text-[#A53860]"
                           : isDark
-                          ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
-                          : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
+                            ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
+                            : "bg-white border-gray-200 text-gray-700 hover:border-gray-300"
                       }`}
                     >
                       <div
@@ -224,8 +258,8 @@ const AddRoleModal = ({
                           active
                             ? "bg-[#A53860] border-[#A53860]"
                             : isDark
-                            ? "border-gray-600"
-                            : "border-gray-300"
+                              ? "border-gray-600"
+                              : "border-gray-300"
                         }`}
                       >
                         {active && <Check className="w-3 h-3 text-white" />}
@@ -306,7 +340,9 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
     >
       {/* Header */}
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
+        <h1
+          className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+        >
           Settings
         </h1>
         <p className={isDark ? "text-gray-400" : "text-gray-600"}>
@@ -324,7 +360,9 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Users className={sectionIconClass} />
-            <h2 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+            <h2
+              className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               Roles & Permissions
             </h2>
           </div>
@@ -342,22 +380,32 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
             <div
               key={role.id}
               className={`p-5 rounded-xl border ${
-                isDark ? "bg-gray-900/50 border-gray-700" : "bg-gray-50 border-gray-200"
+                isDark
+                  ? "bg-gray-900/50 border-gray-700"
+                  : "bg-gray-50 border-gray-200"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0 pr-4">
                   <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <h3 className={`text-base font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                    <h3
+                      className={`text-base font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+                    >
                       {role.name}
                     </h3>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      isDark ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"
-                    }`}>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        isDark
+                          ? "bg-gray-700 text-gray-300"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
                       {role.userCount} users
                     </span>
                   </div>
-                  <p className={`text-sm mb-3 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                  <p
+                    className={`text-sm mb-3 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+                  >
                     {role.description}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -382,7 +430,9 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
                     }`}
                     title="Edit Role"
                   >
-                    <Edit className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-600"}`} />
+                    <Edit
+                      className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+                    />
                   </button>
                   <button
                     onClick={() => deleteRole(role.id)}
@@ -409,16 +459,50 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
       >
         <div className="flex items-center gap-2 mb-4">
           <Bell className={sectionIconClass} />
-          <h2 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+          <h2
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+          >
             Notifications
           </h2>
         </div>
-        <div className={`divide-y ${isDark ? "divide-gray-700/50" : "divide-gray-100"}`}>
-          <ToggleRow label="Email Notifications" description="Receive notifications via email" checked={emailNotifications} onChange={setEmailNotifications} isDark={isDark} />
-          <ToggleRow label="Push Notifications" description="Receive push notifications on your device" checked={pushNotifications} onChange={setPushNotifications} isDark={isDark} />
-          <ToggleRow label="Moment Updates" description="Get notified when someone shares a new moment" checked={momentUpdates} onChange={setMomentUpdates} isDark={isDark} />
-          <ToggleRow label="Community Invites" description="Get notified when you're invited to a community" checked={communityInvites} onChange={setCommunityInvites} isDark={isDark} />
-          <ToggleRow label="Weekly Digest" description="Receive a weekly summary of activity" checked={weeklyDigest} onChange={setWeeklyDigest} isDark={isDark} />
+        <div
+          className={`divide-y ${isDark ? "divide-gray-700/50" : "divide-gray-100"}`}
+        >
+          <ToggleRow
+            label="Email Notifications"
+            description="Receive notifications via email"
+            checked={emailNotifications}
+            onChange={setEmailNotifications}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Push Notifications"
+            description="Receive push notifications on your device"
+            checked={pushNotifications}
+            onChange={setPushNotifications}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Moment Updates"
+            description="Get notified when someone shares a new moment"
+            checked={momentUpdates}
+            onChange={setMomentUpdates}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Community Invites"
+            description="Get notified when you're invited to a community"
+            checked={communityInvites}
+            onChange={setCommunityInvites}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Weekly Digest"
+            description="Receive a weekly summary of activity"
+            checked={weeklyDigest}
+            onChange={setWeeklyDigest}
+            isDark={isDark}
+          />
         </div>
       </motion.div>
 
@@ -431,14 +515,36 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
       >
         <div className="flex items-center gap-2 mb-4">
           <Shield className={sectionIconClass} />
-          <h2 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+          <h2
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+          >
             Privacy & Security
           </h2>
         </div>
-        <div className={`divide-y ${isDark ? "divide-gray-700/50" : "divide-gray-100"}`}>
-          <ToggleRow label="Public Profile" description="Make your profile visible to everyone" checked={profileVisibility} onChange={setProfileVisibility} isDark={isDark} />
-          <ToggleRow label="Show Activity Status" description="Let others see when you're active" checked={showActivity} onChange={setShowActivity} isDark={isDark} />
-          <ToggleRow label="Allow Tagging" description="Allow others to tag you in moments" checked={allowTagging} onChange={setAllowTagging} isDark={isDark} />
+        <div
+          className={`divide-y ${isDark ? "divide-gray-700/50" : "divide-gray-100"}`}
+        >
+          <ToggleRow
+            label="Public Profile"
+            description="Make your profile visible to everyone"
+            checked={profileVisibility}
+            onChange={setProfileVisibility}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Show Activity Status"
+            description="Let others see when you're active"
+            checked={showActivity}
+            onChange={setShowActivity}
+            isDark={isDark}
+          />
+          <ToggleRow
+            label="Allow Tagging"
+            description="Allow others to tag you in moments"
+            checked={allowTagging}
+            onChange={setAllowTagging}
+            isDark={isDark}
+          />
         </div>
       </motion.div>
 
@@ -453,11 +559,16 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
             : "bg-red-50/80 border-red-200/50"
         }`}
       >
-        <h2 className={`text-xl font-bold mb-2 ${isDark ? "text-red-400" : "text-red-700"}`}>
+        <h2
+          className={`text-xl font-bold mb-2 ${isDark ? "text-red-400" : "text-red-700"}`}
+        >
           Danger Zone
         </h2>
-        <p className={`text-sm mb-4 ${isDark ? "text-red-300" : "text-red-600"}`}>
-          Once you delete your account, there is no going back. Please be certain.
+        <p
+          className={`text-sm mb-4 ${isDark ? "text-red-300" : "text-red-600"}`}
+        >
+          Once you delete your account, there is no going back. Please be
+          certain.
         </p>
         <button
           className={`px-5 py-2.5 rounded-xl border font-semibold text-sm transition-colors ${
@@ -471,7 +582,11 @@ export const SettingsPage = ({ isDark }: SettingsPageProps) => {
       </motion.div>
 
       {showAddModal && (
-        <AddRoleModal isDark={isDark} onClose={() => setShowAddModal(false)} onAdd={addRole} />
+        <AddRoleModal
+          isDark={isDark}
+          onClose={() => setShowAddModal(false)}
+          onAdd={addRole}
+        />
       )}
     </motion.div>
   );

@@ -22,7 +22,9 @@ export const LinksTab = ({ isDarkMode }: LinksTabProps) => {
 
       <div
         className={`rounded-lg border overflow-hidden ${
-          isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+          isDarkMode
+            ? "bg-gray-800 border-gray-700"
+            : "bg-white border-gray-200"
         }`}
       >
         <div className="overflow-x-auto">
@@ -86,9 +88,13 @@ export const LinksTab = ({ isDarkMode }: LinksTabProps) => {
               {discoverLinks.map((link) => (
                 <tr
                   key={link.id}
-                  className={isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"}
+                  className={
+                    isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                  }
                 >
-                  <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                  <td
+                    className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                  >
                     {link.preview}
                   </td>
                   <td

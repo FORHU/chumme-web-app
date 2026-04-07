@@ -28,22 +28,35 @@ interface EntertainmentModalProps {
   subcategories: (SubCategory & { categoryName: string })[];
 }
 
-const getTitle = (type: string | null | undefined, itemName?: string): string => {
+const getTitle = (
+  type: string | null | undefined,
+  itemName?: string,
+): string => {
   switch (type) {
-    case "create-category": return "Create Category";
-    case "edit-category": return "Edit Category";
-    case "create-subcategory": return "Create Subcategory";
-    case "edit-subcategory": return "Edit Subcategory";
-    case "add-topic": return "Add Topic";
-    case "edit-topic": return "Edit Topic";
-    case "delete-confirm": return `Delete "${itemName}"?`;
-    default: return "";
+    case "create-category":
+      return "Create Category";
+    case "edit-category":
+      return "Edit Category";
+    case "create-subcategory":
+      return "Create Subcategory";
+    case "edit-subcategory":
+      return "Edit Subcategory";
+    case "add-topic":
+      return "Add Topic";
+    case "edit-topic":
+      return "Edit Topic";
+    case "delete-confirm":
+      return `Delete "${itemName}"?`;
+    default:
+      return "";
   }
 };
 
 const getNameLabel = (type: string | null | undefined): string => {
-  if (type === "create-category" || type === "edit-category") return "Category Name";
-  if (type === "create-subcategory" || type === "edit-subcategory") return "Subcategory Name";
+  if (type === "create-category" || type === "edit-category")
+    return "Category Name";
+  if (type === "create-subcategory" || type === "edit-subcategory")
+    return "Subcategory Name";
   return "Topic Name";
 };
 
@@ -72,10 +85,14 @@ export const EntertainmentModal = ({
   const deleteTopicCategory = useDeleteTopicCategory();
 
   const isLoading =
-    createCategory.isPending || updateCategory.isPending ||
-    deleteCategory.isPending || createSubCategory.isPending ||
-    updateSubCategory.isPending || deleteSubCategory.isPending ||
-    createTopicCategory.isPending || updateTopicCategory.isPending ||
+    createCategory.isPending ||
+    updateCategory.isPending ||
+    deleteCategory.isPending ||
+    createSubCategory.isPending ||
+    updateSubCategory.isPending ||
+    deleteSubCategory.isPending ||
+    createTopicCategory.isPending ||
+    updateTopicCategory.isPending ||
     deleteTopicCategory.isPending;
 
   const showKeywords =
@@ -89,7 +106,9 @@ export const EntertainmentModal = ({
       setName((modalData.item.name as string) || "");
       setDescription((modalData.item.description as string) || "");
       setSelectedCategoryId((modalData.item.chummeCategoryId as string) || "");
-      setSelectedSubcategoryId((modalData.item.chummeSubCategoryId as string) || "");
+      setSelectedSubcategoryId(
+        (modalData.item.chummeSubCategoryId as string) || "",
+      );
       setKeywords((modalData.item.discoveryKeywords as string[]) || []);
     } else {
       setName("");
@@ -206,23 +225,27 @@ export const EntertainmentModal = ({
     }
   };
 
-  const inputClass = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${isDark
-    ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-[#A53860]"
-    : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#A53860]"
-    } focus:ring-2 focus:ring-[#A53860]/10`;
+  const inputClass = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${
+    isDark
+      ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-[#A53860]"
+      : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#A53860]"
+  } focus:ring-2 focus:ring-[#A53860]/10`;
 
-  const labelClass = `block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"
-    }`;
+  const labelClass = `block text-sm font-medium mb-2 ${
+    isDark ? "text-gray-300" : "text-gray-700"
+  }`;
 
-  const selectClass = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${isDark
-    ? "bg-gray-800 border-gray-700 text-white focus:border-[#A53860]"
-    : "bg-gray-50 border-gray-200 text-gray-900 focus:border-[#A53860]"
-    } focus:ring-2 focus:ring-[#A53860]/10`;
+  const selectClass = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all ${
+    isDark
+      ? "bg-gray-800 border-gray-700 text-white focus:border-[#A53860]"
+      : "bg-gray-50 border-gray-200 text-gray-900 focus:border-[#A53860]"
+  } focus:ring-2 focus:ring-[#A53860]/10`;
 
-  const pillClass = `inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono font-medium ${isDark
-    ? "bg-[#A53860]/20 text-[#EF88AD] border border-[#A53860]/30"
-    : "bg-[#A53860]/10 text-[#A53860] border border-[#A53860]/20"
-    }`;
+  const pillClass = `inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono font-medium ${
+    isDark
+      ? "bg-[#A53860]/20 text-[#EF88AD] border border-[#A53860]/30"
+      : "bg-[#A53860]/10 text-[#A53860] border border-[#A53860]/20"
+  }`;
 
   return (
     <AnimatePresence>
@@ -238,41 +261,50 @@ export const EntertainmentModal = ({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className={`w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto ${isDark
-            ? "bg-gray-900 border border-gray-700"
-            : "bg-white border border-gray-200"
-            }`}
+          className={`w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto ${
+            isDark
+              ? "bg-gray-900 border border-gray-700"
+              : "bg-white border border-gray-200"
+          }`}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+            <h3
+              className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {getTitle(modalData.type, modalData.item?.name)}
             </h3>
             <button
               onClick={closeModal}
-              className={`p-2 rounded-lg transition-colors ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-                }`}
+              className={`p-2 rounded-lg transition-colors ${
+                isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+              }`}
             >
-              <X className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-600"}`} />
+              <X
+                className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+              />
             </button>
           </div>
 
           {/* Delete Confirmation */}
           {modalData.type === "delete-confirm" ? (
             <div>
-              <p className={`mb-6 text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+              <p
+                className={`mb-6 text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}
+              >
                 Are you sure you want to delete{" "}
-                <span className="font-semibold">"{modalData.item?.name}"</span>?
+                <span className="font-semibold">{"\""}{modalData.item?.name}{"\""}</span>?
                 This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={closeModal}
                   disabled={isLoading}
-                  className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${isDark
-                    ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                  className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${
+                    isDark
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
                 >
                   Cancel
                 </button>
@@ -287,10 +319,11 @@ export const EntertainmentModal = ({
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-
               {/* Name */}
               <div>
-                <label className={labelClass}>{getNameLabel(modalData.type)}</label>
+                <label className={labelClass}>
+                  {getNameLabel(modalData.type)}
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -314,7 +347,9 @@ export const EntertainmentModal = ({
                   >
                     <option value="">Select Category</option>
                     {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -361,18 +396,23 @@ export const EntertainmentModal = ({
                     <span className="flex items-center gap-1.5">
                       <Hash className="w-3.5 h-3.5" />
                       Discovery Keywords
-                      <span className={`text-xs font-normal ${isDark ? "text-gray-500" : "text-gray-400"
-                        }`}>
+                      <span
+                        className={`text-xs font-normal ${
+                          isDark ? "text-gray-500" : "text-gray-400"
+                        }`}
+                      >
                         — press Enter or comma to add
                       </span>
                     </span>
                   </label>
 
-                  <div className={`min-h-[80px] w-full px-3 py-2.5 rounded-xl border text-sm transition-all ${isDark
-                    ? "bg-gray-800 border-gray-700 focus-within:border-[#A53860]"
-                    : "bg-gray-50 border-gray-200 focus-within:border-[#A53860]"
-                    } focus-within:ring-2 focus-within:ring-[#A53860]/10`}>
-
+                  <div
+                    className={`min-h-[80px] w-full px-3 py-2.5 rounded-xl border text-sm transition-all ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700 focus-within:border-[#A53860]"
+                        : "bg-gray-50 border-gray-200 focus-within:border-[#A53860]"
+                    } focus-within:ring-2 focus-within:ring-[#A53860]/10`}
+                  >
                     {/* Pills */}
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {keywords.map((kw) => (
@@ -402,16 +442,17 @@ export const EntertainmentModal = ({
                             ? "e.g. kpop trending, new music releases..."
                             : "Add another keyword..."
                         }
-                        className={`flex-1 bg-transparent outline-none text-sm ${isDark
-                          ? "text-white placeholder-gray-600"
-                          : "text-gray-900 placeholder-gray-400"
-                          }`}
+                        className={`flex-1 bg-transparent outline-none text-sm ${
+                          isDark
+                            ? "text-white placeholder-gray-600"
+                            : "text-gray-900 placeholder-gray-400"
+                        }`}
                       />
                       {keywordInput.trim() && (
                         <button
                           type="button"
                           onClick={addKeyword}
-                          className="flex-shrink-0 p-1 rounded-lg bg-[#A53860]/20 text-[#A53860] hover:bg-[#A53860]/30 transition-colors"
+                          className="shrink-0 p-1 rounded-lg bg-[#A53860]/20 text-[#A53860] hover:bg-[#A53860]/30 transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -420,25 +461,32 @@ export const EntertainmentModal = ({
                   </div>
 
                   {keywords.length > 0 && (
-                    <p className={`text-xs mt-1.5 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-                      {keywords.length} keyword{keywords.length !== 1 ? "s" : ""} — click × to remove
+                    <p
+                      className={`text-xs mt-1.5 ${isDark ? "text-gray-600" : "text-gray-400"}`}
+                    >
+                      {keywords.length} keyword
+                      {keywords.length !== 1 ? "s" : ""} — click × to remove
                     </p>
                   )}
                 </div>
               )}
 
               {/* Error */}
-              {(createCategory.isError || updateCategory.isError ||
-                createSubCategory.isError || updateSubCategory.isError ||
+              {(createCategory.isError ||
+                updateCategory.isError ||
+                createSubCategory.isError ||
+                updateSubCategory.isError ||
                 createTopicCategory.isError) && (
-                  <p className="text-red-500 text-sm">
-                    {(
-                      createCategory.error || updateCategory.error ||
-                      createSubCategory.error || updateSubCategory.error ||
-                      createTopicCategory.error
-                    )?.message || "Something went wrong. Please try again."}
-                  </p>
-                )}
+                <p className="text-red-500 text-sm">
+                  {(
+                    createCategory.error ||
+                    updateCategory.error ||
+                    createSubCategory.error ||
+                    updateSubCategory.error ||
+                    createTopicCategory.error
+                  )?.message || "Something went wrong. Please try again."}
+                </p>
+              )}
 
               {/* Footer */}
               <div className="flex gap-3 pt-2">
@@ -446,21 +494,26 @@ export const EntertainmentModal = ({
                   type="button"
                   onClick={closeModal}
                   disabled={isLoading}
-                  className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${isDark
-                    ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                  className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${
+                    isDark
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading || !name.trim()}
-                  className="flex-1 h-11 rounded-xl font-semibold text-sm bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                  className="flex-1 h-11 rounded-xl font-semibold text-sm bg-linear-to-r from-[#A53860] to-[#670D2F] text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:pointer-events-none"
                 >
                   {isLoading
-                    ? modalData.type?.includes("edit") ? "Saving..." : "Creating..."
-                    : modalData.type?.includes("edit") ? "Save Changes" : "Create"}
+                    ? modalData.type?.includes("edit")
+                      ? "Saving..."
+                      : "Creating..."
+                    : modalData.type?.includes("edit")
+                      ? "Save Changes"
+                      : "Create"}
                 </button>
               </div>
             </form>

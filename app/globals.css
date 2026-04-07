@@ -45,12 +45,12 @@
   --background-elevated: #ffffff;
 
   --text-primary: #09090b;
-  --text-secondary: #09090bCC; /* 80% */
+  --text-secondary: #09090bcc; /* 80% */
   --text-tertiary: #09090b99; /* 60% */
   --text-quaternary: #09090b66; /* 40% */
 
-  --border-default: #09090b1A; /* 10% */
-  --border-light: #09090b0D; /* 5% */
+  --border-default: #09090b1a; /* 10% */
+  --border-light: #09090b0d; /* 5% */
   --border-strong: #09090b33; /* 20% */
 }
 
@@ -68,12 +68,12 @@
   --background-elevated: #1f1f1f;
 
   --text-primary: #ffffff;
-  --text-secondary: #ffffffCC;
+  --text-secondary: #ffffffcc;
   --text-tertiary: #ffffff99;
   --text-quaternary: #ffffff66;
 
-  --border-default: #ffffff1A;
-  --border-light: #ffffff0D;
+  --border-default: #ffffff1a;
+  --border-light: #ffffff0d;
   --border-strong: #ffffff33;
 }
 
@@ -117,13 +117,27 @@ body {
 
 /* Brand Loader Animations */
 @keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.9; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }
 
 @keyframes dot-stagger {
-  0%, 100% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.4); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
 }
 
 .animate-breathe {

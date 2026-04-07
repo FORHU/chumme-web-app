@@ -30,7 +30,9 @@ export const FeaturedTab = ({ isDarkMode }: FeaturedTabProps) => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 * index }}
             className={`p-6 rounded-lg border ${
-              isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+              isDarkMode
+                ? "bg-gray-800 border-gray-700"
+                : "bg-white border-gray-200"
             }`}
           >
             <div className="flex items-start justify-between">
@@ -47,34 +49,50 @@ export const FeaturedTab = ({ isDarkMode }: FeaturedTabProps) => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                   <div>
-                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                    >
                       Fandom
                     </p>
-                    <p className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    <p
+                      className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                    >
                       {post.fandom}
                     </p>
                   </div>
                   <div>
-                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                    >
                       Duration
                     </p>
-                    <p className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    <p
+                      className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                    >
                       {post.duration}
                     </p>
                   </div>
                   <div>
-                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                    >
                       Start Date
                     </p>
-                    <p className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    <p
+                      className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                    >
                       {post.startDate}
                     </p>
                   </div>
                   <div>
-                    <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    <p
+                      className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                    >
                       End Date
                     </p>
-                    <p className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                    <p
+                      className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                    >
                       {post.endDate}
                     </p>
                   </div>

@@ -3,14 +3,42 @@
 import { Play, SkipForward, RefreshCw } from "lucide-react";
 import type { ChainStatus } from "@/modules/platform-ingestion/api/ingestion-api";
 
-const PLATFORM_COLORS: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  YOUTUBE: { bg: "rgba(226,75,74,0.12)", border: "#E24B4A", text: "#E24B4A", dot: "#E24B4A" },
-  INSTAGRAM: { bg: "rgba(212,83,126,0.12)", border: "#D4537E", text: "#D4537E", dot: "#D4537E" },
-  TIKTOK: { bg: "rgba(136,135,128,0.12)", border: "#888780", text: "#B4B2A9", dot: "#888780" },
-  FACEBOOK: { bg: "rgba(55,138,221,0.12)", border: "#378ADD", text: "#378ADD", dot: "#378ADD" },
+const PLATFORM_COLORS: Record<
+  string,
+  { bg: string; border: string; text: string; dot: string }
+> = {
+  YOUTUBE: {
+    bg: "rgba(226,75,74,0.12)",
+    border: "#E24B4A",
+    text: "#E24B4A",
+    dot: "#E24B4A",
+  },
+  INSTAGRAM: {
+    bg: "rgba(212,83,126,0.12)",
+    border: "#D4537E",
+    text: "#D4537E",
+    dot: "#D4537E",
+  },
+  TIKTOK: {
+    bg: "rgba(136,135,128,0.12)",
+    border: "#888780",
+    text: "#B4B2A9",
+    dot: "#888780",
+  },
+  FACEBOOK: {
+    bg: "rgba(55,138,221,0.12)",
+    border: "#378ADD",
+    text: "#378ADD",
+    dot: "#378ADD",
+  },
 };
 
-const DEFAULT_COLOR = { bg: "rgba(136,135,128,0.1)", border: "#5F5E5A", text: "#888780", dot: "#888780" };
+const DEFAULT_COLOR = {
+  bg: "rgba(136,135,128,0.1)",
+  border: "#5F5E5A",
+  text: "#888780",
+  dot: "#888780",
+};
 
 interface Props {
   data: ChainStatus | undefined;
@@ -39,7 +67,8 @@ export function ChainStatusPanel({
   const textSecondary = isDarkMode ? "#888780" : "#5F5E5A";
   const btnBg = isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
 
-  const currentColor = PLATFORM_COLORS[data?.currentStep ?? ""] ?? DEFAULT_COLOR;
+  const currentColor =
+    PLATFORM_COLORS[data?.currentStep ?? ""] ?? DEFAULT_COLOR;
   const nextColor = PLATFORM_COLORS[data?.nextStep ?? ""] ?? DEFAULT_COLOR;
 
   return (
@@ -64,7 +93,9 @@ export function ChainStatusPanel({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 15, fontWeight: 500, color: textPrimary }}>Crawl chain</span>
+          <span style={{ fontSize: 15, fontWeight: 500, color: textPrimary }}>
+            Crawl chain
+          </span>
           {!isLoading && data && (
             <span
               style={{
@@ -187,7 +218,13 @@ export function ChainStatusPanel({
       </div>
 
       {isLoading && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: 10,
+          }}
+        >
           {[1, 2, 3].map((i) => (
             <div
               key={i}
@@ -212,8 +249,22 @@ export function ChainStatusPanel({
               marginBottom: "1rem",
             }}
           >
-            <div style={{ background: surfaceBg, borderRadius: 10, padding: "12px 14px" }}>
-              <p style={{ fontSize: 11, color: textSecondary, margin: "0 0 8px" }}>Current step</p>
+            <div
+              style={{
+                background: surfaceBg,
+                borderRadius: 10,
+                padding: "12px 14px",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 11,
+                  color: textSecondary,
+                  margin: "0 0 8px",
+                }}
+              >
+                Current step
+              </p>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span
                   style={{
@@ -224,14 +275,34 @@ export function ChainStatusPanel({
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: 14, fontWeight: 600, color: currentColor.text }}>
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: currentColor.text,
+                  }}
+                >
                   {data.currentStep || "None"}
                 </span>
               </div>
             </div>
 
-            <div style={{ background: surfaceBg, borderRadius: 10, padding: "12px 14px" }}>
-              <p style={{ fontSize: 11, color: textSecondary, margin: "0 0 6px" }}>Pending jobs</p>
+            <div
+              style={{
+                background: surfaceBg,
+                borderRadius: 10,
+                padding: "12px 14px",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 11,
+                  color: textSecondary,
+                  margin: "0 0 6px",
+                }}
+              >
+                Pending jobs
+              </p>
               <p
                 style={{
                   fontSize: 26,
@@ -244,8 +315,22 @@ export function ChainStatusPanel({
               </p>
             </div>
 
-            <div style={{ background: surfaceBg, borderRadius: 10, padding: "12px 14px" }}>
-              <p style={{ fontSize: 11, color: textSecondary, margin: "0 0 8px" }}>Next step</p>
+            <div
+              style={{
+                background: surfaceBg,
+                borderRadius: 10,
+                padding: "12px 14px",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 11,
+                  color: textSecondary,
+                  margin: "0 0 8px",
+                }}
+              >
+                Next step
+              </p>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span
                   style={{
@@ -257,18 +342,34 @@ export function ChainStatusPanel({
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: 14, fontWeight: 500, color: textSecondary }}>
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: textSecondary,
+                  }}
+                >
                   {data.nextStep || "None"}
                 </span>
               </div>
             </div>
           </div>
 
-          <div style={{ borderTop: `0.5px solid ${border}`, margin: "0.75rem 0" }} />
+          <div
+            style={{ borderTop: `0.5px solid ${border}`, margin: "0.75rem 0" }}
+          />
 
           {data.chain.length > 0 && (
             <>
-              <p style={{ fontSize: 11, color: textSecondary, margin: "0 0 10px" }}>Chain order</p>
+              <p
+                style={{
+                  fontSize: 11,
+                  color: textSecondary,
+                  margin: "0 0 10px",
+                }}
+              >
+                Chain order
+              </p>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 {data.chain.map((platform, index) => {
                   const isCurrent = platform === data.currentStep;
@@ -277,7 +378,15 @@ export function ChainStatusPanel({
                   const color = PLATFORM_COLORS[platform] ?? DEFAULT_COLOR;
 
                   return (
-                    <div key={platform} style={{ display: "flex", alignItems: "center", flex: 1, minWidth: 0 }}>
+                    <div
+                      key={platform}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: 1,
+                        minWidth: 0,
+                      }}
+                    >
                       <div
                         style={{
                           flex: 1,
@@ -288,8 +397,14 @@ export function ChainStatusPanel({
                           gap: 5,
                           padding: "10px 8px",
                           borderRadius: 10,
-                          background: isCurrent ? color.bg : isDone ? "rgba(29,158,117,0.1)" : surfaceBg,
-                          border: isCurrent ? `1.5px solid ${color.border}` : `0.5px solid ${border}`,
+                          background: isCurrent
+                            ? color.bg
+                            : isDone
+                              ? "rgba(29,158,117,0.1)"
+                              : surfaceBg,
+                          border: isCurrent
+                            ? `1.5px solid ${color.border}`
+                            : `0.5px solid ${border}`,
                         }}
                       >
                         <span
@@ -297,24 +412,48 @@ export function ChainStatusPanel({
                             width: 7,
                             height: 7,
                             borderRadius: "50%",
-                            background: isCurrent ? color.dot : isDone ? "#1D9E75" : border,
+                            background: isCurrent
+                              ? color.dot
+                              : isDone
+                                ? "#1D9E75"
+                                : border,
                           }}
                         />
                         <span
                           style={{
                             fontSize: 11,
                             fontWeight: 500,
-                            color: isCurrent ? color.text : isDone ? "#1D9E75" : textSecondary,
+                            color: isCurrent
+                              ? color.text
+                              : isDone
+                                ? "#1D9E75"
+                                : textSecondary,
                             whiteSpace: "nowrap",
                           }}
                         >
                           {platform}
                         </span>
                         {isCurrent && (
-                          <span style={{ fontSize: 10, color: color.text, opacity: 0.7 }}>← now</span>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              color: color.text,
+                              opacity: 0.7,
+                            }}
+                          >
+                            ← now
+                          </span>
                         )}
                         {isDone && (
-                          <span style={{ fontSize: 10, color: "#1D9E75", opacity: 0.7 }}>done</span>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              color: "#1D9E75",
+                              opacity: 0.7,
+                            }}
+                          >
+                            done
+                          </span>
                         )}
                       </div>
                       {index < data.chain.length - 1 && (
@@ -323,7 +462,9 @@ export function ChainStatusPanel({
                             width: 16,
                             height: 1,
                             flexShrink: 0,
-                            background: isDone ? "rgba(29,158,117,0.4)" : border,
+                            background: isDone
+                              ? "rgba(29,158,117,0.4)"
+                              : border,
                           }}
                         />
                       )}
@@ -336,14 +477,22 @@ export function ChainStatusPanel({
 
           {!data.isActive && (
             <p style={{ fontSize: 12, color: textSecondary, marginTop: 12 }}>
-              Chain is idle. Press &quot;Start chain&quot; to begin sequential crawling across all platforms.
+              Chain is idle. Press &quot;Start chain&quot; to begin sequential
+              crawling across all platforms.
             </p>
           )}
         </>
       )}
 
       {!isLoading && !data && (
-        <p style={{ fontSize: 13, textAlign: "center", padding: "1rem 0", color: textSecondary }}>
+        <p
+          style={{
+            fontSize: 13,
+            textAlign: "center",
+            padding: "1rem 0",
+            color: textSecondary,
+          }}
+        >
           Could not load chain status.
         </p>
       )}

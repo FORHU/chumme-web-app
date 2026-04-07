@@ -4,7 +4,9 @@ interface DashboardState {
   activeNav: string;
   setActiveNav: (nav: string) => void;
   settingsExpanded: boolean;
-  setSettingsExpanded: (expanded: boolean | ((prev: boolean) => boolean)) => void;
+  setSettingsExpanded: (
+    expanded: boolean | ((prev: boolean) => boolean),
+  ) => void;
 }
 
 export const useDashboardStore = create<DashboardState>((set) => ({
@@ -13,6 +15,9 @@ export const useDashboardStore = create<DashboardState>((set) => ({
   settingsExpanded: false,
   setSettingsExpanded: (expanded) =>
     set((state) => ({
-      settingsExpanded: typeof expanded === "function" ? expanded(state.settingsExpanded) : expanded,
+      settingsExpanded:
+        typeof expanded === "function"
+          ? expanded(state.settingsExpanded)
+          : expanded,
     })),
 }));

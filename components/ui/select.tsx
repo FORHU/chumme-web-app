@@ -26,12 +26,15 @@ export function Select({ value, onValueChange, children }: SelectProps) {
   const optionsRef = React.useRef<Map<string, string>>(new Map());
   const [selectedLabel, setSelectedLabel] = React.useState<string | null>(null);
 
-  const registerOption = React.useCallback((optValue: string, label: string) => {
-    optionsRef.current.set(optValue, label);
-    if (value !== undefined && value === optValue) {
-      setSelectedLabel(label);
-    }
-  }, [value]);
+  const registerOption = React.useCallback(
+    (optValue: string, label: string) => {
+      optionsRef.current.set(optValue, label);
+      if (value !== undefined && value === optValue) {
+        setSelectedLabel(label);
+      }
+    },
+    [value],
+  );
 
   const selectOption = React.useCallback(
     (nextValue: string, label: string) => {
@@ -110,7 +113,11 @@ export interface SelectValueProps extends React.HTMLAttributes<HTMLSpanElement> 
   placeholder?: string;
 }
 
-export function SelectValue({ placeholder, className, ...props }: SelectValueProps) {
+export function SelectValue({
+  placeholder,
+  className,
+  ...props
+}: SelectValueProps) {
   const ctx = React.useContext(SelectContext);
   const text = ctx?.selectedLabel ?? ctx?.value ?? "";
 
@@ -123,30 +130,30 @@ export function SelectValue({ placeholder, className, ...props }: SelectValuePro
 
 export type SelectContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
-  ({ className, children, ...props }, ref) => {
-    const ctx = React.useContext(SelectContext);
-    if (!ctx?.open) return null;
+export const SelectContent = React.forwardRef<
+  HTMLDivElement,
+  SelectContentProps
+>(({ className, children, ...props }, ref) => {
+  const ctx = React.useContext(SelectContext);
+  if (!ctx?.open) return null;
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "absolute left-0 right-0 z-50 mt-2 max-h-60 overflow-auto rounded-md border border-gray-200 bg-white p-1 shadow-lg",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "absolute left-0 right-0 z-50 mt-2 max-h-60 overflow-auto rounded-md border border-gray-200 bg-white p-1 shadow-lg",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
 
 SelectContent.displayName = "SelectContent";
 
-export interface SelectItemProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface SelectItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
 }
 

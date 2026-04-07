@@ -10,10 +10,7 @@ interface AuthCardProps {
   className?: string;
 }
 
-export const AuthCard = ({
-  children,
-  className,
-}: AuthCardProps) => {
+export const AuthCard = ({ children, className }: AuthCardProps) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -25,9 +22,7 @@ export const AuthCard = ({
       transition={{ duration: 0.35 }}
       className={cn(
         "w-full lg:w-[480px] rounded-2xl shadow-lg border p-10",
-        isDark
-          ? "bg-gray-900 border-gray-800"
-          : "bg-white border-gray-200",
+        isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200",
         className,
       )}
     >

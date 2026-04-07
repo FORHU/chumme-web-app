@@ -57,9 +57,18 @@ export interface PipelineStatus {
 
 export type PlatformBreakdown =
   | Record<string, number>
-  | Array<{ platform?: string; name?: string; key?: string; count?: number; value?: number }>;
+  | Array<{
+      platform?: string;
+      name?: string;
+      key?: string;
+      count?: number;
+      value?: number;
+    }>;
 
-export type ScoutSuccess = number | { discoveredTalents7d?: number; [key: string]: unknown } | null;
+export type ScoutSuccess =
+  | number
+  | { discoveredTalents7d?: number; [key: string]: unknown }
+  | null;
 
 export interface AnalyticsTrends {
   platforms?: PlatformBreakdown;
@@ -92,18 +101,24 @@ export const ingestionApi = {
    * Returns all schedules for a given ingestion target.
    */
   getSchedulesByTarget: (
-    targetId: string
-  ): Promise<ApiResponse<{ success: boolean; data: SocialIngestionSchedule[] }>> =>
-    api.get(`/api/v1/ingestion-schedules/target/${targetId}`),
+    targetId: string,
+  ): Promise<
+    ApiResponse<{ success: boolean; data: SocialIngestionSchedule[] }>
+  > => api.get(`/api/v1/ingestion-schedules/target/${targetId}`),
 
   /**
    * POST /api/v1/ingestion-schedules
    * Creates a new schedule for a target.
    */
   createSchedule: (
-    params: CreateScheduleParams
-  ): Promise<ApiResponse<{ success: boolean; message: string; data: SocialIngestionSchedule }>> =>
-    api.post("/api/v1/ingestion-schedules", params),
+    params: CreateScheduleParams,
+  ): Promise<
+    ApiResponse<{
+      success: boolean;
+      message: string;
+      data: SocialIngestionSchedule;
+    }>
+  > => api.post("/api/v1/ingestion-schedules", params),
 
   /**
    * PUT /api/v1/ingestion-schedules/:id
@@ -111,16 +126,21 @@ export const ingestionApi = {
    */
   updateSchedule: (
     id: string,
-    params: UpdateScheduleParams
-  ): Promise<ApiResponse<{ success: boolean; message: string; data: SocialIngestionSchedule }>> =>
-    api.put(`/api/v1/ingestion-schedules/${id}`, params),
+    params: UpdateScheduleParams,
+  ): Promise<
+    ApiResponse<{
+      success: boolean;
+      message: string;
+      data: SocialIngestionSchedule;
+    }>
+  > => api.put(`/api/v1/ingestion-schedules/${id}`, params),
 
   /**
    * DELETE /api/v1/ingestion-schedules/:id
    * Deletes a schedule.
    */
   deleteSchedule: (
-    id: string
+    id: string,
   ): Promise<ApiResponse<{ success: boolean; message: string }>> =>
     api.delete(`/api/v1/ingestion-schedules/${id}`),
 
@@ -129,7 +149,7 @@ export const ingestionApi = {
    * Manually triggers a crawl for a specific schedule.
    */
   triggerSchedule: (
-    id: string
+    id: string,
   ): Promise<ApiResponse<{ success: boolean; message: string }>> =>
     api.post(`/api/v1/ingestion-schedules/${id}/trigger`, {}),
 
@@ -137,8 +157,9 @@ export const ingestionApi = {
    * GET /api/v1/ingestion-schedules/chain/status
    * Returns current chain state — active step, pending jobs, full chain order.
    */
-  getChainStatus: (): Promise<ApiResponse<{ success: boolean; data: ChainStatus }>> =>
-    api.get("/api/v1/ingestion-schedules/chain/status"),
+  getChainStatus: (): Promise<
+    ApiResponse<{ success: boolean; data: ChainStatus }>
+  > => api.get("/api/v1/ingestion-schedules/chain/status"),
 
   /**
    * POST /api/v1/ingestion-schedules/chain/start
@@ -151,8 +172,9 @@ export const ingestionApi = {
    * POST /api/v1/ingestion-schedules/chain/skip
    * Skips the current platform step and advances to the next.
    */
-  skipChainStep: (): Promise<ApiResponse<{ success: boolean; message: string }>> =>
-    api.post("/api/v1/ingestion-schedules/chain/skip", {}),
+  skipChainStep: (): Promise<
+    ApiResponse<{ success: boolean; message: string }>
+  > => api.post("/api/v1/ingestion-schedules/chain/skip", {}),
 
   // ── Monitoring ─────────────────────────────────────────────────────────────
 
@@ -169,7 +191,7 @@ export const ingestionApi = {
    * Manually runs the full scheduler loop immediately.
    */
   triggerManualCrawl: (
-    force = true
+    force = true,
   ): Promise<ApiResponse<{ success: boolean; message: string }>> =>
     api.get(`/api/v1/monitoring/trigger-crawl?force=${force}`),
 

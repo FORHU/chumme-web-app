@@ -33,7 +33,9 @@ export const ReportsPanel = ({ isDarkMode }: ReportsPanelProps) => {
             <div
               key={index}
               className={`p-4 rounded-xl border ${
-                isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+                isDarkMode
+                  ? "bg-gray-900 border-gray-700"
+                  : "bg-white border-gray-200"
               }`}
             >
               <div className="flex items-start justify-between mb-2">

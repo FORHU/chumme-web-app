@@ -40,20 +40,34 @@ export function PlatformIngestionCenter() {
   const [targetId, setTargetId] = useState(PLACEHOLDER_TARGET_ID);
   const [targetIdInput, setTargetIdInput] = useState("");
   const [triggeringId, setTriggeringId] = useState<string | null>(null);
-  const [deleteTargetScheduleId, setDeleteTargetScheduleId] = useState<string | null>(null);
+  const [deleteTargetScheduleId, setDeleteTargetScheduleId] = useState<
+    string | null
+  >(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   // ─── Data ──────────────────────────────────────────────────────────────────
 
-  const { data: pipelineData, isLoading: pipelineLoading, refetch: refetchPipeline } =
-    useGetPipelineStatus();
+  const {
+    data: pipelineData,
+    isLoading: pipelineLoading,
+    refetch: refetchPipeline,
+  } = useGetPipelineStatus();
 
-  const { data: workerData, isLoading: workerLoading, refetch: refetchWorker } =
-    useGetWorkerHealth();
+  const {
+    data: workerData,
+    isLoading: workerLoading,
+    refetch: refetchWorker,
+  } = useGetWorkerHealth();
 
-  const { data: trendsData, isLoading: trendsLoading, refetch: refetchTrends } =
-    useGetAnalyticsTrends();
+  const {
+    data: trendsData,
+    isLoading: trendsLoading,
+    refetch: refetchTrends,
+  } = useGetAnalyticsTrends();
 
   const { data: schedulesData, isLoading: schedulesLoading } =
     useGetSchedulesByTarget(targetId, { enabled: !!targetId });
@@ -80,10 +94,12 @@ export function PlatformIngestionCenter() {
     },
   });
 
-  const { mutate: triggerManualCrawl, isPending: manualCrawlPending } = useTriggerManualCrawl({
-    onSuccess: () => showToast("Manual crawl triggered successfully", "success"),
-    onError: () => showToast("Failed to trigger manual crawl", "error"),
-  });
+  const { mutate: triggerManualCrawl, isPending: manualCrawlPending } =
+    useTriggerManualCrawl({
+      onSuccess: () =>
+        showToast("Manual crawl triggered successfully", "success"),
+      onError: () => showToast("Failed to trigger manual crawl", "error"),
+    });
 
   const { mutate: updateSchedule } = useUpdateSchedule({
     onSuccess: () => {
@@ -93,15 +109,16 @@ export function PlatformIngestionCenter() {
     onError: () => showToast("Failed to update schedule", "error"),
   });
 
-  const { mutate: deleteSchedule, isPending: deletingSchedule } = useDeleteSchedule({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ingestionKeys.all });
-      setShowDeleteConfirm(false);
-      setDeleteTargetScheduleId(null);
-      showToast("Schedule deleted", "success");
-    },
-    onError: () => showToast("Failed to delete schedule", "error"),
-  });
+  const { mutate: deleteSchedule, isPending: deletingSchedule } =
+    useDeleteSchedule({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ingestionKeys.all });
+        setShowDeleteConfirm(false);
+        setDeleteTargetScheduleId(null);
+        showToast("Schedule deleted", "success");
+      },
+      onError: () => showToast("Failed to delete schedule", "error"),
+    });
 
   const {
     data: chainData,
@@ -200,11 +217,16 @@ export function PlatformIngestionCenter() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-4">
         <div>
-          <h2 className={`text-2xl font-bold mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          <h2
+            className={`text-2xl font-bold mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
             Platform Ingestion
           </h2>
-          <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-            Monitor and control the content ingestion pipeline across all platforms.
+          <p
+            className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+          >
+            Monitor and control the content ingestion pipeline across all
+            platforms.
           </p>
         </div>
         <div className="flex gap-2 shrink-0">
@@ -269,7 +291,9 @@ export function PlatformIngestionCenter() {
       {/* Schedules Table */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          <h3
+            className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
             Ingestion Schedules
           </h3>
         </div>
@@ -332,16 +356,24 @@ export function PlatformIngestionCenter() {
                 <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                <h3
+                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                >
                   Delete Schedule
                 </h3>
               </div>
-              <p className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Are you sure you want to delete this schedule? This will stop automatic crawling for this target.
+              <p
+                className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+              >
+                Are you sure you want to delete this schedule? This will stop
+                automatic crawling for this target.
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setShowDeleteConfirm(false); setDeleteTargetScheduleId(null); }}
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteTargetScheduleId(null);
+                  }}
                   disabled={deletingSchedule}
                   className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${
                     isDarkMode
@@ -357,8 +389,13 @@ export function PlatformIngestionCenter() {
                   className="flex-1 h-11 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {deletingSchedule ? (
-                    <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Deleting...</>
-                  ) : "Delete"}
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete"
+                  )}
                 </button>
               </div>
             </motion.div>

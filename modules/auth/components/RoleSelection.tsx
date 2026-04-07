@@ -10,7 +10,10 @@ interface RoleSelectionProps {
   onSignIn: () => void;
 }
 
-export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) => {
+export const RoleSelection = ({
+  onSelectRole,
+  onSignIn,
+}: RoleSelectionProps) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -29,14 +32,14 @@ export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) =>
     >
       {/* Header */}
       <div className="mb-10 text-center">
-        <h2 className={`text-3xl font-bold mb-3 ${
-          isDark ? "text-white" : "text-gray-900"
-        }`}>
+        <h2
+          className={`text-3xl font-bold mb-3 ${
+            isDark ? "text-white" : "text-gray-900"
+          }`}
+        >
           Which one are you?
         </h2>
-        <p className={`text-sm ${
-          isDark ? "text-gray-400" : "text-gray-600"
-        }`}>
+        <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
           Select your role to continue
         </p>
       </div>
@@ -59,15 +62,19 @@ export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) =>
             </div>
           </div>
 
-          <h3 className={`text-xl font-bold text-center mb-3 ${
-            isDark ? "text-white" : "text-gray-900"
-          }`}>
+          <h3
+            className={`text-xl font-bold text-center mb-3 ${
+              isDark ? "text-white" : "text-gray-900"
+            }`}
+          >
             Admin
           </h3>
 
-          <p className={`text-sm text-center mb-6 leading-relaxed ${
-            isDark ? "text-gray-400" : "text-gray-600"
-          }`}>
+          <p
+            className={`text-sm text-center mb-6 leading-relaxed ${
+              isDark ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             Manage platform, users, communities, and analytics
           </p>
 
@@ -96,15 +103,19 @@ export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) =>
             </div>
           </div>
 
-          <h3 className={`text-xl font-bold text-center mb-3 ${
-            isDark ? "text-white" : "text-gray-900"
-          }`}>
+          <h3
+            className={`text-xl font-bold text-center mb-3 ${
+              isDark ? "text-white" : "text-gray-900"
+            }`}
+          >
             User
           </h3>
 
-          <p className={`text-sm text-center mb-6 leading-relaxed ${
-            isDark ? "text-gray-400" : "text-gray-600"
-          }`}>
+          <p
+            className={`text-sm text-center mb-6 leading-relaxed ${
+              isDark ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             Discover communities, chat, and explore content
           </p>
 
@@ -119,12 +130,12 @@ export const RoleSelection = ({ onSelectRole, onSignIn }: RoleSelectionProps) =>
       </div>
 
       {/* Sign In Link */}
-      <div className={`text-center pt-8 mt-6 border-t ${
-        isDark ? "border-gray-700" : "border-gray-200"
-      }`}>
-        <p className={`text-sm ${
-          isDark ? "text-gray-400" : "text-gray-600"
-        }`}>
+      <div
+        className={`text-center pt-8 mt-6 border-t ${
+          isDark ? "border-gray-700" : "border-gray-200"
+        }`}
+      >
+        <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
           Already have an account?{" "}
           <button
             type="button"

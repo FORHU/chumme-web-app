@@ -3,7 +3,19 @@
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus, Edit, Trash2, X, MapPin, Users, Grid3x3, Activity, AlertTriangle, TrendingUp, Search } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  X,
+  MapPin,
+  Users,
+  Grid3x3,
+  Activity,
+  AlertTriangle,
+  TrendingUp,
+  Search,
+} from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import {
   useGetCommunitiesCategories,
@@ -27,9 +39,13 @@ const communityAnalytics = [
 export function CommunityControlCenter() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  const [activeTab, setActiveTab] = useState<"countries" | "categories" | "analytics" | "moderation">("countries");
+  const [activeTab, setActiveTab] = useState<
+    "countries" | "categories" | "analytics" | "moderation"
+  >("countries");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [modalType, setModalType] = useState<"country" | "category" | "community">("country");
+  const [modalType, setModalType] = useState<
+    "country" | "category" | "community"
+  >("country");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Form states
@@ -41,19 +57,33 @@ export function CommunityControlCenter() {
   const [communityDescription, setCommunityDescription] = useState("");
   const [countryNote, setCountryNote] = useState("");
   const [countryEmoji, setCountryEmoji] = useState("🌍");
-  const [countryTrait, setCountryTrait] = useState<"NONE" | "COMMUNITIES" | "ENTERTAINMENT">("COMMUNITIES");
+  const [countryTrait, setCountryTrait] = useState<
+    "NONE" | "COMMUNITIES" | "ENTERTAINMENT"
+  >("COMMUNITIES");
   const [countryColorPrimary, setCountryColorPrimary] = useState("#A53860");
   const [countryColorSecondary, setCountryColorSecondary] = useState("#670D2F");
-  const [countryColorGradient, setCountryColorGradient] = useState(["#A53860", "#670D2F"]);
+  const [countryColorGradient, setCountryColorGradient] = useState([
+    "#A53860",
+    "#670D2F",
+  ]);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const [editTarget, setEditTarget] = useState<{ id: string; name: string } | null>(null);
+  const [editTarget, setEditTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const [selectedCountryId, setSelectedCountryId] = useState<string>("");
-  const [deleteSubTargetId, setDeleteSubTargetId] = useState<string | null>(null);
+  const [deleteSubTargetId, setDeleteSubTargetId] = useState<string | null>(
+    null,
+  );
   const [showDeleteSubConfirm, setShowDeleteSubConfirm] = useState(false);
-  const [editSubTarget, setEditSubTarget] = useState<{ id: string; name: string; chummeCategoryId: string } | null>(null);
+  const [editSubTarget, setEditSubTarget] = useState<{
+    id: string;
+    name: string;
+    chummeCategoryId: string;
+  } | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -134,7 +164,11 @@ export function CommunityControlCenter() {
       },
     });
 
-  const isSubmitting = creatingCategory || creatingSubcategory || updatingCategory || updatingSubCategory;
+  const isSubmitting =
+    creatingCategory ||
+    creatingSubcategory ||
+    updatingCategory ||
+    updatingSubCategory;
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
@@ -152,10 +186,7 @@ export function CommunityControlCenter() {
 
   const handleConfirmDelete = () => {
     if (!deleteTargetId) return;
-    deleteCategory({
-      endpoint: `/api/v1/chumme-categories/${deleteTargetId}`,
-      method: "DELETE",
-    });
+    deleteCategory({ id: deleteTargetId });
   };
 
   const handleDeleteSubClick = (id: string) => {
@@ -165,17 +196,19 @@ export function CommunityControlCenter() {
 
   const handleConfirmDeleteSub = () => {
     if (!deleteSubTargetId) return;
-    deleteSubCategory({
-      endpoint: `/api/v1/chumme-subcategories/${deleteSubTargetId}`,
-      method: "DELETE",
-    });
+    deleteSubCategory({ id: deleteSubTargetId });
   };
 
-  const handleEditSubClick = (sub: { id: string; name: string; chummeCategoryId: string }) => {
+  const handleEditSubClick = (sub: {
+    id: string;
+    name: string;
+    chummeCategoryId: string;
+  }) => {
     setEditSubTarget(sub);
     setCategoryName(sub.name);
     setSelectedCountry(
-      communitiesCategories.find((c) => c.id === sub.chummeCategoryId)?.name ?? ""
+      communitiesCategories.find((c) => c.id === sub.chummeCategoryId)?.name ??
+        "",
     );
     setModalType("category");
     setShowCreateModal(true);
@@ -186,75 +219,55 @@ export function CommunityControlCenter() {
       if (!countryName.trim()) return;
       if (editTarget) {
         updateCategory({
-          endpoint: `/api/v1/chumme-categories/${editTarget.id}`,
-          method: "PUT",
-          data: {
-            id: editTarget.id,
-            name: countryName,
-            traits: countryTrait,
-            note: countryNote || undefined,
-            emojiIcon: countryEmoji || undefined,
-            colorSet: {
-              primary: countryColorPrimary,
-              secondary: countryColorSecondary,
-              gradient: countryColorGradient,
-            },
+          id: editTarget.id,
+          name: countryName,
+          traits: countryTrait,
+          note: countryNote || undefined,
+          emojiIcon: countryEmoji || undefined,
+          colorSet: {
+            primary: countryColorPrimary,
+            secondary: countryColorSecondary,
+            gradient: countryColorGradient,
           },
         });
       } else {
         createCommunitiesCategory({
-          endpoint: "/api/v1/chumme-categories/create",
-          method: "POST",
-          data: {
-            name: countryName,
-            isAd: false,
-            traits: countryTrait,
-            note: countryNote || undefined,
-            emojiIcon: countryEmoji || undefined,
-            colorSet: {
-              primary: countryColorPrimary,
-              secondary: countryColorSecondary,
-              gradient: countryColorGradient,
-            },
+          name: countryName,
+          isAd: false,
+          traits: countryTrait,
+          note: countryNote || undefined,
+          emojiIcon: countryEmoji || undefined,
+          colorSet: {
+            primary: countryColorPrimary,
+            secondary: countryColorSecondary,
+            gradient: countryColorGradient,
           },
         });
       }
     } else if (modalType === "category") {
       if (!categoryName.trim() || !selectedCountry) return;
       const parentCountry = communitiesCategories.find(
-        (c) => c.name === selectedCountry
+        (c) => c.name === selectedCountry,
       );
       if (!parentCountry) return;
       if (editSubTarget) {
-        updateSubCategory({
-          endpoint: `/api/v1/chumme-subcategories/${editSubTarget.id}`,
-          method: "PUT",
-          data: { id: editSubTarget.id, name: categoryName },
-        });
+        updateSubCategory({ id: editSubTarget.id, name: categoryName });
       } else {
         createSubcategory({
-          endpoint: "/api/v1/chumme-subcategories/create",
-          method: "POST",
-          data: {
-            name: categoryName,
-            chummeCategoryId: parentCountry.id,
-            isAd: false,
-          },
+          name: categoryName,
+          chummeCategoryId: parentCountry.id,
+          isAd: false,
         });
       }
     } else if (modalType === "community") {
       if (!communityName.trim() || !selectedCategory) return;
       const parentCategory = communitiesCategories.find(
-        (c) => c.name === selectedCategory
+        (c) => c.name === selectedCategory,
       );
       createSubcategory({
-        endpoint: "/api/v1/chumme-subcategories/create",
-        method: "POST",
-        data: {
-          name: communityName,
-          chummeCategoryId: parentCategory?.id ?? selectedCategory,
-          isAd: false,
-        },
+        name: communityName,
+        chummeCategoryId: parentCategory?.id ?? selectedCategory,
+        isAd: false,
       });
     } else {
       setShowCreateModal(false);
@@ -288,61 +301,106 @@ export function CommunityControlCenter() {
     <div className="h-full">
       {/* Header */}
       <div className="mb-6">
-        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+        <h2
+          className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+        >
           Communities
         </h2>
-        <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-          Manage countries, categories, and communities across the Chumme ecosystem
+        <p
+          className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+        >
+          Manage countries, categories, and communities across the Chumme
+          ecosystem
         </p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
+        <div
+          className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-[#A53860]/20 flex items-center justify-center">
               <MapPin className="w-5 h-5 text-[#A53860]" />
             </div>
-            <span className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Countries</span>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Countries
+            </span>
           </div>
-          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-            {categoriesLoading
-              ? <span className="inline-block w-12 h-8 bg-gray-600/30 rounded animate-pulse" />
-              : communitiesCategories.length}
+          <p
+            className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
+            {categoriesLoading ? (
+              <span className="inline-block w-12 h-8 bg-gray-600/30 rounded animate-pulse" />
+            ) : (
+              communitiesCategories.length
+            )}
           </p>
           <p className="text-sm text-green-600 mt-1">Live from backend</p>
         </div>
 
-        <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
+        <div
+          className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-[#EF88AD]/20 flex items-center justify-center">
               <Grid3x3 className="w-5 h-5 text-[#EF88AD]" />
             </div>
-            <span className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Categories</span>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Categories
+            </span>
           </div>
-          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>—</p>
+          <p
+            className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
+            —
+          </p>
           <p className="text-sm text-green-600 mt-1">+8 this month</p>
         </div>
 
-        <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
+        <div
+          className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-[#670D2F]/20 flex items-center justify-center">
               <Users className="w-5 h-5 text-[#670D2F]" />
             </div>
-            <span className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Communities</span>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Communities
+            </span>
           </div>
-          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>3,200</p>
+          <p
+            className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
+            3,200
+          </p>
           <p className="text-sm text-green-600 mt-1">+45 this week</p>
         </div>
 
-        <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
+        <div
+          className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-[#F4C2A0]/20 flex items-center justify-center">
               <Activity className="w-5 h-5 text-[#A53860]" />
             </div>
-            <span className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Active Today</span>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+            >
+              Active Today
+            </span>
           </div>
-          <p className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>850</p>
+          <p
+            className={`text-3xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
+            850
+          </p>
           <p className="text-sm text-green-600 mt-1">+12% from yesterday</p>
         </div>
       </div>
@@ -362,8 +420,8 @@ export function CommunityControlCenter() {
               activeTab === tab.id
                 ? "bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white shadow-lg"
                 : isDarkMode
-                ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -374,7 +432,6 @@ export function CommunityControlCenter() {
 
       {/* Tab Content */}
       <AnimatePresence mode="wait">
-
         {/* ── Countries Tab ── */}
         {activeTab === "countries" && (
           <motion.div
@@ -394,52 +451,109 @@ export function CommunityControlCenter() {
               </button>
             </div>
 
-            <div className={`rounded-2xl border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl overflow-hidden`}>
+            <div
+              className={`rounded-2xl border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl overflow-hidden`}
+            >
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}>
+                  <thead
+                    className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}
+                  >
                     <tr>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Name</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Traits</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Actions</th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Name
+                      </th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Traits
+                      </th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {categoriesLoading && Array.from({ length: 4 }).map((_, i) => (
-                      <tr key={i} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                        {Array.from({ length: 3 }).map((_, j) => (
-                          <td key={j} className="px-6 py-4"><div className="h-4 rounded bg-gray-600/20 animate-pulse" /></td>
-                        ))}
-                      </tr>
-                    ))}
+                    {categoriesLoading &&
+                      Array.from({ length: 4 }).map((_, i) => (
+                        <tr
+                          key={i}
+                          className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
+                        >
+                          {Array.from({ length: 3 }).map((_, j) => (
+                            <td key={j} className="px-6 py-4">
+                              <div className="h-4 rounded bg-gray-600/20 animate-pulse" />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
                     {categoriesError && !categoriesLoading && (
-                      <tr><td colSpan={3} className="px-6 py-8 text-center text-red-400 text-sm">Failed to load categories. Please try again.</td></tr>
-                    )}
-                    {!categoriesLoading && !categoriesError && communitiesCategories.length === 0 && (
-                      <tr><td colSpan={3} className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>No countries yet.</td></tr>
-                    )}
-                    {!categoriesLoading && communitiesCategories.map((category) => (
-                      <tr key={category.id} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>{category.name}</td>
-                        <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{category.chummeTraits}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleEditClick({ id: category.id, name: category.name })}
-                              className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
-                            >
-                              <Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(category.id)}
-                              className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}
-                            >
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </button>
-                          </div>
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="px-6 py-8 text-center text-red-400 text-sm"
+                        >
+                          Failed to load categories. Please try again.
                         </td>
                       </tr>
-                    ))}
+                    )}
+                    {!categoriesLoading &&
+                      !categoriesError &&
+                      communitiesCategories.length === 0 && (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                          >
+                            No countries yet.
+                          </td>
+                        </tr>
+                      )}
+                    {!categoriesLoading &&
+                      communitiesCategories.map((category, i) => (
+                        <tr
+                          key={category.id || `cat-${i}`}
+                          className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
+                        >
+                          <td
+                            className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}
+                          >
+                            {category.name}
+                          </td>
+                          <td
+                            className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                          >
+                            {category.chummeTraits}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() =>
+                                  handleEditClick({
+                                    id: category.id,
+                                    name: category.name,
+                                  })
+                                }
+                                className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                              >
+                                <Edit
+                                  className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(category.id)}
+                                className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -476,16 +590,22 @@ export function CommunityControlCenter() {
                     : "bg-white border-gray-200 text-gray-900"
                 } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
               >
-                <option value="">Select a Country to view its Categories</option>
+                <option value="">
+                  Select a Country to view its Categories
+                </option>
                 {communitiesCategories.map((country) => (
-                  <option key={country.id} value={country.id}>{country.name}</option>
+                  <option key={country.id} value={country.id}>
+                    {country.name}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div className="mb-4">
               <div className="relative">
-                <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
+                <Search
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                />
                 <input
                   type="text"
                   placeholder="Search categories..."
@@ -501,78 +621,136 @@ export function CommunityControlCenter() {
               </div>
             </div>
 
-            <div className={`rounded-2xl border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl overflow-hidden`}>
+            <div
+              className={`rounded-2xl border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl overflow-hidden`}
+            >
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}>
+                  <thead
+                    className={isDarkMode ? "bg-gray-900/50" : "bg-gray-50"}
+                  >
                     <tr>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Category Name</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Note</th>
-                      <th className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Actions</th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Category Name
+                      </th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Note
+                      </th>
+                      <th
+                        className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {!selectedCountryId && (
                       <tr>
-                        <td colSpan={3} className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                        <td
+                          colSpan={3}
+                          className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                        >
                           Select a country above to view its categories.
                         </td>
                       </tr>
                     )}
 
-                    {selectedCountryId && subcategoriesLoading && Array.from({ length: 3 }).map((_, i) => (
-                      <tr key={i} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                        {Array.from({ length: 3 }).map((_, j) => (
-                          <td key={j} className="px-6 py-4"><div className="h-4 rounded bg-gray-600/20 animate-pulse" /></td>
-                        ))}
-                      </tr>
-                    ))}
-                    {selectedCountryId && subcategoriesError && !subcategoriesLoading && (
-                      <tr>
-                        <td colSpan={3} className="px-6 py-8 text-center text-red-400 text-sm">
-                          Failed to load categories. Please try again.
-                        </td>
-                      </tr>
-                    )}
-
-                    {selectedCountryId && !subcategoriesLoading && !subcategoriesError && subcategories.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
-                          No categories yet for this country.
-                        </td>
-                      </tr>
-                    )}
-
-                    {selectedCountryId && !subcategoriesLoading && subcategories
-                      .filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                      .map((sub) => (
-                        <tr key={sub.id} className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}>
-                          <td className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}>{sub.name}</td>
-                          <td className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"} max-w-xs truncate`}>
-                            {sub.note ?? <span className="italic opacity-40">—</span>}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEditSubClick({
-                                  id: sub.id,
-                                  name: sub.name,
-                                  chummeCategoryId: sub.chummeCategoryId,
-                                })}
-                                className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
-                              >
-                                <Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteSubClick(sub.id)}
-                                className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </button>
-                            </div>
-                          </td>
+                    {selectedCountryId &&
+                      subcategoriesLoading &&
+                      Array.from({ length: 3 }).map((_, i) => (
+                        <tr
+                          key={i}
+                          className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
+                        >
+                          {Array.from({ length: 3 }).map((_, j) => (
+                            <td key={j} className="px-6 py-4">
+                              <div className="h-4 rounded bg-gray-600/20 animate-pulse" />
+                            </td>
+                          ))}
                         </tr>
                       ))}
+                    {selectedCountryId &&
+                      subcategoriesError &&
+                      !subcategoriesLoading && (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className="px-6 py-8 text-center text-red-400 text-sm"
+                          >
+                            Failed to load categories. Please try again.
+                          </td>
+                        </tr>
+                      )}
+
+                    {selectedCountryId &&
+                      !subcategoriesLoading &&
+                      !subcategoriesError &&
+                      subcategories.length === 0 && (
+                        <tr>
+                          <td
+                            colSpan={3}
+                            className={`px-6 py-8 text-center text-sm ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                          >
+                            No categories yet for this country.
+                          </td>
+                        </tr>
+                      )}
+
+                    {selectedCountryId &&
+                      !subcategoriesLoading &&
+                      subcategories
+                        .filter((s) =>
+                          s.name
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                        )
+                        .map((sub) => (
+                          <tr
+                            key={sub.id}
+                            className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
+                          >
+                            <td
+                              className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}
+                            >
+                              {sub.name}
+                            </td>
+                            <td
+                              className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"} max-w-xs truncate`}
+                            >
+                              {sub.note ?? (
+                                <span className="italic opacity-40">—</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() =>
+                                    handleEditSubClick({
+                                      id: sub.id,
+                                      name: sub.name,
+                                      chummeCategoryId: sub.chummeCategoryId,
+                                    })
+                                  }
+                                  className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                                >
+                                  <Edit
+                                    className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                  />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteSubClick(sub.id)}
+                                  className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}
+                                >
+                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               </div>
@@ -589,8 +767,14 @@ export function CommunityControlCenter() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Communities by Country</h3>
+            <div
+              className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
+                Communities by Country
+              </h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -599,7 +783,9 @@ export function CommunityControlCenter() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                      label={({ name, percent }) =>
+                        `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                      }
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
@@ -608,19 +794,46 @@ export function CommunityControlCenter() {
                         <Cell key={entry.id} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF", border: "none", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF",
+                        border: "none",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className={`rounded-2xl p-6 border mt-6 ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Fastest Growing Communities</h3>
+            <div
+              className={`rounded-2xl p-6 border mt-6 ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
+                Fastest Growing Communities
+              </h3>
               <div className="space-y-3">
-                {["BTS Philippines Fans", "Blackpink Korea", "Anime Japan", "K-Drama Thailand"].map((name, index) => (
-                  <div key={index} className={`flex items-center justify-between p-4 rounded-lg ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
-                    <span className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>{name}</span>
-                    <span className="text-green-600 text-sm font-semibold">+{10 + (index * 7) % 30}%</span>
+                {[
+                  "BTS Philippines Fans",
+                  "Blackpink Korea",
+                  "Anime Japan",
+                  "K-Drama Thailand",
+                ].map((name, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between p-4 rounded-lg ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}
+                  >
+                    <span
+                      className={`font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                    >
+                      {name}
+                    </span>
+                    <span className="text-green-600 text-sm font-semibold">
+                      +{10 + ((index * 7) % 30)}%
+                    </span>
                   </div>
                 ))}
               </div>
@@ -637,26 +850,67 @@ export function CommunityControlCenter() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Reports Panel</h3>
+            <div
+              className={`rounded-2xl p-6 border ${isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"} backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
+                Reports Panel
+              </h3>
               <div className="space-y-4">
                 {[
-                  { community: "Spam Community XYZ", reason: "Spam content", date: "2 hours ago" },
-                  { community: "Inappropriate Group", reason: "Inappropriate content", date: "5 hours ago" },
-                  { community: "Fake Merch Sellers", reason: "Scam reports", date: "1 day ago" },
+                  {
+                    community: "Spam Community XYZ",
+                    reason: "Spam content",
+                    date: "2 hours ago",
+                  },
+                  {
+                    community: "Inappropriate Group",
+                    reason: "Inappropriate content",
+                    date: "5 hours ago",
+                  },
+                  {
+                    community: "Fake Merch Sellers",
+                    reason: "Scam reports",
+                    date: "1 day ago",
+                  },
                 ].map((report, index) => (
-                  <div key={index} className={`p-4 rounded-xl border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}>
+                  <div
+                    key={index}
+                    className={`p-4 rounded-xl border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h4 className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{report.community}</h4>
-                        <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Reason: {report.reason}</p>
+                        <h4
+                          className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                        >
+                          {report.community}
+                        </h4>
+                        <p
+                          className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                        >
+                          Reason: {report.reason}
+                        </p>
                       </div>
-                      <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>{report.date}</span>
+                      <span
+                        className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                      >
+                        {report.date}
+                      </span>
                     </div>
                     <div className="flex gap-2 mt-3">
-                      <button className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors">Suspend</button>
-                      <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Dismiss</button>
-                      <button className="px-4 py-2 bg-[#A53860] text-white rounded-lg text-sm font-medium hover:bg-[#670D2F] transition-colors">Review</button>
+                      <button className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors">
+                        Suspend
+                      </button>
+                      <button
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                      >
+                        Dismiss
+                      </button>
+                      <button className="px-4 py-2 bg-[#A53860] text-white rounded-lg text-sm font-medium hover:bg-[#670D2F] transition-colors">
+                        Review
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -674,7 +928,10 @@ export function CommunityControlCenter() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => { setShowCreateModal(false); resetForm(); }}
+            onClick={() => {
+              setShowCreateModal(false);
+              resetForm();
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -685,16 +942,29 @@ export function CommunityControlCenter() {
               className={`w-full max-w-lg rounded-2xl p-6 ${isDarkMode ? "bg-gray-900" : "bg-white"} shadow-2xl max-h-[90vh] overflow-y-auto`}
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+                <h3
+                  className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                >
                   {modalType === "country"
-                    ? editTarget ? "Edit Country" : "Add Country"
-                    : modalType === "category" ? editSubTarget ? "Edit Category" : "Create Category" : "Create Community"}
+                    ? editTarget
+                      ? "Edit Country"
+                      : "Add Country"
+                    : modalType === "category"
+                      ? editSubTarget
+                        ? "Edit Category"
+                        : "Create Category"
+                      : "Create Community"}
                 </h3>
                 <button
-                  onClick={() => { setShowCreateModal(false); resetForm(); }}
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
                   className={`p-2 rounded-lg transition-colors ${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}`}
                 >
-                  <X className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                  <X
+                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
                 </button>
               </div>
 
@@ -703,7 +973,9 @@ export function CommunityControlCenter() {
                 <div className="space-y-4">
                   {/* Name */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Country Name
                     </label>
                     <input
@@ -713,45 +985,61 @@ export function CommunityControlCenter() {
                       onChange={(e) => setCountryName(e.target.value)}
                       maxLength={100}
                       className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
 
                   {/* Type */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Type
                     </label>
                     <div className="flex gap-2">
-                      {(["NONE", "COMMUNITIES", "ENTERTAINMENT"] as const).map((trait) => (
-                        <button
-                          key={trait}
-                          type="button"
-                          onClick={() => setCountryTrait(trait)}
-                          className={`flex-1 h-10 rounded-xl text-sm font-medium transition-all border ${
-                            countryTrait === trait
-                              ? "bg-[#A53860]/20 border-[#A53860] text-[#EF88AD]"
-                              : isDarkMode
-                                ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
-                                : "bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300"
-                          }`}
-                        >
-                          {trait === "NONE" ? "None" : trait === "COMMUNITIES" ? "Communities" : "Entertainment"}
-                        </button>
-                      ))}
+                      {(["NONE", "COMMUNITIES", "ENTERTAINMENT"] as const).map(
+                        (trait) => (
+                          <button
+                            key={trait}
+                            type="button"
+                            onClick={() => setCountryTrait(trait)}
+                            className={`flex-1 h-10 rounded-xl text-sm font-medium transition-all border ${
+                              countryTrait === trait
+                                ? "bg-[#A53860]/20 border-[#A53860] text-[#EF88AD]"
+                                : isDarkMode
+                                  ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
+                                  : "bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            {trait === "NONE"
+                              ? "None"
+                              : trait === "COMMUNITIES"
+                                ? "Communities"
+                                : "Entertainment"}
+                          </button>
+                        ),
+                      )}
                     </div>
                   </div>
 
                   {/* Emoji */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Emoji Icon
                     </label>
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
-                      }`}>
+                      <div
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl border ${
+                          isDarkMode
+                            ? "bg-gray-800 border-gray-700"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                      >
                         {countryEmoji}
                       </div>
                       <input
@@ -760,7 +1048,9 @@ export function CommunityControlCenter() {
                         onChange={(e) => setCountryEmoji(e.target.value)}
                         placeholder="🌍"
                         className={`flex-1 h-12 px-4 rounded-xl text-sm transition-all border ${
-                          isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                          isDarkMode
+                            ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                            : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                         } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                       />
                     </div>
@@ -768,19 +1058,53 @@ export function CommunityControlCenter() {
 
                   {/* Color */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Colors
                     </label>
                     <div className="flex gap-2 flex-wrap">
                       {[
-                        { primary: "#A53860", secondary: "#670D2F", gradient: ["#A53860", "#670D2F"] },
-                        { primary: "#D3427B", secondary: "#A53860", gradient: ["#D3427B", "#A53860"] },
-                        { primary: "#6366F1", secondary: "#4F46E5", gradient: ["#6366F1", "#4F46E5"] },
-                        { primary: "#10B981", secondary: "#059669", gradient: ["#10B981", "#059669"] },
-                        { primary: "#F59E0B", secondary: "#D97706", gradient: ["#F59E0B", "#D97706"] },
-                        { primary: "#EF4444", secondary: "#DC2626", gradient: ["#EF4444", "#DC2626"] },
-                        { primary: "#8B5CF6", secondary: "#7C3AED", gradient: ["#8B5CF6", "#7C3AED"] },
-                        { primary: "#06B6D4", secondary: "#0891B2", gradient: ["#06B6D4", "#0891B2"] },
+                        {
+                          primary: "#A53860",
+                          secondary: "#670D2F",
+                          gradient: ["#A53860", "#670D2F"],
+                        },
+                        {
+                          primary: "#D3427B",
+                          secondary: "#A53860",
+                          gradient: ["#D3427B", "#A53860"],
+                        },
+                        {
+                          primary: "#6366F1",
+                          secondary: "#4F46E5",
+                          gradient: ["#6366F1", "#4F46E5"],
+                        },
+                        {
+                          primary: "#10B981",
+                          secondary: "#059669",
+                          gradient: ["#10B981", "#059669"],
+                        },
+                        {
+                          primary: "#F59E0B",
+                          secondary: "#D97706",
+                          gradient: ["#F59E0B", "#D97706"],
+                        },
+                        {
+                          primary: "#EF4444",
+                          secondary: "#DC2626",
+                          gradient: ["#EF4444", "#DC2626"],
+                        },
+                        {
+                          primary: "#8B5CF6",
+                          secondary: "#7C3AED",
+                          gradient: ["#8B5CF6", "#7C3AED"],
+                        },
+                        {
+                          primary: "#06B6D4",
+                          secondary: "#0891B2",
+                          gradient: ["#06B6D4", "#0891B2"],
+                        },
                       ].map((color) => (
                         <button
                           key={color.primary}
@@ -795,7 +1119,9 @@ export function CommunityControlCenter() {
                               ? "ring-2 ring-white ring-offset-2 ring-offset-gray-900 scale-110"
                               : "hover:scale-105"
                           }`}
-                          style={{ background: `linear-gradient(135deg, ${color.gradient[0]}, ${color.gradient[1]})` }}
+                          style={{
+                            background: `linear-gradient(135deg, ${color.gradient[0]}, ${color.gradient[1]})`,
+                          }}
                         />
                       ))}
                     </div>
@@ -803,8 +1129,17 @@ export function CommunityControlCenter() {
 
                   {/* Description */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Description <span className={isDarkMode ? "text-gray-500" : "text-gray-400"}>(optional)</span>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
+                      Description{" "}
+                      <span
+                        className={
+                          isDarkMode ? "text-gray-500" : "text-gray-400"
+                        }
+                      >
+                        (optional)
+                      </span>
                     </label>
                     <textarea
                       placeholder="What's this category about?"
@@ -813,20 +1148,26 @@ export function CommunityControlCenter() {
                       maxLength={500}
                       rows={3}
                       className={`w-full px-4 py-3 rounded-xl text-sm transition-all border resize-none ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
 
                   {/* Preview */}
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Preview
                     </label>
                     <div className="flex justify-center py-4">
                       <div
                         className="w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-lg"
-                        style={{ background: `linear-gradient(135deg, ${countryColorGradient[0]}, ${countryColorGradient[1]})` }}
+                        style={{
+                          background: `linear-gradient(135deg, ${countryColorGradient[0]}, ${countryColorGradient[1]})`,
+                        }}
                       >
                         <span className="text-3xl">{countryEmoji}</span>
                         <span className="text-white text-[11px] font-bold mt-1 text-center px-2 truncate max-w-[80px]">
@@ -842,7 +1183,9 @@ export function CommunityControlCenter() {
               {modalType === "category" && (
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Category Name
                     </label>
                     <input
@@ -851,24 +1194,32 @@ export function CommunityControlCenter() {
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
                       className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Country <span className="text-red-400">*</span>
                     </label>
                     <select
                       value={selectedCountry}
                       onChange={(e) => setSelectedCountry(e.target.value)}
                       className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white"
+                          : "bg-gray-50 border-gray-200 text-gray-900"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     >
                       <option value="">Select Country</option>
                       {communitiesCategories.map((country) => (
-                        <option key={country.id} value={country.name}>{country.name}</option>
+                        <option key={country.id} value={country.name}>
+                          {country.name}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -879,7 +1230,9 @@ export function CommunityControlCenter() {
               {modalType === "community" && (
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Community Name
                     </label>
                     <input
@@ -888,30 +1241,45 @@ export function CommunityControlCenter() {
                       value={communityName}
                       onChange={(e) => setCommunityName(e.target.value)}
                       className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Parent Category <span className="text-red-400">*</span>
                     </label>
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                       className={`w-full h-12 px-4 rounded-xl text-sm transition-all border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white"
+                          : "bg-gray-50 border-gray-200 text-gray-900"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     >
                       <option value="">Select Category</option>
                       {communitiesCategories.map((category) => (
-                        <option key={category.id} value={category.name}>{category.name}</option>
+                        <option key={category.id} value={category.name}>
+                          {category.name}
+                        </option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Description <span className={`font-normal ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>(optional)</span>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
+                      Description{" "}
+                      <span
+                        className={`font-normal ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                      >
+                        (optional)
+                      </span>
                     </label>
                     <textarea
                       placeholder="Describe the community..."
@@ -919,7 +1287,9 @@ export function CommunityControlCenter() {
                       onChange={(e) => setCommunityDescription(e.target.value)}
                       rows={3}
                       className={`w-full px-4 py-3 rounded-xl text-sm transition-all resize-none border ${
-                        isDarkMode ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                       } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
                     />
                   </div>
@@ -929,10 +1299,15 @@ export function CommunityControlCenter() {
               {/* Action Buttons */}
               <div className="flex gap-3 mt-6">
                 <button
-                  onClick={() => { setShowCreateModal(false); resetForm(); }}
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
                   disabled={isSubmitting}
                   className={`flex-1 h-12 rounded-xl font-semibold transition-colors disabled:opacity-50 ${
-                    isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    isDarkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   Cancel
@@ -945,9 +1320,15 @@ export function CommunityControlCenter() {
                   {isSubmitting ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      {editTarget || editSubTarget ? "Saving..." : "Creating..."}
+                      {editTarget || editSubTarget
+                        ? "Saving..."
+                        : "Creating..."}
                     </>
-                  ) : editTarget || editSubTarget ? "Save Changes" : "Create"}
+                  ) : editTarget || editSubTarget ? (
+                    "Save Changes"
+                  ) : (
+                    "Create"
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -972,15 +1353,23 @@ export function CommunityControlCenter() {
               onClick={(e) => e.stopPropagation()}
               className={`w-full max-w-sm rounded-2xl p-6 ${isDarkMode ? "bg-gray-900" : "bg-white"} shadow-2xl`}
             >
-              <h3 className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+              <h3
+                className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 Delete Country
               </h3>
-              <p className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Are you sure you want to delete this country? This action cannot be undone.
+              <p
+                className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+              >
+                Are you sure you want to delete this country? This action cannot
+                be undone.
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setShowDeleteConfirm(false); setDeleteTargetId(null); }}
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteTargetId(null);
+                  }}
                   disabled={deletingCategory}
                   className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
                 >
@@ -996,7 +1385,9 @@ export function CommunityControlCenter() {
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Deleting...
                     </>
-                  ) : "Delete"}
+                  ) : (
+                    "Delete"
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -1021,18 +1412,28 @@ export function CommunityControlCenter() {
               onClick={(e) => e.stopPropagation()}
               className={`w-full max-w-sm rounded-2xl p-6 ${isDarkMode ? "bg-gray-900" : "bg-white"} shadow-2xl`}
             >
-              <h3 className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+              <h3
+                className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 Delete Category
               </h3>
-              <p className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Are you sure you want to delete this category? This action cannot be undone.
+              <p
+                className={`text-sm mb-6 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+              >
+                Are you sure you want to delete this category? This action
+                cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setShowDeleteSubConfirm(false); setDeleteSubTargetId(null); }}
+                  onClick={() => {
+                    setShowDeleteSubConfirm(false);
+                    setDeleteSubTargetId(null);
+                  }}
                   disabled={deletingSubCategory}
                   className={`flex-1 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${
-                    isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    isDarkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   Cancel
@@ -1047,7 +1448,9 @@ export function CommunityControlCenter() {
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Deleting...
                     </>
-                  ) : "Delete"}
+                  ) : (
+                    "Delete"
+                  )}
                 </button>
               </div>
             </motion.div>

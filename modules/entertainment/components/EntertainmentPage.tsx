@@ -26,14 +26,18 @@ export const EntertainmentPage = () => {
   const [modalData, setModalData] = useState<ModalData>({ type: null });
   const closeModal = () => setModalData({ type: null });
 
-  const { data: categories = [], isLoading, error } = useEntertainmentCategories();
+  const {
+    data: categories = [],
+    isLoading,
+    error,
+  } = useEntertainmentCategories();
 
   const subcategories = useMemo(() => {
     return categories.flatMap((cat) =>
       (cat.chummeSubCategories || []).map((sub) => ({
         ...sub,
         categoryName: cat.name,
-      }))
+      })),
     );
   }, [categories]);
 
@@ -44,8 +48,8 @@ export const EntertainmentPage = () => {
           ...t,
           categoryName: cat.name,
           subcategoryName: sub.name,
-        }))
-      )
+        })),
+      ),
     );
   }, [categories]);
 
@@ -59,7 +63,10 @@ export const EntertainmentPage = () => {
   }, [categories, subcategories, topics]);
 
   if (isLoading) return <ChummeLoader />;
-  if (error) return <div className="p-8 text-red-500">Error loading entertainment data.</div>;
+  if (error)
+    return (
+      <div className="p-8 text-red-500">Error loading entertainment data.</div>
+    );
 
   return (
     <div>
@@ -69,7 +76,9 @@ export const EntertainmentPage = () => {
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <h1 className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
+        <h1
+          className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+        >
           Entertainment Manager
         </h1>
         <p className={isDark ? "text-gray-400" : "text-gray-600"}>
@@ -83,18 +92,21 @@ export const EntertainmentPage = () => {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="mb-8"
       >
-        <div className={`border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
+        <div
+          className={`border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}
+        >
           <div className="flex gap-6 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-4 px-2 font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.id
-                  ? "border-[#A53860] text-[#A53860]"
-                  : isDark
-                    ? "border-transparent text-gray-400 hover:text-gray-300"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
-                  }`}
+                className={`pb-4 px-2 font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  activeTab === tab.id
+                    ? "border-[#A53860] text-[#A53860]"
+                    : isDark
+                      ? "border-transparent text-gray-400 hover:text-gray-300"
+                      : "border-transparent text-gray-600 hover:text-gray-900"
+                }`}
               >
                 {tab.name}
               </button>
@@ -109,14 +121,35 @@ export const EntertainmentPage = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {activeTab === "overview" && <OverviewTab isDark={isDark} stats={stats} categories={categories} />}
-        {activeTab === "categories" && <CategoriesTab isDark={isDark} setModalData={setModalData} categories={categories} />}
-        {activeTab === "subcategories" && <SubcategoriesTab isDark={isDark} setModalData={setModalData} subcategories={subcategories} />}
-        {activeTab === "topics" && <TopicsTab isDark={isDark} setModalData={setModalData} topics={topics} />}
+        {activeTab === "overview" && (
+          <OverviewTab isDark={isDark} stats={stats} categories={categories} />
+        )}
+        {activeTab === "categories" && (
+          <CategoriesTab
+            isDark={isDark}
+            setModalData={setModalData}
+            categories={categories}
+          />
+        )}
+        {activeTab === "subcategories" && (
+          <SubcategoriesTab
+            isDark={isDark}
+            setModalData={setModalData}
+            subcategories={subcategories}
+          />
+        )}
+        {activeTab === "topics" && (
+          <TopicsTab
+            isDark={isDark}
+            setModalData={setModalData}
+            topics={topics}
+          />
+        )}
       </motion.div>
 
       {modalData.type && (
         <EntertainmentModal
+          key={modalData.item?.id || modalData.type}
           isDark={isDark}
           modalData={modalData}
           closeModal={closeModal}

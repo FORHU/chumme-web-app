@@ -10,7 +10,10 @@ export interface RouteGuardProps {
   requireAuth?: boolean;
 }
 
-export const RouteGuard = ({ children, requireAuth = true }: RouteGuardProps) => {
+export const RouteGuard = ({
+  children,
+  requireAuth = true,
+}: RouteGuardProps) => {
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();

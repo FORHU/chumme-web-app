@@ -42,7 +42,6 @@ export const Hero = () => {
             Start Journey
           </Button>
 
-
           <a
             href="/chumme.apk"
             download="chumme.apk"
@@ -57,8 +56,10 @@ export const Hero = () => {
             >
               <Download className="w-4 h-4 text-brand-vibrant group-hover:animate-bounce" />
               <span>Download APK</span>
-              <span className="text-xs px-1.5 py-0.5 rounded-full bg-brand-vibrant/20 
-                text-brand-vibrant font-mono">
+              <span
+                className="text-xs px-1.5 py-0.5 rounded-full bg-brand-vibrant/20 
+                text-brand-vibrant font-mono"
+              >
                 Android
               </span>
             </Button>

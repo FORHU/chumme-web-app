@@ -1,15 +1,9 @@
 "use client";
+import { Users, Flag, Ban, Shield, TrendingUp } from "lucide-react";
 import {
-  Users,
-  Flag,
-  Ban,
-  Shield,
-  TrendingUp,
-} from "lucide-react";
-import { 
-  CommunityReport, 
-  ActiveCommunity, 
-  ActionLogItem 
+  CommunityReport,
+  ActiveCommunity,
+  ActionLogItem,
 } from "@/modules/community/types";
 
 export const communityStats = [

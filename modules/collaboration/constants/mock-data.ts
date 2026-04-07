@@ -1,4 +1,13 @@
-import type { CollabRoom, PublicCollab, Song, Recording, MusicSong, KaraokeSong, KaraokeRecording, Report } from "@/modules/collaboration/types";
+import type {
+  CollabRoom,
+  PublicCollab,
+  Song,
+  Recording,
+  MusicSong,
+  KaraokeSong,
+  KaraokeRecording,
+  Report,
+} from "@/modules/collaboration/types";
 
 export const mockRooms: CollabRoom[] = [
   {
@@ -70,7 +79,13 @@ export const mockPublicCollabs: PublicCollab[] = [
 ];
 
 export const mockSongs: Song[] = [
-  { id: "1", title: "Dynamite", artist: "BTS", usageCount: 230, status: "Active" },
+  {
+    id: "1",
+    title: "Dynamite",
+    artist: "BTS",
+    usageCount: 230,
+    status: "Active",
+  },
   {
     id: "2",
     title: "How You Like That",
@@ -78,7 +93,13 @@ export const mockSongs: Song[] = [
     usageCount: 180,
     status: "Active",
   },
-  { id: "3", title: "Butter", artist: "BTS", usageCount: 195, status: "Active" },
+  {
+    id: "3",
+    title: "Butter",
+    artist: "BTS",
+    usageCount: 195,
+    status: "Active",
+  },
   {
     id: "4",
     title: "Kill This Love",
@@ -119,22 +140,96 @@ export const mockRecordings: Recording[] = [
 ];
 
 export const mockMusicSongs: MusicSong[] = [
-  { id: "1", title: "Dynamite", artist: "BTS", album: "BE", genre: "Pop", duration: "3:20", status: "Active" },
-  { id: "2", title: "How You Like That", artist: "BLACKPINK", album: "THE ALBUM", genre: "K-Pop", duration: "3:01", status: "Active" },
-  { id: "3", title: "Love Shot", artist: "EXO", album: "Love Shot", genre: "K-Pop", duration: "3:10", status: "Active" },
-  { id: "4", title: "Butter", artist: "BTS", album: "Butter", genre: "Pop", duration: "2:44", status: "Active" },
+  {
+    id: "1",
+    title: "Dynamite",
+    artist: "BTS",
+    album: "BE",
+    genre: "Pop",
+    duration: "3:20",
+    status: "Active",
+  },
+  {
+    id: "2",
+    title: "How You Like That",
+    artist: "BLACKPINK",
+    album: "THE ALBUM",
+    genre: "K-Pop",
+    duration: "3:01",
+    status: "Active",
+  },
+  {
+    id: "3",
+    title: "Love Shot",
+    artist: "EXO",
+    album: "Love Shot",
+    genre: "K-Pop",
+    duration: "3:10",
+    status: "Active",
+  },
+  {
+    id: "4",
+    title: "Butter",
+    artist: "BTS",
+    album: "Butter",
+    genre: "Pop",
+    duration: "2:44",
+    status: "Active",
+  },
 ];
 
 export const mockKaraokeSongs: KaraokeSong[] = [
-  { id: "1", title: "Dynamite", artist: "BTS", lyrics: "Lyrics Available", duration: "3:20", status: "Active" },
-  { id: "2", title: "Butter", artist: "BTS", lyrics: "Lyrics Available", duration: "2:44", status: "Active" },
-  { id: "3", title: "How You Like That", artist: "BLACKPINK", lyrics: "Lyrics Available", duration: "3:01", status: "Active" },
+  {
+    id: "1",
+    title: "Dynamite",
+    artist: "BTS",
+    lyrics: "Lyrics Available",
+    duration: "3:20",
+    status: "Active",
+  },
+  {
+    id: "2",
+    title: "Butter",
+    artist: "BTS",
+    lyrics: "Lyrics Available",
+    duration: "2:44",
+    status: "Active",
+  },
+  {
+    id: "3",
+    title: "How You Like That",
+    artist: "BLACKPINK",
+    lyrics: "Lyrics Available",
+    duration: "3:01",
+    status: "Active",
+  },
 ];
 
 export const mockKaraokeRecordings: KaraokeRecording[] = [
-  { id: "1", user: "user_123", song: "Dynamite", room: "Kpop Night Room", date: "Feb 20", views: 1200 },
-  { id: "2", user: "user_777", song: "Butter", room: "BTS Sing Room", date: "Feb 21", views: 900 },
-  { id: "3", user: "maria_23", song: "How You Like That", room: "Fan Singing PH", date: "Feb 22", views: 750 },
+  {
+    id: "1",
+    user: "user_123",
+    song: "Dynamite",
+    room: "Kpop Night Room",
+    date: "Feb 20",
+    views: 1200,
+  },
+  {
+    id: "2",
+    user: "user_777",
+    song: "Butter",
+    room: "BTS Sing Room",
+    date: "Feb 21",
+    views: 900,
+  },
+  {
+    id: "3",
+    user: "maria_23",
+    song: "How You Like That",
+    room: "Fan Singing PH",
+    date: "Feb 22",
+    views: 750,
+  },
 ];
 
 export const mockReports: Report[] = [

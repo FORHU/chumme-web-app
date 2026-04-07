@@ -11,7 +11,11 @@ import {
   removeStorageData,
 } from "@/modules/shared/utils/storage";
 import { authService } from "@/modules/shared/api/auth.service";
-import { AuthResponse, User, RegisterRequest } from "@/modules/shared/api/api.types";
+import {
+  AuthResponse,
+  User,
+  RegisterRequest,
+} from "@/modules/shared/api/api.types";
 import { setCachedAccessToken } from "@/modules/shared/api/api-client";
 
 type VerificationRequiredResult = {
@@ -50,7 +54,8 @@ function extractApiErrorMessage(err: unknown): string | undefined {
     const response = err.response;
     if (isRecord(response)) {
       const data = response.data;
-      if (isRecord(data) && typeof data.message === "string") return data.message;
+      if (isRecord(data) && typeof data.message === "string")
+        return data.message;
       if (typeof data === "string") return data;
     }
 
@@ -141,11 +146,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error("Login failed");
       }
 
-      await persistAuth(res, () => set({ user: res.user, isAuthenticated: true }));
+      await persistAuth(res, () =>
+        set({ user: res.user, isAuthenticated: true }),
+      );
       return { success: true };
     } catch (err: unknown) {
-      const message =
-        extractApiErrorMessage(err) || "Invalid credentials";
+      const message = extractApiErrorMessage(err) || "Invalid credentials";
       return { error: true, message };
     } finally {
       set({ isLoading: false });
@@ -175,11 +181,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error("Login failed");
       }
 
-      await persistAuth(res, () => set({ user: res.user, isAuthenticated: true }));
+      await persistAuth(res, () =>
+        set({ user: res.user, isAuthenticated: true }),
+      );
       return { success: true };
     } catch (err: unknown) {
-      const message =
-        extractApiErrorMessage(err) || "Invalid credentials";
+      const message = extractApiErrorMessage(err) || "Invalid credentials";
       return { error: true, message };
     } finally {
       set({ isLoading: false });
@@ -209,11 +216,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error("Login failed");
       }
 
-      await persistAuth(res, () => set({ user: res.user, isAuthenticated: true }));
+      await persistAuth(res, () =>
+        set({ user: res.user, isAuthenticated: true }),
+      );
       return { success: true };
     } catch (err: unknown) {
-      const message =
-        extractApiErrorMessage(err) || "Invalid credentials";
+      const message = extractApiErrorMessage(err) || "Invalid credentials";
       return { error: true, message };
     } finally {
       set({ isLoading: false });

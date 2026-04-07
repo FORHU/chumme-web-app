@@ -6,7 +6,15 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Bell, Search, Sun, Moon, LogOut, ChevronDown, Settings } from "lucide-react";
+import {
+  Bell,
+  Search,
+  Sun,
+  Moon,
+  LogOut,
+  ChevronDown,
+  Settings,
+} from "lucide-react";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 import { NAV_ITEMS } from "@/modules/dashboard/constants/nav-items";
 import { useDashboardStore } from "@/modules/dashboard/store/useDashboardStore";
@@ -22,7 +30,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const { activeNav, setActiveNav, settingsExpanded, setSettingsExpanded } = useDashboardStore();
+  const { activeNav, setActiveNav, settingsExpanded, setSettingsExpanded } =
+    useDashboardStore();
 
   useEffect(() => {
     const currentNavItem = NAV_ITEMS.find((item) => item.href === pathname);
@@ -56,7 +65,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className={`min-h-screen flex ${isDark ? "bg-linear-to-br from-[#0a0a0a] via-[#1a0510] to-[#0a0a0a]" : "bg-linear-to-br from-[#fce7f3] via-[#fce1ed] to-[#f3e8ff]"}`}>
+    <div
+      className={`min-h-screen flex ${isDark ? "bg-linear-to-br from-[#0a0a0a] via-[#1a0510] to-[#0a0a0a]" : "bg-linear-to-br from-[#fce7f3] via-[#fce1ed] to-[#f3e8ff]"}`}
+    >
       {/* ── Sidebar ── */}
       <motion.aside
         initial={{ x: -260 }}
@@ -65,9 +76,21 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         className={`w-64 shrink-0 flex flex-col border-r h-screen sticky top-0 ${isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
       >
         {/* Logo */}
-        <div className={`p-6 border-b flex items-center gap-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-          <Image src="/logo.png" alt="Chumme" width={40} height={40} className="object-contain" />
-          <span className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>Chumme</span>
+        <div
+          className={`p-6 border-b flex items-center gap-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}
+        >
+          <Image
+            src="/logo.png"
+            alt="Chumme"
+            width={40}
+            height={40}
+            className="object-contain"
+          />
+          <span
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+          >
+            Chumme
+          </span>
         </div>
 
         {/* Nav */}
@@ -136,7 +159,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               }`}
             >
               <Settings className="w-5 h-5 shrink-0" />
-              <span className="font-medium flex-1 text-left text-sm">Settings</span>
+              <span className="font-medium flex-1 text-left text-sm">
+                Settings
+              </span>
               <motion.div
                 animate={{ rotate: settingsExpanded ? 180 : 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -188,8 +213,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </nav>
 
         {/* Theme toggle + sign out */}
-        <div className={`p-4 border-t space-y-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-          <div className={`rounded-xl p-1 flex gap-1 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}>
+        <div
+          className={`p-4 border-t space-y-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}
+        >
+          <div
+            className={`rounded-xl p-1 flex gap-1 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
+          >
             <button
               onClick={() => setTheme("light")}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${
@@ -241,7 +270,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         >
           {/* Search */}
           <div className="flex-1 max-w-xl relative">
-            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none ${isDark ? "text-gray-500" : "text-gray-400"}`} />
+            <Search
+              className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
+            />
             <input
               type="text"
               placeholder="Search communities, collaborations…"
@@ -259,7 +290,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
             }`}
           >
-            <Bell className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`} />
+            <Bell
+              className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`}
+            />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#A53860]" />
           </button>
 
@@ -270,9 +303,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </motion.header>
 
         {/* Page content */}
-        <main className="flex-1 p-8 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-8 overflow-auto">{children}</main>
       </div>
     </div>
   );

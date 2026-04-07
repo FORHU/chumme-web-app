@@ -34,23 +34,33 @@ export const api = create({
 });
 
 // Request interceptor — attach auth token
-api.axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  if (!_cachedAccessToken && typeof window !== "undefined") {
-    _cachedAccessToken = await getStorageData<string>(ACCESS_TOKEN);
-  }
-  if (_cachedAccessToken) {
-    config.headers.Authorization = `Bearer ${_cachedAccessToken}`;
-  }
-  return config;
-});
+api.axiosInstance.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    if (!_cachedAccessToken && typeof window !== "undefined") {
+      _cachedAccessToken = await getStorageData<string>(ACCESS_TOKEN);
+    }
+    if (_cachedAccessToken) {
+      config.headers.Authorization = `Bearer ${_cachedAccessToken}`;
+    }
+    return config;
+  },
+);
 
 // Response interceptor — handle 401 with token refresh
 api.axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError & { config?: InternalAxiosRequestConfig & { _retry?: boolean } }) => {
+  async (
+    error: AxiosError & {
+      config?: InternalAxiosRequestConfig & { _retry?: boolean };
+    },
+  ) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       const rt = await getStorageData<string>(REFRESH_TOKEN);

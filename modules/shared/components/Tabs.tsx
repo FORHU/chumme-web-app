@@ -17,7 +17,7 @@ export interface TabsProps {
 
 export const Tabs = ({ items, defaultOpenId, className }: TabsProps) => {
   const [activeTab, setActiveTab] = useState<string | undefined>(
-    defaultOpenId || items[0]?.id
+    defaultOpenId || items[0]?.id,
   );
 
   if (!items.length) return null;

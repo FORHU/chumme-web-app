@@ -10,7 +10,11 @@ export interface SongLibraryProps {
   onAddSong: () => void;
 }
 
-export const SongLibrary = ({ isDarkMode, songs, onAddSong }: SongLibraryProps) => {
+export const SongLibrary = ({
+  isDarkMode,
+  songs,
+  onAddSong,
+}: SongLibraryProps) => {
   return (
     <motion.div
       key="songs"

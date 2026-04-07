@@ -67,7 +67,7 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
         <path d="M20 12h2"></path>
         <path d="m6.34 17.66-1.41 1.41"></path>
         <path d="m19.07 4.93-1.41 1.41"></path>
-       </svg>
+      </svg>
 
       {/* Moon Icon (Dark Mode) */}
       <svg

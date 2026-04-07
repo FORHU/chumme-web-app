@@ -25,7 +25,11 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/dashboard",
     icon: Home,
     children: [
-      { label: "Platform Ingestion", href: "/dashboard/platform-ingestion", icon: Activity },
+      {
+        label: "Platform Ingestion",
+        href: "/dashboard/platform-ingestion",
+        icon: Activity,
+      },
     ],
   },
   { label: "Discover", href: "/dashboard/discover", icon: Compass },
@@ -38,7 +42,11 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Entertainment", href: "/dashboard/entertainment", icon: Star },
     ],
   },
-  { label: "Collaborations", href: "/dashboard/collaborations", icon: UserPlus },
+  {
+    label: "Collaborations",
+    href: "/dashboard/collaborations",
+    icon: UserPlus,
+  },
   { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
   { label: "Profile", href: "/dashboard/profile", icon: User },
 ];

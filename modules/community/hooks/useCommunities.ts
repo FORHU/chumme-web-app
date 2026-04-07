@@ -1,5 +1,10 @@
+import {
+  useMutation,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
-import { useApiMutation } from "@/modules/shared/hooks/useApiMutation";
+import { api } from "@/modules/shared/api/api-client";
 import type {
   ChummeCategory,
   ChummeSubCategory,
@@ -26,7 +31,7 @@ export const communitiesKeys = {
 export const useGetCommunitiesCategories = () => {
   return useApiQuery<{ categories: ChummeCategory[] }>(
     [...communitiesKeys.categories()],
-    "/api/v1/chumme-categories/communities"
+    "/api/v1/chumme-categories/communities",
   );
 };
 
@@ -37,12 +42,16 @@ export const useGetCommunitiesCategories = () => {
  */
 export const useGetSubcategoriesByCategoryId = (
   categoryId: string,
-  options?: { enabled?: boolean }
+  options?: Partial<UseQueryOptions<{ subCategories: ChummeSubCategory[] }>>,
 ) => {
   return useApiQuery<{ subCategories: ChummeSubCategory[] }>(
     [...communitiesKeys.subcategories(categoryId)],
     `/api/v1/chumme-subcategories/category/${categoryId}`,
-    { enabled: !!categoryId && (options?.enabled ?? true) }
+    {
+      enabled: !!categoryId && (options?.enabled ?? true),
+      refetchInterval: 30_000,
+      ...options,
+    },
   );
 };
 
@@ -52,26 +61,65 @@ export const useGetSubcategoriesByCategoryId = (
  * Creates a new top-level Communities category ("Add Country" in the UI).
  * POST /api/v1/chumme-categories/create
  */
-export const useCreateCommunitiesCategory = (
-  options?: Parameters<
-    typeof useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>
-  >[0]
-) => {
-  return useApiMutation<ChummeCategory, Error, CreateCommunitiesCategoryParams>(
-    options
-  );
+export const useCreateCommunitiesCategory = (options?: {
+  onSuccess?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: {
+      name: string;
+      chummeTrait?: string;
+      traits?: string;
+      isAd: boolean;
+      [key: string]: any;
+    }) => {
+      // TODO: re-add color to payload once backend Joi schema is updated
+      // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
+      const res = await api.post("/api/v1/chumme-categories/create", {
+        name: params.name,
+        chummeTrait: params.chummeTrait || params.traits || "COMMUNITIES",
+        isAd: params.isAd,
+      });
+      if (!res.ok)
+        throw new Error((res.data as any)?.message || "Create failed");
+      return res.data as ChummeCategory;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.categories() });
+      options?.onSuccess?.();
+    },
+  });
 };
 
 /**
  * Creates a subcategory under a Communities category ("Create Category" in the UI).
  * POST /api/v1/chumme-subcategories/create
  */
-export const useCreateSubCategory = (
-  options?: Parameters<
-    typeof useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>
-  >[0]
-) => {
-  return useApiMutation<ChummeSubCategory, Error, CreateSubCategoryParams>(
-    options
-  );
+export const useCreateSubCategory = (options?: { onSuccess?: () => void }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: {
+      name: string;
+      chummeCategoryId: string;
+      isAd: boolean;
+      note?: string;
+      [key: string]: any;
+    }) => {
+      // TODO: re-add color to payload once backend Joi schema is updated
+      // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
+      const res = await api.post("/api/v1/chumme-subcategories/create", {
+        name: params.name,
+        chummeCategoryId: params.chummeCategoryId,
+        isAd: params.isAd,
+        note: params.note,
+      });
+      if (!res.ok)
+        throw new Error((res.data as any)?.message || "Create failed");
+      return res.data as ChummeSubCategory;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.all });
+      options?.onSuccess?.();
+    },
+  });
 };

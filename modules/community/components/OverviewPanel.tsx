@@ -1,13 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Flag,
-  UserX,
-  Crown,
-  Shield,
-  LucideIcon,
-} from "lucide-react";
+import { Flag, UserX, Crown, Shield, LucideIcon } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -32,8 +26,11 @@ interface OverviewPanelProps {
 const ModerationTrendsChart = ({ isDarkMode }: { isDarkMode: boolean }) => {
   return (
     <div
-      className={`p-6 rounded-lg border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-gray-50 border-gray-200"
-        }`}
+      className={`p-6 rounded-lg border ${
+        isDarkMode
+          ? "bg-gray-900 border-gray-700"
+          : "bg-gray-50 border-gray-200"
+      }`}
     >
       <h3
         className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"} mb-6`}
@@ -78,8 +75,11 @@ const ModerationTrendsChart = ({ isDarkMode }: { isDarkMode: boolean }) => {
 const ReportTypesDistribution = ({ isDarkMode }: { isDarkMode: boolean }) => {
   return (
     <div
-      className={`p-6 rounded-lg border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-gray-50 border-gray-200"
-        }`}
+      className={`p-6 rounded-lg border ${
+        isDarkMode
+          ? "bg-gray-900 border-gray-700"
+          : "bg-gray-50 border-gray-200"
+      }`}
     >
       <h3
         className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"} mb-6`}
@@ -133,10 +133,11 @@ const QuickActionCard = ({
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.1 * index }}
       whileHover={{ y: -2 }}
-      className={`p-4 rounded-lg border text-left transition-colors ${isDarkMode
+      className={`p-4 rounded-lg border text-left transition-colors ${
+        isDarkMode
           ? "bg-gray-800 border-gray-600 hover:bg-gray-700"
           : "bg-white border-gray-300 hover:bg-gray-50"
-        }`}
+      }`}
     >
       <div
         className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center mb-3`}
@@ -148,7 +149,9 @@ const QuickActionCard = ({
       >
         {action.title}
       </h4>
-      <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+      <p
+        className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+      >
         {action.description}
       </p>
     </motion.button>
@@ -191,8 +194,11 @@ export const OverviewPanel = ({ isDarkMode }: OverviewPanelProps) => {
       </div>
 
       <div
-        className={`p-6 rounded-lg border ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-gray-50 border-gray-200"
-          }`}
+        className={`p-6 rounded-lg border ${
+          isDarkMode
+            ? "bg-gray-900 border-gray-700"
+            : "bg-gray-50 border-gray-200"
+        }`}
       >
         <h3
           className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-gray-900"} mb-6`}
@@ -201,7 +207,12 @@ export const OverviewPanel = ({ isDarkMode }: OverviewPanelProps) => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => (
-            <QuickActionCard key={action.title} action={action} index={index} isDarkMode={isDarkMode} />
+            <QuickActionCard
+              key={action.title}
+              action={action}
+              index={index}
+              isDarkMode={isDarkMode}
+            />
           ))}
         </div>
       </div>

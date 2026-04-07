@@ -59,7 +59,9 @@ export const OverviewTab = ({ isDarkMode }: OverviewTabProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div
           className={`p-6 rounded-lg border ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode
+              ? "bg-gray-800 border-gray-700"
+              : "bg-white border-gray-200"
           }`}
         >
           <h3
@@ -91,7 +93,9 @@ export const OverviewTab = ({ isDarkMode }: OverviewTabProps) => {
 
         <div
           className={`p-6 rounded-lg border ${
-            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+            isDarkMode
+              ? "bg-gray-800 border-gray-700"
+              : "bg-white border-gray-200"
           }`}
         >
           <h3
@@ -105,7 +109,10 @@ export const OverviewTab = ({ isDarkMode }: OverviewTabProps) => {
                 strokeDasharray="3 3"
                 stroke={isDarkMode ? "#374151" : "#E5E7EB"}
               />
-              <XAxis dataKey="fandom" stroke={isDarkMode ? "#9CA3AF" : "#6B7280"} />
+              <XAxis
+                dataKey="fandom"
+                stroke={isDarkMode ? "#9CA3AF" : "#6B7280"}
+              />
               <YAxis stroke={isDarkMode ? "#9CA3AF" : "#6B7280"} />
               <Tooltip
                 contentStyle={{

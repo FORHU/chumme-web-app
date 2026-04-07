@@ -29,7 +29,7 @@ export const ingestionKeys = {
 export const useGetPipelineStatus = () => {
   return useApiQuery<{ message: string; data: PipelineStatus }>(
     [...ingestionKeys.pipeline()],
-    "/api/v1/monitoring/pipeline"
+    "/api/v1/monitoring/pipeline",
   );
 };
 
@@ -40,7 +40,7 @@ export const useGetPipelineStatus = () => {
 export const useGetWorkerHealth = () => {
   return useApiQuery<{ message: string; data: Record<string, unknown> | null }>(
     [...ingestionKeys.workerHealth()],
-    "/api/v1/monitoring/worker/health"
+    "/api/v1/monitoring/worker/health",
   );
 };
 
@@ -51,7 +51,7 @@ export const useGetWorkerHealth = () => {
 export const useGetAnalyticsTrends = () => {
   return useApiQuery<{ message: string; data: AnalyticsTrends }>(
     [...ingestionKeys.trends()],
-    "/api/v1/monitoring/analytics/trends"
+    "/api/v1/monitoring/analytics/trends",
   );
 };
 
@@ -61,7 +61,7 @@ export const useGetAnalyticsTrends = () => {
 export const useGetChainStatus = () => {
   return useApiQuery<{ success: boolean; data: ChainStatus }>(
     [...ingestionKeys.all, "chain-status"],
-    "/api/v1/ingestion-schedules/chain/status"
+    "/api/v1/ingestion-schedules/chain/status",
   );
 };
 
@@ -75,7 +75,7 @@ export const useStartChain = (
       Error,
       Record<string, never>
     >
-  >[0]
+  >[0],
 ) => {
   return useApiMutation<
     { success: boolean; message: string },
@@ -94,7 +94,7 @@ export const useSkipChainStep = (
       Error,
       Record<string, never>
     >
-  >[0]
+  >[0],
 ) => {
   return useApiMutation<
     { success: boolean; message: string },
@@ -111,12 +111,12 @@ export const useSkipChainStep = (
  */
 export const useGetSchedulesByTarget = (
   targetId: string,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) => {
   return useApiQuery<{ success: boolean; data: SocialIngestionSchedule[] }>(
     [...ingestionKeys.schedules(targetId)],
     `/api/v1/ingestion-schedules/target/${targetId}`,
-    { enabled: !!targetId && (options?.enabled ?? true) }
+    { enabled: !!targetId && (options?.enabled ?? true) },
   );
 };
 
@@ -128,12 +128,18 @@ export const useGetSchedulesByTarget = (
  */
 export const useTriggerSchedule = (
   options?: Parameters<
-    typeof useApiMutation<{ success: boolean; message: string }, Error, { id: string }>
-  >[0]
+    typeof useApiMutation<
+      { success: boolean; message: string },
+      Error,
+      { id: string }
+    >
+  >[0],
 ) => {
-  return useApiMutation<{ success: boolean; message: string }, Error, { id: string }>(
-    options
-  );
+  return useApiMutation<
+    { success: boolean; message: string },
+    Error,
+    { id: string }
+  >(options);
 };
 
 /**
@@ -144,12 +150,18 @@ export const useTriggerSchedule = (
  */
 export const useTriggerManualCrawl = (
   options?: Parameters<
-    typeof useApiMutation<{ success: boolean; message: string }, Error, { force?: boolean }>
-  >[0]
+    typeof useApiMutation<
+      { success: boolean; message: string },
+      Error,
+      { force?: boolean }
+    >
+  >[0],
 ) => {
-  return useApiMutation<{ success: boolean; message: string }, Error, { force?: boolean }>(
-    options
-  );
+  return useApiMutation<
+    { success: boolean; message: string },
+    Error,
+    { force?: boolean }
+  >(options);
 };
 
 /**
@@ -162,7 +174,7 @@ export const useCreateSchedule = (
       Error,
       CreateScheduleParams
     >
-  >[0]
+  >[0],
 ) => {
   return useApiMutation<
     { success: boolean; message: string; data: SocialIngestionSchedule },
@@ -181,7 +193,7 @@ export const useUpdateSchedule = (
       Error,
       UpdateScheduleParams & { id?: string }
     >
-  >[0]
+  >[0],
 ) => {
   return useApiMutation<
     { success: boolean; message: string; data: SocialIngestionSchedule },
@@ -195,10 +207,16 @@ export const useUpdateSchedule = (
  */
 export const useDeleteSchedule = (
   options?: Parameters<
-    typeof useApiMutation<{ success: boolean; message: string }, Error, { id: string }>
-  >[0]
+    typeof useApiMutation<
+      { success: boolean; message: string },
+      Error,
+      { id: string }
+    >
+  >[0],
 ) => {
-  return useApiMutation<{ success: boolean; message: string }, Error, { id: string }>(
-    options
-  );
+  return useApiMutation<
+    { success: boolean; message: string },
+    Error,
+    { id: string }
+  >(options);
 };

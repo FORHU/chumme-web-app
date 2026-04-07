@@ -64,7 +64,14 @@ export interface KaraokeRecording {
   views: number;
 }
 
-export type TabId = "monitor" | "rooms" | "public" | "private" | "songs" | "recordings" | "reports";
+export type TabId =
+  | "monitor"
+  | "rooms"
+  | "public"
+  | "private"
+  | "songs"
+  | "recordings"
+  | "reports";
 export type CollabPage = "rooms" | "music" | "karaoke";
 export type KaraokeTabId = "songs" | "recordings";
 

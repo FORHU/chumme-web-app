@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { FloatingBubble } from "@/modules/community/components/FloatingBubble";
 
 interface BubblePosition {
@@ -14,16 +14,19 @@ interface BubblePosition {
   isManuallyPlaced?: boolean;
 }
 
+import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
+
 export interface BubbleData {
   id: string;
-  name: string;
+  label: string; // The primary name/label
   count?: number;
   color?: string;
   size: number;
-  label?: string;
+  subLabel?: string; // The subtitle (e.g. "members")
   badge?: string;
   statusActive?: boolean;
   onClick: () => void;
+  chummeVisualDesign?: ChummeVisualDesign | null;
 }
 
 interface BubbleCanvasProps {
@@ -39,7 +42,9 @@ export const BubbleCanvas = ({
   containerWidth: propWidth,
   containerHeight: propHeight,
 }: BubbleCanvasProps) => {
-  const [positions, setPositions] = useState<Record<string, BubblePosition>>({});
+  const [positions, setPositions] = useState<Record<string, BubblePosition>>(
+    {},
+  );
   const [containerSize, setContainerSize] = useState({
     width: propWidth || 800,
     height: propHeight || 500,
@@ -61,7 +66,8 @@ export const BubbleCanvas = ({
 
   const { width: containerWidth, height: containerHeight } = containerSize;
 
-  useEffect(() => {
+  // 1. Initial layout calculation (stable)
+  const initialLayout = useMemo(() => {
     const initial: Record<string, BubblePosition> = {};
     const PADDING = 24;
     bubbles.forEach((bubble, index) => {
@@ -81,8 +87,13 @@ export const BubbleCanvas = ({
         isManuallyPlaced: false,
       };
     });
-    setPositions(initial);
+    return initial;
   }, [bubbles, containerWidth, containerHeight]);
+
+  // 2. Sync state when initial layout changes (standard state reset)
+  useEffect(() => {
+    setPositions(initialLayout);
+  }, [initialLayout]);
 
   useEffect(() => {
     const animate = () => {
@@ -94,12 +105,23 @@ export const BubbleCanvas = ({
           b.x += b.vx;
           b.y += b.vy;
           const pad = b.size / 2 + 20;
-          if (b.x <= pad) { b.x = pad; b.vx = Math.abs(b.vx) * 0.8; }
-          else if (b.x >= containerWidth - pad) { b.x = containerWidth - pad; b.vx = -Math.abs(b.vx) * 0.8; }
-          if (b.y <= pad) { b.y = pad; b.vy = Math.abs(b.vy) * 0.8; }
-          else if (b.y >= containerHeight - pad) { b.y = containerHeight - pad; b.vy = -Math.abs(b.vy) * 0.8; }
+          if (b.x <= pad) {
+            b.x = pad;
+            b.vx = Math.abs(b.vx) * 0.8;
+          } else if (b.x >= containerWidth - pad) {
+            b.x = containerWidth - pad;
+            b.vx = -Math.abs(b.vx) * 0.8;
+          }
+          if (b.y <= pad) {
+            b.y = pad;
+            b.vy = Math.abs(b.vy) * 0.8;
+          } else if (b.y >= containerHeight - pad) {
+            b.y = containerHeight - pad;
+            b.vy = -Math.abs(b.vy) * 0.8;
+          }
           arr.forEach((other) => {
-            if (b.id === other.id || other.isDragging || other.isManuallyPlaced) return;
+            if (b.id === other.id || other.isDragging || other.isManuallyPlaced)
+              return;
             const dx = other.x - b.x;
             const dy = other.y - b.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -108,13 +130,17 @@ export const BubbleCanvas = ({
               const angle = Math.atan2(dy, dx);
               const ax = (b.x + Math.cos(angle) * min - other.x) * 0.05;
               const ay = (b.y + Math.sin(angle) * min - other.y) * 0.05;
-              b.vx -= ax; b.vy -= ay;
-              other.vx += ax; other.vy += ay;
+              b.vx -= ax;
+              b.vy -= ay;
+              other.vx += ax;
+              other.vy += ay;
               const overlap = min - dist;
               const sx = (dx / dist) * overlap * 0.5;
               const sy = (dy / dist) * overlap * 0.5;
-              b.x -= sx; b.y -= sy;
-              other.x += sx; other.y += sy;
+              b.x -= sx;
+              b.y -= sy;
+              other.x += sx;
+              other.y += sy;
             }
           });
           b.vx *= 0.98;
@@ -125,7 +151,9 @@ export const BubbleCanvas = ({
       animationRef.current = requestAnimationFrame(animate);
     };
     animationRef.current = requestAnimationFrame(animate);
-    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
   }, [containerWidth, containerHeight]);
 
   const handleDragStart = (id: string) => {
@@ -156,7 +184,8 @@ export const BubbleCanvas = ({
           const min = (b.size + other.size) / 2 + 15;
           if (dist < min) {
             hasCollision = true;
-            const angle = dist > 0 ? Math.atan2(dy, dx) : Math.random() * Math.PI * 2;
+            const angle =
+              dist > 0 ? Math.atan2(dy, dx) : Math.random() * Math.PI * 2;
             cx = other.x + Math.cos(angle) * min;
             cy = other.y + Math.sin(angle) * min;
             cx = Math.max(r, Math.min(containerWidth - r, cx));
@@ -166,7 +195,14 @@ export const BubbleCanvas = ({
       }
       return {
         ...prev,
-        [id]: { ...prev[id], x: cx, y: cy, vx: 0, vy: 0, isManuallyPlaced: true },
+        [id]: {
+          ...prev[id],
+          x: cx,
+          y: cy,
+          vx: 0,
+          vy: 0,
+          isManuallyPlaced: true,
+        },
       };
     });
   };
@@ -187,13 +223,14 @@ export const BubbleCanvas = ({
           <FloatingBubble
             key={bubble.id}
             id={bubble.id}
-            name={bubble.name}
+            name={bubble.label} // Updated to use bubble.label as the main text
             count={bubble.count}
             color={bubble.color}
             size={bubble.size}
-            label={bubble.label}
+            label={bubble.subLabel} // Updated to use bubble.subLabel as the subtitle
             badge={bubble.badge}
             statusActive={bubble.statusActive}
+            chummeVisualDesign={bubble.chummeVisualDesign}
             isDark={isDark}
             containerWidth={containerWidth}
             containerHeight={containerHeight}

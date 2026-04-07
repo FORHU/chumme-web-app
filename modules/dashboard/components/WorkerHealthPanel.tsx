@@ -13,15 +13,26 @@ export function WorkerHealthPanel({ data, isLoading, isDarkMode }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const panel = `rounded-2xl border backdrop-blur-xl ${
-    isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"
+    isDarkMode
+      ? "bg-gray-800/50 border-gray-700/50"
+      : "bg-white/80 border-gray-200/50"
   }`;
 
   const metric = (label: string, value: unknown, unit = "") => (
-    <div key={label} className={`flex items-center justify-between py-3 border-b last:border-0 ${
-      isDarkMode ? "border-gray-700/50" : "border-gray-100"
-    }`}>
-      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>{label}</span>
-      <span className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+    <div
+      key={label}
+      className={`flex items-center justify-between py-3 border-b last:border-0 ${
+        isDarkMode ? "border-gray-700/50" : "border-gray-100"
+      }`}
+    >
+      <span
+        className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+      >
+        {label}
+      </span>
+      <span
+        className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+      >
         {value !== undefined && value !== null ? `${value}${unit}` : "—"}
       </span>
     </div>
@@ -39,7 +50,9 @@ export function WorkerHealthPanel({ data, isLoading, isDarkMode }: Props) {
           <div className="w-8 h-8 rounded-lg bg-[#670D2F]/20 flex items-center justify-center">
             <Cpu className="w-4 h-4 text-[#A53860]" />
           </div>
-          <span className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+          <span
+            className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+          >
             Worker Health Details
           </span>
           {data && (
@@ -49,9 +62,13 @@ export function WorkerHealthPanel({ data, isLoading, isDarkMode }: Props) {
           )}
         </div>
         {expanded ? (
-          <ChevronUp className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
+          <ChevronUp
+            className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+          />
         ) : (
-          <ChevronDown className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
+          <ChevronDown
+            className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+          />
         )}
       </button>
 
@@ -68,7 +85,9 @@ export function WorkerHealthPanel({ data, isLoading, isDarkMode }: Props) {
             </div>
           )}
           {!isLoading && !data && (
-            <p className={`text-sm text-center py-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+            <p
+              className={`text-sm text-center py-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+            >
               No worker metrics available. Worker may be offline.
             </p>
           )}
@@ -79,30 +98,35 @@ export function WorkerHealthPanel({ data, isLoading, isDarkMode }: Props) {
                 typeof data.successRate === "number"
                   ? `${(data.successRate * 100).toFixed(1)}`
                   : null,
-                "%"
+                "%",
               )}
               {metric(
                 "Failure Rate",
                 typeof data.failureRate === "number"
                   ? `${(data.failureRate * 100).toFixed(1)}`
                   : null,
-                "%"
+                "%",
               )}
               {metric(
                 "Throughput",
                 typeof data.throughput === "number"
                   ? `${data.throughput.toFixed(1)}`
                   : null,
-                " jobs/min"
+                " jobs/min",
               )}
               {/* Render any other fields dynamically */}
               {Object.entries(data)
-                .filter(([k]) => !["successRate", "failureRate", "throughput"].includes(k))
+                .filter(
+                  ([k]) =>
+                    !["successRate", "failureRate", "throughput"].includes(k),
+                )
                 .map(([k, v]) =>
                   metric(
-                    k.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
-                    typeof v === "object" && v !== null ? JSON.stringify(v) : v
-                  )
+                    k
+                      .replace(/([A-Z])/g, " $1")
+                      .replace(/^./, (s) => s.toUpperCase()),
+                    typeof v === "object" && v !== null ? JSON.stringify(v) : v,
+                  ),
                 )}
             </div>
           )}

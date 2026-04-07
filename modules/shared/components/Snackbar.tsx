@@ -20,10 +20,26 @@ interface SnackbarProps {
 }
 
 const iconMap = {
-  success:  { Icon: CheckCircle, color: "text-green-400",  bg: "bg-green-500/20 border-green-500/30" },
-  error:    { Icon: XCircle,     color: "text-red-400",    bg: "bg-red-500/20 border-red-500/30" },
-  download: { Icon: Download,    color: "text-[#EF88AD]",  bg: "bg-[#A53860]/20 border-[#A53860]/30" },
-  upload:   { Icon: Upload,      color: "text-[#EF88AD]",  bg: "bg-[#A53860]/20 border-[#A53860]/30" },
+  success: {
+    Icon: CheckCircle,
+    color: "text-green-400",
+    bg: "bg-green-500/20 border-green-500/30",
+  },
+  error: {
+    Icon: XCircle,
+    color: "text-red-400",
+    bg: "bg-red-500/20 border-red-500/30",
+  },
+  download: {
+    Icon: Download,
+    color: "text-[#EF88AD]",
+    bg: "bg-[#A53860]/20 border-[#A53860]/30",
+  },
+  upload: {
+    Icon: Upload,
+    color: "text-[#EF88AD]",
+    bg: "bg-[#A53860]/20 border-[#A53860]/30",
+  },
 };
 
 const SnackbarItem = ({
@@ -96,8 +112,8 @@ const SnackbarItem = ({
             message.type === "error"
               ? "bg-red-400"
               : message.type === "success"
-              ? "bg-green-400"
-              : "bg-[#EF88AD]"
+                ? "bg-green-400"
+                : "bg-[#EF88AD]"
           }`}
           style={{ width: `${progress}%` }}
           transition={{ duration: 0.1 }}

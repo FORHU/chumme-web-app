@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Circle, useJoinCircleMutation } from "../hooks/useCircles";
 import { Card } from "@/modules/shared/components/Card";
 import { Button } from "@/modules/shared/components/Button";
@@ -25,7 +26,6 @@ export const CircleCard = ({ circle, className }: CircleCardProps) => {
     });
   };
 
-
   return (
     <Card
       variant="glass"
@@ -36,10 +36,11 @@ export const CircleCard = ({ circle, className }: CircleCardProps) => {
     >
       <div className="relative h-32 w-full overflow-hidden bg-background-tertiary">
         {circle.bannerUrl ? (
-          <img
+          <Image
             src={circle.bannerUrl}
             alt={circle.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-brand-core/20 to-brand-vibrant/20" />
@@ -55,9 +56,11 @@ export const CircleCard = ({ circle, className }: CircleCardProps) => {
         {/* Icon/Avatar Overlay */}
         <div className="absolute -top-10 left-5 w-16 h-16 rounded-2xl border-4 border-background-elevated overflow-hidden bg-background-secondary shadow-lg">
           {circle.iconUrl ? (
-            <img
+            <Image
               src={circle.iconUrl}
               alt={circle.name}
+              width={64}
+              height={64}
               className="h-full w-full object-cover"
             />
           ) : (

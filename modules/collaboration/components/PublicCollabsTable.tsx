@@ -9,7 +9,10 @@ export interface PublicCollabsTableProps {
   collabs: PublicCollab[];
 }
 
-export const PublicCollabsTable = ({ isDarkMode, collabs }: PublicCollabsTableProps) => {
+export const PublicCollabsTable = ({
+  isDarkMode,
+  collabs,
+}: PublicCollabsTableProps) => {
   return (
     <motion.div
       key="public"

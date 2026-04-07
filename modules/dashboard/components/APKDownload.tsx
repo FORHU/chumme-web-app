@@ -1,20 +1,36 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Smartphone, Download, CheckCircle2, AlertCircle, RefreshCw, SmartphoneIcon } from "lucide-react";
+import {
+  Smartphone,
+  Download,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  SmartphoneIcon,
+} from "lucide-react";
 
 export const APKDownload = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center justify-between">
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">APK Download</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Download the latest version of the Chumme Android application</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            APK Download
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Download the latest version of the Chumme Android application
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs font-semibold px-4 py-2 border border-gray-100 dark:border-gray-700 rounded-xl flex items-center gap-2">
-            <RefreshCw className="w-3.5 h-3.5 text-gray-400" /> Auto-update enabled
+            <RefreshCw className="w-3.5 h-3.5 text-gray-400" /> Auto-update
+            enabled
           </span>
         </div>
       </motion.div>
@@ -34,15 +50,19 @@ export const APKDownload = () => {
                 <Smartphone className="size-8" />
               </div>
               <h3 className="text-2xl font-bold mb-2">Latest Release</h3>
-              <p className="text-white/80 text-sm mb-8 leading-relaxed font-medium">Get the current stable version of Chumme for Android devices.</p>
-              
+              <p className="text-white/80 text-sm mb-8 leading-relaxed font-medium">
+                Get the current stable version of Chumme for Android devices.
+              </p>
+
               <div className="mt-auto flex items-end justify-between">
                 <div>
-                  <p className="text-xs font-bold text-white/60 tracking-widest uppercase mb-1">Version</p>
+                  <p className="text-xs font-bold text-white/60 tracking-widest uppercase mb-1">
+                    Version
+                  </p>
                   <p className="text-xl font-bold">1.02.4-Beta</p>
                 </div>
                 <button
-                  onClick={() => window.open('/chumme.apk')}
+                  onClick={() => window.open("/chumme.apk")}
                   className="px-6 py-3 bg-white text-[#A53860] font-bold rounded-2xl flex items-center gap-2 hover:bg-[#F3D9E2] transition-colors shadow-lg active:scale-95"
                 >
                   <Download className="w-5 h-5" /> Download Now
@@ -60,19 +80,42 @@ export const APKDownload = () => {
               className="p-6 bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50 rounded-2xl shadow-sm"
             >
               <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 italic">
-                <SmartphoneIcon className="w-4 h-4 text-[#A53860]" /> Release Details
+                <SmartphoneIcon className="w-4 h-4 text-[#A53860]" /> Release
+                Details
               </h4>
               <div className="space-y-4">
                 {[
-                  { label: "Release Date", value: "March 24, 2026", icon: CheckCircle2, color: "text-green-500" },
-                  { label: "File Size",   value: "42.8 MB",       icon: CheckCircle2, color: "text-green-500" },
-                  { label: "Requirements", value: "Android 9.0+",  icon: AlertCircle,  color: "text-[#A53860]" },
+                  {
+                    label: "Release Date",
+                    value: "March 24, 2026",
+                    icon: CheckCircle2,
+                    color: "text-green-500",
+                  },
+                  {
+                    label: "File Size",
+                    value: "42.8 MB",
+                    icon: CheckCircle2,
+                    color: "text-green-500",
+                  },
+                  {
+                    label: "Requirements",
+                    value: "Android 9.0+",
+                    icon: AlertCircle,
+                    color: "text-[#A53860]",
+                  },
                 ].map((spec) => (
-                  <div key={spec.label} className="flex items-center justify-between text-sm py-1">
-                    <span className="text-gray-500 dark:text-gray-400 font-medium">{spec.label}</span>
+                  <div
+                    key={spec.label}
+                    className="flex items-center justify-between text-sm py-1"
+                  >
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">
+                      {spec.label}
+                    </span>
                     <div className="flex items-center gap-2">
-                       <spec.icon className={`w-3.5 h-3.5 ${spec.color}`} />
-                       <span className="text-gray-900 dark:text-white font-bold">{spec.value}</span>
+                      <spec.icon className={`w-3.5 h-3.5 ${spec.color}`} />
+                      <span className="text-gray-900 dark:text-white font-bold">
+                        {spec.value}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -80,17 +123,31 @@ export const APKDownload = () => {
             </motion.div>
 
             <motion.div
-               initial={{ x: 20, opacity: 0 }}
-               animate={{ x: 0, opacity: 1 }}
-               transition={{ delay: 0.35 }}
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.35 }}
               className="p-6 bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50 rounded-2xl shadow-sm"
             >
-              <h4 className="font-bold text-gray-900 dark:text-white mb-4 italic">Change Log 1.02.4</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-4 italic">
+                Change Log 1.02.4
+              </h4>
               <ul className="space-y-3 text-xs text-gray-500 dark:text-gray-400 font-medium list-none">
-                <li className="flex items-center gap-2"><div className="size-1.5 rounded-full bg-[#A53860]" /> Improved push notification reliability</li>
-                <li className="flex items-center gap-2"><div className="size-1.5 rounded-full bg-[#A53860]" /> Fixed UI layout on small screens</li>
-                <li className="flex items-center gap-2"><div className="size-1.5 rounded-full bg-[#A53860]" /> Optimized image loading engine</li>
-                <li className="flex items-center gap-2"><div className="size-1.5 rounded-full bg-[#A53860]" /> New onboarding animations added</li>
+                <li className="flex items-center gap-2">
+                  <div className="size-1.5 rounded-full bg-[#A53860]" />{" "}
+                  Improved push notification reliability
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="size-1.5 rounded-full bg-[#A53860]" /> Fixed
+                  UI layout on small screens
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="size-1.5 rounded-full bg-[#A53860]" />{" "}
+                  Optimized image loading engine
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="size-1.5 rounded-full bg-[#A53860]" /> New
+                  onboarding animations added
+                </li>
               </ul>
             </motion.div>
           </div>

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
+import { ChummeVisualDesign } from "@/modules/community/api/communities-api";
 
 interface FloatingBubbleProps {
   id: string;
@@ -21,6 +22,7 @@ interface FloatingBubbleProps {
   onPositionChange: (id: string, pos: { x: number; y: number }) => void;
   onDragStart?: (id: string) => void;
   onDragEnd?: (id: string) => void;
+  chummeVisualDesign?: ChummeVisualDesign | null;
 }
 
 export const FloatingBubble = ({
@@ -39,8 +41,19 @@ export const FloatingBubble = ({
   onDragStart,
   onDragEnd,
   containerRef,
+  chummeVisualDesign,
 }: FloatingBubbleProps) => {
   const isDragging = useRef(false);
+
+  const colorSet = chummeVisualDesign?.colorSet as
+    | {
+        primary?: string;
+        glow?: string;
+      }
+    | undefined;
+
+  const primaryColor = color;
+  const glowColor = colorSet?.glow ?? primaryColor + "50";
 
   const handleDragStart = () => {
     isDragging.current = true;
@@ -81,18 +94,20 @@ export const FloatingBubble = ({
       whileTap={{ scale: 0.95 }}
       transition={{
         scale: { type: "spring", stiffness: 400, damping: 20 },
-        x: { type: "tween", duration: isDragging.current ? 0 : 0.1 },
-        y: { type: "tween", duration: isDragging.current ? 0 : 0.1 },
+        x: { type: "tween", duration: 0 },
+        y: { type: "tween", duration: 0 },
         opacity: { duration: 0.3 },
       }}
       className="absolute cursor-move group"
       style={{ width: size, height: size }}
-      onClick={() => { if (!isDragging.current) onClick(); }}
+      onClick={() => {
+        if (!isDragging.current) onClick();
+      }}
     >
       {/* Glow */}
       <motion.div
         className="absolute inset-0 rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition-opacity duration-500"
-        style={{ backgroundColor: color }}
+        style={{ backgroundColor: primaryColor }}
         animate={{ opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -101,8 +116,8 @@ export const FloatingBubble = ({
       <div
         className="relative w-full h-full rounded-full flex flex-col items-center justify-center border-2 border-white/30 shadow-2xl group-hover:border-white/50 transition-all duration-300 backdrop-blur-sm"
         style={{
-          background: `linear-gradient(135deg, ${color}ee, ${color}99)`,
-          boxShadow: `0 8px 32px ${color}40`,
+          backgroundColor: primaryColor,
+          boxShadow: `0 0 24px ${glowColor}`,
         }}
       >
         <div
@@ -121,9 +136,7 @@ export const FloatingBubble = ({
           </div>
         )}
 
-        {label && (
-          <div className="text-white/75 text-xs mt-0.5">{label}</div>
-        )}
+        {label && <div className="text-white/75 text-xs mt-0.5">{label}</div>}
 
         {badge && (
           <div className="mt-2 px-3 py-1 rounded-full bg-white/25 backdrop-blur-sm">
@@ -134,11 +147,15 @@ export const FloatingBubble = ({
         {statusActive !== undefined && (
           <div className="absolute top-3 right-3">
             <motion.div
-              className={`w-3 h-3 rounded-full shadow-lg ${statusActive ? "bg-green-400" : "bg-gray-400"
-                }`}
+              className={`w-3 h-3 rounded-full shadow-lg ${
+                statusActive ? "bg-green-400" : "bg-gray-400"
+              }`}
               animate={{
                 boxShadow: statusActive
-                  ? ["0 0 0 0 rgba(74,222,128,0.7)", "0 0 0 8px rgba(74,222,128,0)"]
+                  ? [
+                      "0 0 0 0 rgba(74,222,128,0.7)",
+                      "0 0 0 8px rgba(74,222,128,0)",
+                    ]
                   : "0 0 0 0 rgba(156,163,175,0)",
               }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -149,10 +166,13 @@ export const FloatingBubble = ({
 
       {/* Tooltip */}
       <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap shadow-lg border ${isDark
-            ? "bg-gray-900 text-white border-gray-700"
-            : "bg-white text-gray-900 border-gray-200"
-          }`}>
+        <div
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap shadow-lg border ${
+            isDark
+              ? "bg-gray-900 text-white border-gray-700"
+              : "bg-white text-gray-900 border-gray-200"
+          }`}
+        >
           Drag to move • Click to edit
         </div>
       </div>

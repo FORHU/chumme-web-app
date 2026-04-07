@@ -39,7 +39,7 @@ export const AuthLayout = ({
           "absolute inset-0 transition-all duration-300 bg-gradient-to-br",
           isDark
             ? "from-[#1a0510] via-[#0a0a0a] to-[#1a0510]"
-            : "from-[#fce7f3] via-[#fce1ed] to-[#e9d5fd]"
+            : "from-[#fce7f3] via-[#fce1ed] to-[#e9d5fd]",
         )}
       />
 
@@ -107,7 +107,11 @@ export const AuthLayout = ({
                 }}
                 className="absolute inset-0 -m-8 blur-2xl rounded-full bg-gradient-to-br from-[#EF88AD] to-[#A53860] opacity-30"
               />
-              <Link href="/" aria-label="Go to landing page" className="block cursor-pointer">
+              <Link
+                href="/"
+                aria-label="Go to landing page"
+                className="block cursor-pointer"
+              >
                 <Image
                   src="/logo.png"
                   alt="Chumme"
@@ -125,10 +129,12 @@ export const AuthLayout = ({
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <h1 className={cn(
-              "font-['Poppins',sans-serif] text-5xl xl:text-6xl font-bold mb-5 leading-tight",
-              isDark ? "text-white" : "text-gray-900"
-            )}>
+            <h1
+              className={cn(
+                "font-['Poppins',sans-serif] text-5xl xl:text-6xl font-bold mb-5 leading-tight",
+                isDark ? "text-white" : "text-gray-900",
+              )}
+            >
               {headline.map((line, i) => (
                 <span key={i}>
                   {line}
@@ -136,10 +142,12 @@ export const AuthLayout = ({
                 </span>
               ))}
             </h1>
-            <p className={cn(
-              "font-['Poppins',sans-serif] text-lg leading-relaxed max-w-md",
-              isDark ? "text-gray-400" : "text-gray-600"
-            )}>
+            <p
+              className={cn(
+                "font-['Poppins',sans-serif] text-lg leading-relaxed max-w-md",
+                isDark ? "text-gray-400" : "text-gray-600",
+              )}
+            >
               {tagline}
             </p>
           </motion.div>
@@ -156,7 +164,7 @@ export const AuthLayout = ({
                 "flex items-center gap-2 transition-colors",
                 isDark
                   ? "text-gray-400 hover:text-[#EF88AD]"
-                  : "text-gray-700 hover:text-[#A53860]"
+                  : "text-gray-700 hover:text-[#A53860]",
               )}
             >
               <Globe className="w-5 h-5" />

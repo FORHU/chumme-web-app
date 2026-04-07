@@ -52,13 +52,17 @@ export const LiveMonitor = ({ isDarkMode, rooms }: LiveMonitorProps) => {
               >
                 <div className="flex justify-between">
                   <span>Participants</span>
-                  <span className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
+                  <span
+                    className={isDarkMode ? "text-gray-300" : "text-gray-700"}
+                  >
                     {room.participants}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Song</span>
-                  <span className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
+                  <span
+                    className={isDarkMode ? "text-gray-300" : "text-gray-700"}
+                  >
                     {room.song}
                   </span>
                 </div>

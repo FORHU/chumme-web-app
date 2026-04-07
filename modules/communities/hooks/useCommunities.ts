@@ -1,10 +1,9 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApiQuery } from "@/modules/shared/hooks/useApiQuery";
-import { useApiMutation } from "@/modules/shared/hooks/useApiMutation";
+import { api } from "@/modules/shared/api/api-client";
 import type {
   ChummeCategory,
   ChummeSubCategory,
-  UpdateCommunitiesCategoryParams,
-  UpdateSubCategoryParams,
 } from "@/modules/community/api/communities-api";
 import {
   communitiesKeys,
@@ -23,54 +22,90 @@ export {
 export const useGetCommunitiesCategories = () => {
   return useApiQuery<{ categories: ChummeCategory[] }>(
     [...communitiesKeys.categories()],
-    "/api/v1/chumme-categories/communities"
+    "/api/v1/chumme-categories/communities",
   );
 };
 
-export const useDeleteCommunitiesCategory = (
-  options?: Parameters<
-    typeof useApiMutation<{ message: string }, Error, { id: string }>
-  >[0]
-) => {
-  return useApiMutation<{ message: string }, Error, { id: string }>(options);
+export const useDeleteCommunitiesCategory = (options?: {
+  onSuccess?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const res = await api.delete(`/api/v1/chumme-categories/${id}`);
+      if (!res.ok)
+        throw new Error((res.data as { message?: string })?.message || "Delete failed");
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.categories() });
+      options?.onSuccess?.();
+    },
+  });
 };
 
-export const useUpdateCommunitiesCategory = (
-  options?: Parameters<
-    typeof useApiMutation<
-      ChummeCategory,
-      Error,
-      UpdateCommunitiesCategoryParams & { id: string }
-    >
-  >[0]
-) => {
-  return useApiMutation<
-    ChummeCategory,
-    Error,
-    UpdateCommunitiesCategoryParams & { id: string }
-  >(options);
+export const useUpdateCommunitiesCategory = (options?: {
+  onSuccess?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: {
+      id: string;
+      name: string;
+      [key: string]: unknown;
+    }) => {
+      // TODO: re-add color to payload once backend Joi schema is updated
+      // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
+      const res = await api.put(`/api/v1/chumme-categories/${params.id}`, {
+        name: params.name,
+      });
+      if (!res.ok)
+        throw new Error((res.data as { message?: string })?.message || "Update failed");
+      return res.data as ChummeCategory;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.categories() });
+      options?.onSuccess?.();
+    },
+  });
 };
 
-export const useDeleteSubCategory = (
-  options?: Parameters<
-    typeof useApiMutation<{ message: string }, Error, { id: string }>
-  >[0]
-) => {
-  return useApiMutation<{ message: string }, Error, { id: string }>(options);
+export const useDeleteSubCategory = (options?: { onSuccess?: () => void }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const res = await api.delete(`/api/v1/chumme-subcategories/${id}`);
+      if (!res.ok)
+        throw new Error((res.data as { message?: string })?.message || "Delete failed");
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.all });
+      options?.onSuccess?.();
+    },
+  });
 };
 
-export const useUpdateSubCategory = (
-  options?: Parameters<
-    typeof useApiMutation<
-      ChummeSubCategory,
-      Error,
-      UpdateSubCategoryParams & { id: string }
-    >
-  >[0]
-) => {
-  return useApiMutation<
-    ChummeSubCategory,
-    Error,
-    UpdateSubCategoryParams & { id: string }
-  >(options);
+export const useUpdateSubCategory = (options?: { onSuccess?: () => void }) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params: {
+      id: string;
+      name: string;
+      [key: string]: unknown;
+    }) => {
+      // TODO: re-add color to payload once backend Joi schema is updated
+      // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
+      const res = await api.put(`/api/v1/chumme-subcategories/${params.id}`, {
+        name: params.name,
+      });
+      if (!res.ok)
+        throw new Error((res.data as { message?: string })?.message || "Update failed");
+      return res.data as ChummeSubCategory;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communitiesKeys.all });
+      options?.onSuccess?.();
+    },
+  });
 };

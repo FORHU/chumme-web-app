@@ -18,7 +18,10 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <AuthLayout headline={["Forgot your", "password?"]} tagline="No worries — we'll send a reset link to your inbox.">
+    <AuthLayout
+      headline={["Forgot your", "password?"]}
+      tagline="No worries — we'll send a reset link to your inbox."
+    >
       <motion.div
         key="forgot"
         initial={{ opacity: 0, y: 20 }}
@@ -75,7 +78,9 @@ export const ForgotPasswordForm = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEmail(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900"
                     required
                   />

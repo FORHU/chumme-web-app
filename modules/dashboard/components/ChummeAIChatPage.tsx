@@ -4,11 +4,26 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import {
-  Plus, Edit, Trash2, Power, X, MessageSquare, Mic,
-  Video, TrendingUp, Users, Upload,
+  Plus,
+  Edit,
+  Trash2,
+  Power,
+  X,
+  MessageSquare,
+  Mic,
+  Video,
+  TrendingUp,
+  Users,
+  Upload,
 } from "lucide-react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 
 import type { ComponentType } from "react";
@@ -26,8 +41,20 @@ interface AIArtist {
 
 const mockArtists: AIArtist[] = [
   { id: "1", name: "Lisa", avatar: "L", type: "Chat", status: "Active" },
-  { id: "2", name: "Jennie", avatar: "J", type: "Voice Chat", status: "Active" },
-  { id: "3", name: "Jungkook", avatar: "JK", type: "AI Avatar", status: "Disabled" },
+  {
+    id: "2",
+    name: "Jennie",
+    avatar: "J",
+    type: "Voice Chat",
+    status: "Active",
+  },
+  {
+    id: "3",
+    name: "Jungkook",
+    avatar: "JK",
+    type: "AI Avatar",
+    status: "Disabled",
+  },
   { id: "4", name: "Taylor", avatar: "T", type: "Chat", status: "Active" },
 ];
 
@@ -83,7 +110,9 @@ export const ChummeAIChatPage = () => {
         >
           AI Artist Studio
         </h2>
-        <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+        <p
+          className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+        >
           Create, manage, and monitor AI artists for fan engagement
         </p>
       </div>
@@ -324,7 +353,9 @@ export const ChummeAIChatPage = () => {
                   <div className="flex items-center justify-center gap-2 mb-4">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        artist.status === "Active" ? "bg-green-500" : "bg-gray-400"
+                        artist.status === "Active"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
                       }`}
                     />
                     <span
@@ -400,8 +431,14 @@ export const ChummeAIChatPage = () => {
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={analyticsData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#374151" : "#E5E7EB"} />
-                <XAxis dataKey="name" stroke={isDarkMode ? "#9CA3AF" : "#6B7280"} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={isDarkMode ? "#374151" : "#E5E7EB"}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke={isDarkMode ? "#9CA3AF" : "#6B7280"}
+                />
                 <YAxis stroke={isDarkMode ? "#9CA3AF" : "#6B7280"} />
                 <Tooltip
                   contentStyle={{
@@ -410,9 +447,24 @@ export const ChummeAIChatPage = () => {
                     borderRadius: "8px",
                   }}
                 />
-                <Line type="monotone" dataKey="chats" stroke="#A53860" strokeWidth={2} />
-                <Line type="monotone" dataKey="voice" stroke="#EF88AD" strokeWidth={2} />
-                <Line type="monotone" dataKey="avatar" stroke="#670D2F" strokeWidth={2} />
+                <Line
+                  type="monotone"
+                  dataKey="chats"
+                  stroke="#A53860"
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="voice"
+                  stroke="#EF88AD"
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="avatar"
+                  stroke="#670D2F"
+                  strokeWidth={2}
+                />
               </LineChart>
             </ResponsiveContainer>
           </motion.div>
@@ -426,15 +478,23 @@ export const ChummeAIChatPage = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`rounded-2xl p-6 border ${
-              isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"
-            } backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            <div
+              className={`rounded-2xl p-6 border ${
+                isDarkMode
+                  ? "bg-gray-800/50 border-gray-700/50"
+                  : "bg-white/80 border-gray-200/50"
+              } backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 Chat Configuration
               </h3>
-        
+
               <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
                   AI Personality Description
                 </label>
                 <textarea
@@ -447,26 +507,32 @@ export const ChummeAIChatPage = () => {
                   } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 outline-none`}
                 />
               </div>
-        
+
               <div className="mb-6">
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
                   Conversation Tone
                 </label>
-                <select className={`w-full h-12 px-4 rounded-xl text-sm border transition-all outline-none ${
-                  isDarkMode
-                    ? "bg-gray-900 border-gray-700 text-white"
-                    : "bg-gray-50 border-gray-200 text-gray-900"
-                } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}>
+                <select
+                  className={`w-full h-12 px-4 rounded-xl text-sm border transition-all outline-none ${
+                    isDarkMode
+                      ? "bg-gray-900 border-gray-700 text-white"
+                      : "bg-gray-50 border-gray-200 text-gray-900"
+                  } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                >
                   <option>Friendly</option>
                   <option>Energetic</option>
                   <option>Professional</option>
                   <option>Casual</option>
                 </select>
               </div>
-        
+
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <label
+                    className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Sample Prompts
                   </label>
                   <button className="px-3 py-1 bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white rounded-lg text-xs font-medium flex items-center gap-1">
@@ -475,16 +541,27 @@ export const ChummeAIChatPage = () => {
                 </div>
                 <div className="space-y-2">
                   {samplePrompts.map((prompt, index) => (
-                    <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${
-                      isDarkMode ? "bg-gray-900" : "bg-gray-50"
-                    }`}>
-                      <span className={`flex-1 text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <div
+                      key={index}
+                      className={`flex items-center gap-3 p-3 rounded-lg ${
+                        isDarkMode ? "bg-gray-900" : "bg-gray-50"
+                      }`}
+                    >
+                      <span
+                        className={`flex-1 text-sm ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                      >
                         {prompt}
                       </span>
-                      <button className={`p-1 rounded transition-colors ${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-200"}`}>
-                        <Edit className={`w-4 h-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
+                      <button
+                        className={`p-1 rounded transition-colors ${isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-200"}`}
+                      >
+                        <Edit
+                          className={`w-4 h-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                        />
                       </button>
-                      <button className={`p-1 rounded transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}>
+                      <button
+                        className={`p-1 rounded transition-colors ${isDarkMode ? "hover:bg-red-500/20" : "hover:bg-red-50"}`}
+                      >
                         <Trash2 className="w-4 h-4 text-red-500" />
                       </button>
                     </div>
@@ -494,7 +571,7 @@ export const ChummeAIChatPage = () => {
             </div>
           </motion.div>
         )}
-        
+
         {activeTab === "voice" && (
           <motion.div
             key="voice"
@@ -503,15 +580,23 @@ export const ChummeAIChatPage = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`rounded-2xl p-6 border ${
-              isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"
-            } backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            <div
+              className={`rounded-2xl p-6 border ${
+                isDarkMode
+                  ? "bg-gray-800/50 border-gray-700/50"
+                  : "bg-white/80 border-gray-200/50"
+              } backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 Voice Chat Settings
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Voice Model
                   </label>
                   <input
@@ -525,12 +610,18 @@ export const ChummeAIChatPage = () => {
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Language
                   </label>
-                  <select className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
-                    isDarkMode ? "bg-gray-900 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
-                  } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}>
+                  <select
+                    className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
+                      isDarkMode
+                        ? "bg-gray-900 border-gray-700 text-white"
+                        : "bg-gray-50 border-gray-200 text-gray-900"
+                    } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                  >
                     <option>English</option>
                     <option>Korean</option>
                     <option>Japanese</option>
@@ -538,12 +629,18 @@ export const ChummeAIChatPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Accent
                   </label>
-                  <select className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
-                    isDarkMode ? "bg-gray-900 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
-                  } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}>
+                  <select
+                    className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
+                      isDarkMode
+                        ? "bg-gray-900 border-gray-700 text-white"
+                        : "bg-gray-50 border-gray-200 text-gray-900"
+                    } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                  >
                     <option>Neutral</option>
                     <option>American</option>
                     <option>British</option>
@@ -551,12 +648,18 @@ export const ChummeAIChatPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Emotion Style
                   </label>
-                  <select className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
-                    isDarkMode ? "bg-gray-900 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
-                  } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}>
+                  <select
+                    className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
+                      isDarkMode
+                        ? "bg-gray-900 border-gray-700 text-white"
+                        : "bg-gray-50 border-gray-200 text-gray-900"
+                    } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                  >
                     <option>Friendly</option>
                     <option>Energetic</option>
                     <option>Calm</option>
@@ -571,7 +674,7 @@ export const ChummeAIChatPage = () => {
             </div>
           </motion.div>
         )}
-        
+
         {activeTab === "avatar" && (
           <motion.div
             key="avatar"
@@ -580,34 +683,54 @@ export const ChummeAIChatPage = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`rounded-2xl p-6 border ${
-              isDarkMode ? "bg-gray-800/50 border-gray-700/50" : "bg-white/80 border-gray-200/50"
-            } backdrop-blur-xl`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            <div
+              className={`rounded-2xl p-6 border ${
+                isDarkMode
+                  ? "bg-gray-800/50 border-gray-700/50"
+                  : "bg-white/80 border-gray-200/50"
+              } backdrop-blur-xl`}
+            >
+              <h3
+                className={`text-lg font-bold mb-4 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+              >
                 AI Live Avatar Configuration
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-6">
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Avatar Image
                     </label>
-                    <div className={`border-2 border-dashed rounded-xl p-8 text-center ${
-                      isDarkMode ? "border-gray-700" : "border-gray-300"
-                    }`}>
-                      <Upload className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
-                      <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    <div
+                      className={`border-2 border-dashed rounded-xl p-8 text-center ${
+                        isDarkMode ? "border-gray-700" : "border-gray-300"
+                      }`}
+                    >
+                      <Upload
+                        className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+                      />
+                      <p
+                        className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                      >
                         Click to upload avatar image
                       </p>
                     </div>
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                    >
                       Lip Sync Model
                     </label>
-                    <select className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
-                      isDarkMode ? "bg-gray-900 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
-                    } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}>
+                    <select
+                      className={`w-full h-12 px-4 rounded-xl text-sm border outline-none ${
+                        isDarkMode
+                          ? "bg-gray-900 border-gray-700 text-white"
+                          : "bg-gray-50 border-gray-200 text-gray-900"
+                      } focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10`}
+                    >
                       <option>Standard Sync</option>
                       <option>High Precision</option>
                       <option>Anime Style</option>
@@ -615,22 +738,41 @@ export const ChummeAIChatPage = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className={`text-sm font-medium mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <h4
+                    className={`text-sm font-medium mb-3 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Animation Presets
                   </h4>
                   {[
-                    { label: "Idle Animation", options: ["Gentle Breathing", "Blinking", "Head Tilt"] },
-                    { label: "Talking Animation", options: ["Natural Speech", "Expressive", "Subtle"] },
-                    { label: "Reaction Animation", options: ["Happy", "Surprised", "Thoughtful"] },
+                    {
+                      label: "Idle Animation",
+                      options: ["Gentle Breathing", "Blinking", "Head Tilt"],
+                    },
+                    {
+                      label: "Talking Animation",
+                      options: ["Natural Speech", "Expressive", "Subtle"],
+                    },
+                    {
+                      label: "Reaction Animation",
+                      options: ["Happy", "Surprised", "Thoughtful"],
+                    },
                   ].map((preset) => (
                     <div key={preset.label} className="mb-4">
-                      <label className={`block text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      <label
+                        className={`block text-xs font-medium mb-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                      >
                         {preset.label}
                       </label>
-                      <select className={`w-full h-10 px-3 rounded-lg text-sm border outline-none ${
-                        isDarkMode ? "bg-gray-900 border-gray-700 text-white" : "bg-gray-50 border-gray-200 text-gray-900"
-                      }`}>
-                        {preset.options.map((opt) => <option key={opt}>{opt}</option>)}
+                      <select
+                        className={`w-full h-10 px-3 rounded-lg text-sm border outline-none ${
+                          isDarkMode
+                            ? "bg-gray-900 border-gray-700 text-white"
+                            : "bg-gray-50 border-gray-200 text-gray-900"
+                        }`}
+                      >
+                        {preset.options.map((opt) => (
+                          <option key={opt}>{opt}</option>
+                        ))}
                       </select>
                     </div>
                   ))}
@@ -705,7 +847,9 @@ export const ChummeAIChatPage = () => {
                   </label>
                   <select
                     value={artistType}
-                    onChange={(e) => setArtistType(e.target.value as ArtistType)}
+                    onChange={(e) =>
+                      setArtistType(e.target.value as ArtistType)
+                    }
                     className={`w-full h-11 px-4 rounded-xl border ${
                       isDarkMode
                         ? "bg-gray-700 border-gray-600 text-white"

@@ -58,7 +58,9 @@ export const AddSongModal = ({
                   isDarkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"
                 }`}
               >
-                <X className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                <X
+                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                />
               </button>
             </div>
 

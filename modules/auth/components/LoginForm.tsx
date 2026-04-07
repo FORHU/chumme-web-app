@@ -4,15 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
-import {
-  Apple,
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Apple, Eye, EyeOff, Lock, Mail, Moon, Sun } from "lucide-react";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
@@ -72,14 +64,16 @@ export const LoginForm = () => {
             <div className="mb-8 flex items-start justify-between">
               <div className="flex-1">
                 <h2
-                  className={`text-2xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"
-                    }`}
+                  className={`text-2xl font-bold mb-2 ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
                 >
                   Sign In
                 </h2>
                 <p
-                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"
-                    }`}
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
                 >
                   Welcome back! Please enter your details
                 </p>
@@ -87,11 +81,14 @@ export const LoginForm = () => {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className={`p-2 rounded-lg transition-all ${isDarkMode
+                className={`p-2 rounded-lg transition-all ${
+                  isDarkMode
                     ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                }`}
+                title={
+                  isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+                }
               >
                 {mounted ? (
                   isDarkMode ? (
@@ -113,9 +110,7 @@ export const LoginForm = () => {
               )}
 
               <div>
-                <label
-                  className="text-sm font-semibold mb-2 block text-gray-900 dark:text-white"
-                >
+                <label className="text-sm font-semibold mb-2 block text-gray-900 dark:text-white">
                   Email
                 </label>
                 <div className="relative group">
@@ -124,7 +119,9 @@ export const LoginForm = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEmail(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -132,9 +129,7 @@ export const LoginForm = () => {
               </div>
 
               <div>
-                <label
-                  className="text-sm font-semibold mb-2 block text-gray-900 dark:text-white"
-                >
+                <label className="text-sm font-semibold mb-2 block text-gray-900 dark:text-white">
                   Password
                 </label>
                 <div className="relative group">
@@ -143,7 +138,9 @@ export const LoginForm = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPassword(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-12 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -162,13 +159,13 @@ export const LoginForm = () => {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <label
-                  className="flex items-center gap-2 cursor-pointer select-none text-gray-700 dark:text-gray-300"
-                >
+                <label className="flex items-center gap-2 cursor-pointer select-none text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
                     checked={rememberMe}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setRememberMe(e.target.checked)
+                    }
                     className="h-4 w-4 rounded border-2 border-gray-300 dark:border-gray-600 accent-[#A53860]"
                   />
                   Remember me

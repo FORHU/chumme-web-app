@@ -69,7 +69,8 @@ export const INSTALL_STEPS = [
   {
     step: "1",
     title: "Download APK",
-    description: "Click the download button to save the APK file to your device",
+    description:
+      "Click the download button to save the APK file to your device",
   },
   {
     step: "2",

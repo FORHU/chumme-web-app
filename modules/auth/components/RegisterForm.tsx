@@ -3,15 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  Apple,
-  ArrowLeft,
-  Eye,
-  EyeOff,
-  Lock,
-  Mail,
-  User,
-} from "lucide-react";
+import { Apple, ArrowLeft, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
@@ -91,9 +83,7 @@ export const RegisterForm = () => {
             </button>
 
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2 text-gray-900">
-                Sign Up
-              </h2>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900">Sign Up</h2>
               <p className="text-sm text-gray-600">
                 Create your account to get started
               </p>
@@ -116,7 +106,9 @@ export const RegisterForm = () => {
                     type="text"
                     placeholder="Enter your full name"
                     value={fullName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullName(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFullName(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -133,7 +125,9 @@ export const RegisterForm = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEmail(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -150,7 +144,9 @@ export const RegisterForm = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
                     value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPassword(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-12 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -178,7 +174,9 @@ export const RegisterForm = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={confirmPassword}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setConfirmPassword(e.target.value)
+                    }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border border-gray-200 bg-white text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     required
                   />
@@ -189,7 +187,9 @@ export const RegisterForm = () => {
                 <input
                   type="checkbox"
                   checked={agreeTerms}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAgreeTerms(e.target.checked)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAgreeTerms(e.target.checked)
+                  }
                   className="mt-1 h-4 w-4 rounded border-2 border-gray-300 accent-[#A53860]"
                 />
                 <span className="text-sm text-gray-600 font-['Poppins',sans-serif]">

@@ -94,8 +94,8 @@ export const Dialog = ({
           <Button
             variant={isDestructive ? "secondary" : "primary"}
             className={cn(
-               "flex-1 font-bold",
-               isDestructive && "bg-red-500 hover:bg-red-600 border-none"
+              "flex-1 font-bold",
+              isDestructive && "bg-red-500 hover:bg-red-600 border-none",
             )}
             onClick={onConfirm}
             disabled={isLoading}

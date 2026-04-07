@@ -13,7 +13,12 @@ import { ReportsPanel } from "@/modules/collaboration/components/ReportsPanel";
 import { LiveMonitor } from "@/modules/collaboration/components/LiveMonitor";
 import { AddSongModal } from "@/modules/collaboration/components/AddSongModal";
 import { CollabStats } from "@/modules/collaboration/components/CollabStats";
-import { mockRooms, mockPublicCollabs, mockSongs, mockRecordings } from "@/modules/collaboration/constants/mock-data";
+import {
+  mockRooms,
+  mockPublicCollabs,
+  mockSongs,
+  mockRecordings,
+} from "@/modules/collaboration/constants/mock-data";
 import type { TabId } from "@/modules/collaboration/types";
 
 export const CollaborationManager = () => {
@@ -40,7 +45,9 @@ export const CollaborationManager = () => {
   return (
     <div className="h-full">
       <div className="mb-8">
-        <h2 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+        <h2
+          className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}
+        >
           Collaboration Manager
         </h2>
         <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -77,20 +84,31 @@ export const CollaborationManager = () => {
           <RoomsTable isDarkMode={isDarkMode} rooms={mockRooms} />
         )}
         {activeTab === "public" && (
-          <PublicCollabsTable isDarkMode={isDarkMode} collabs={mockPublicCollabs} />
+          <PublicCollabsTable
+            isDarkMode={isDarkMode}
+            collabs={mockPublicCollabs}
+          />
         )}
         {activeTab === "private" && (
-          <PrivateRoomsTable isDarkMode={isDarkMode} rooms={mockRooms.filter(r => r.type === "Private")} />
+          <PrivateRoomsTable
+            isDarkMode={isDarkMode}
+            rooms={mockRooms.filter((r) => r.type === "Private")}
+          />
         )}
         {activeTab === "songs" && (
-          <SongLibrary isDarkMode={isDarkMode} songs={mockSongs} onAddSong={() => setShowCreateModal(true)} />
+          <SongLibrary
+            isDarkMode={isDarkMode}
+            songs={mockSongs}
+            onAddSong={() => setShowCreateModal(true)}
+          />
         )}
         {activeTab === "recordings" && (
-          <RecordingsTable isDarkMode={isDarkMode} recordings={mockRecordings} />
+          <RecordingsTable
+            isDarkMode={isDarkMode}
+            recordings={mockRecordings}
+          />
         )}
-        {activeTab === "reports" && (
-          <ReportsPanel isDarkMode={isDarkMode} />
-        )}
+        {activeTab === "reports" && <ReportsPanel isDarkMode={isDarkMode} />}
       </AnimatePresence>
 
       <AddSongModal
