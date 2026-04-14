@@ -8,6 +8,9 @@ import {
   User,
   Activity,
   LayoutGrid,
+  Headphones,
+  Mic2,
+  Music2,
 } from "lucide-react";
 import type React from "react";
 
@@ -39,6 +42,15 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Communities", href: "/dashboard/communities", icon: Users },
       { label: "Entertainment", href: "/dashboard/entertainment", icon: Star },
+    ],
+  },
+  {
+    label: "Music",
+    href: "#",
+    icon: Headphones,
+    children: [
+      { label: "Karaoke", href: "/dashboard/music/karaoke", icon: Mic2 },
+      { label: "Song", href: "/dashboard/music/song", icon: Music2 },
     ],
   },
   {

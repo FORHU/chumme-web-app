@@ -1,0 +1,61 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { musicService, type ArtistOption } from "@/modules/collaboration/api/music.service";
+
+const SONGS_KEY  = ["music-songs"];
+const KARAOKE_KEY = ["music-karaoke"];
+
+export const useSongs = () =>
+  useQuery({
+    queryKey: SONGS_KEY,
+    queryFn: () => musicService.getSongs({ isKaraoke: false, limit: 50 }),
+    staleTime: 2 * 60 * 1000,
+  });
+
+export const useKaraokeSongs = () =>
+  useQuery({
+    queryKey: KARAOKE_KEY,
+    queryFn: () => musicService.getSongs({ isKaraoke: true, limit: 50 }),
+    staleTime: 2 * 60 * 1000,
+  });
+
+export const useUploadSong = (isKaraoke: boolean) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      file,
+      meta,
+    }: {
+      file: File;
+      meta: { title: string; musicArtistId?: string };
+    }) =>
+      musicService.uploadSong(file, {
+        title: meta.title,
+        isKaraoke,
+        musicArtistId: meta.musicArtistId,
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY,
+      });
+    },
+  });
+};
+
+export const useDeleteSong = (isKaraoke: boolean) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => musicService.deleteSong(id),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY,
+      });
+    },
+  });
+};
+
+export const useArtists = () =>
+  useQuery({
+    queryKey: ["artists"],
+    queryFn: musicService.getArtists,
+    staleTime: 5 * 60 * 1000,
+  });

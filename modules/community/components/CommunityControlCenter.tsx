@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   X,
-  MapPin,
   Grid3x3,
   Activity,
   TrendingUp,
@@ -54,7 +53,7 @@ const getColorForId = (id: string, index: number) => {
   return PRESET_COLORS[index % PRESET_COLORS.length];
 };
 
-type TabId = "countries" | "categories" | "analytics" | "moderation";
+type TabId = "categories" | "subcategories" | "analytics" | "moderation";
 type ModalType = "country" | "category" | "community";
 
 interface CommunityControlCenterProps {
@@ -87,13 +86,16 @@ export const CommunityControlCenter = ({
     targetParentName: "",
   });
 
-  const [activeTab, setActiveTab] = useState<TabId>("countries");
+  const [activeTab, setActiveTab] = useState<TabId>("categories");
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("country");
   const [isEdit, setIsEdit] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountryId, setSelectedCountryId] = useState<string>("");
+  const [colorOverrides, setColorOverrides] = useState<Record<string, string>>(
+    {},
+  );
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -134,6 +136,7 @@ export const CommunityControlCenter = ({
 
   const onMutationSuccess = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: communitiesKeys.all });
+    setColorOverrides({});
     setShowModal(false);
     resetForm();
   }, [queryClient, resetForm]);
@@ -182,7 +185,9 @@ export const CommunityControlCenter = ({
       setIsEdit(true);
       setEditingId(item.id);
       const color =
-        item.color ?? item.chummeVisualDesign?.colorSet?.primary ?? "#D3427B";
+        item.color ??
+        (item.chummeVisualDesign?.colorSet as any)?.primary ??
+        "#D3427B";
       setFormData({
         name: item.name,
         color: color,
@@ -206,9 +211,9 @@ export const CommunityControlCenter = ({
           chummeTrait: "COMMUNITIES",
         },
         {
-          onSuccess: () => showSuccess("Country created successfully"),
+          onSuccess: () => showSuccess("Category created successfully"),
           onError: (err: { message?: string }) =>
-            showError(err?.message || "Failed to create country"),
+            showError(err?.message || "Failed to create category"),
         },
       );
     } else if (modalType === "category") {
@@ -243,11 +248,23 @@ export const CommunityControlCenter = ({
   const handleUpdate = useCallback(() => {
     if (!formData.name.trim() || !editingId) return;
 
-    const payload = { id: editingId, name: formData.name };
+    // Optimistic update — show color change instantly
+    if (editingId && formData.color) {
+      setColorOverrides((prev) => ({
+        ...prev,
+        [editingId]: formData.color,
+      }));
+    }
+
+    const payload = {
+      id: editingId,
+      name: formData.name,
+      color: formData.color,
+    };
 
     if (modalType === "country") {
       updateCountry(payload, {
-        onSuccess: () => showSuccess("Country updated successfully"),
+        onSuccess: () => showSuccess("Category updated successfully"),
         onError: (err: { message?: string }) =>
           showError(err?.message || "Update failed"),
       });
@@ -260,6 +277,7 @@ export const CommunityControlCenter = ({
     }
   }, [
     editingId,
+    formData.color,
     formData.name,
     modalType,
     showError,
@@ -287,6 +305,7 @@ export const CommunityControlCenter = ({
         name: c.name,
         count: c.populationCount || 0,
         color:
+          colorOverrides[c.id] ||
           c.color ||
           c.chummeVisualDesign?.colorSet?.primary ||
           getColorForId(c.id, i),
@@ -294,7 +313,7 @@ export const CommunityControlCenter = ({
         onClick: () => openEdit("country", c),
         chummeVisualDesign: c.chummeVisualDesign ?? null,
       }));
-  }, [countries, searchQuery, openEdit]);
+  }, [countries, searchQuery, openEdit, colorOverrides]);
 
   const categoryBubbles = useMemo(() => {
     return subcategories
@@ -304,6 +323,7 @@ export const CommunityControlCenter = ({
         name: s.name,
         count: s.populationCount || 0,
         color:
+          colorOverrides[s.id] ||
           s.color ||
           s.chummeVisualDesign?.colorSet?.primary ||
           getColorForId(s.id, i + 5),
@@ -311,7 +331,7 @@ export const CommunityControlCenter = ({
         onClick: () => openEdit("category", s),
         chummeVisualDesign: s.chummeVisualDesign ?? null,
       }));
-  }, [subcategories, searchQuery, openEdit]);
+  }, [subcategories, searchQuery, openEdit, colorOverrides]);
 
   // ─── Styles ─────────────────────────────────────────────────────────────────
 
@@ -326,8 +346,8 @@ export const CommunityControlCenter = ({
     label: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    { id: "countries", label: "Countries", icon: MapPin },
     { id: "categories", label: "Categories", icon: Grid3x3 },
+    { id: "subcategories", label: "Sub Categories", icon: Grid3x3 },
     { id: "analytics", label: "Analytics", icon: TrendingUp },
     { id: "moderation", label: "Moderation", icon: AlertTriangle },
   ];
@@ -351,10 +371,10 @@ export const CommunityControlCenter = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {[
           {
-            label: "Countries",
+            label: "Categories",
             value: countries.length,
             sub: "Live from backend",
-            icon: MapPin,
+            icon: Grid3x3,
             color: "#A53860",
           },
           {
@@ -416,7 +436,10 @@ export const CommunityControlCenter = ({
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              setSearchQuery("");
+            }}
             className={`px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
               activeTab === tab.id
                 ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-xl shadow-[#A53860]/20"
@@ -432,10 +455,10 @@ export const CommunityControlCenter = ({
       </div>
 
       <AnimatePresence mode="wait">
-        {/* COUNTRIES TAB */}
-        {activeTab === "countries" && (
+        {/* CATEGORIES TAB — shows top-level country/category bubbles */}
+        {activeTab === "categories" && (
           <motion.div
-            key="countries"
+            key="categories"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -445,7 +468,7 @@ export const CommunityControlCenter = ({
                 onClick={() => openCreate("country")}
                 className="h-12 px-8 bg-linear-to-r from-[#A53860] to-[#670D2F] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 shadow-lg transition-all active:scale-95"
               >
-                <Plus className="w-5 h-5" /> Add Country
+                <Plus className="w-5 h-5" /> Add Category
               </button>
               <div className="relative flex-1">
                 <Search
@@ -453,7 +476,7 @@ export const CommunityControlCenter = ({
                 />
                 <input
                   type="text"
-                  placeholder="Search countries..."
+                  placeholder="Search categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`${inputClass(isDark)} pl-12 h-12`}
@@ -482,12 +505,12 @@ export const CommunityControlCenter = ({
                   <p
                     className={`text-xl font-bold ${isDark ? "text-gray-300" : "text-gray-700"}`}
                   >
-                    No countries found
+                    No categories yet
                   </p>
                   <p
                     className={`text-sm ${isDark ? "text-gray-500" : "text-gray-400"}`}
                   >
-                    Start by adding a new region
+                    Click &quot;Add Category&quot; to get started
                   </p>
                 </div>
               )}
@@ -495,25 +518,26 @@ export const CommunityControlCenter = ({
           </motion.div>
         )}
 
-        {/* CATEGORIES TAB */}
-        {activeTab === "categories" && (
+        {/* SUBCATEGORIES TAB */}
+        {activeTab === "subcategories" && (
           <motion.div
-            key="categories"
+            key="subcategories"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
+            {/* Category selector pills */}
             <div className="flex gap-2 overflow-x-auto mb-6 pb-2 scrollbar-hide">
               {countries.map((c) => (
                 <button
                   key={c.id}
                   onClick={() => setSelectedCountryId(c.id)}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap border-2 ${
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap border-2 ${
                     selectedCountryId === c.id
                       ? "border-[#A53860] bg-[#A53860]/10 text-[#A53860]"
                       : isDark
-                        ? "border-gray-700 text-gray-500 hover:border-gray-600"
-                        : "border-gray-200 text-gray-500 hover:border-gray-300"
+                        ? "border-gray-700 text-gray-500 hover:border-gray-600 hover:text-gray-300"
+                        : "border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   }`}
                 >
                   {c.name}
@@ -521,13 +545,14 @@ export const CommunityControlCenter = ({
               ))}
             </div>
 
+            {/* Add Subcategory + Search row */}
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <button
                 onClick={() => openCreate("category")}
                 disabled={countries.length === 0}
                 className="h-12 px-8 bg-linear-to-r from-[#A53860] to-[#670D2F] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 shadow-lg transition-all active:scale-95 disabled:opacity-50"
               >
-                <Plus className="w-5 h-5" /> Add Category
+                <Plus className="w-5 h-5" /> Add Subcategory
               </button>
               <div className="relative flex-1">
                 <Search
@@ -535,7 +560,7 @@ export const CommunityControlCenter = ({
                 />
                 <input
                   type="text"
-                  placeholder="Search in categories..."
+                  placeholder="Search subcategories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`${inputClass(isDark)} pl-12 h-12`}
@@ -543,6 +568,7 @@ export const CommunityControlCenter = ({
               </div>
             </div>
 
+            {/* Bubble canvas for subcategories */}
             <div
               className={`${cardBase} p-6 min-h-[500px] h-[600px] relative overflow-hidden shadow-2xl`}
             >
@@ -556,22 +582,16 @@ export const CommunityControlCenter = ({
                   isDark={isDark}
                 />
               )}
-              {subcategories.length === 0 && !loadingSub && (
+              {!loadingSub && subcategories.length === 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-7xl mb-4" role="img" aria-label="Target">
-                    🎯
-                  </div>
-                  <p
-                    className={`text-xl font-bold ${isDark ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    No categories yet
+                  <div className="text-7xl mb-4">🎯</div>
+                  <p className={`text-xl font-bold ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                    No subcategories yet
                   </p>
-                  <p
-                    className={`text-sm ${isDark ? "text-gray-500" : "text-gray-400"}`}
-                  >
-                    {isEdit
-                      ? "Update existing country/category"
-                      : "Configure a new community for the region"}
+                  <p className={`text-sm ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                    {countries.length === 0
+                      ? "Add a category first before adding subcategories"
+                      : "Click \"Add Subcategory\" to get started"}
                   </p>
                 </div>
               )}
@@ -758,8 +778,13 @@ export const CommunityControlCenter = ({
                   <h3
                     className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}
                   >
-                    {isEdit ? "Manage" : "Initialize"}{" "}
-                    {modalType === "country" ? "Country" : "Category"}
+                    {isEdit
+                      ? modalType === "category"
+                        ? "Edit Subcategory"
+                        : "Edit Category"
+                      : modalType === "category"
+                        ? "Add Subcategory"
+                        : "Add Category"}
                   </h3>
                   <p className="text-sm text-gray-400">
                     Chumme Administrative Panel
@@ -780,7 +805,7 @@ export const CommunityControlCenter = ({
                       <label
                         className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDark ? "text-gray-500" : "text-gray-400"}`}
                       >
-                        Official Name
+                        Category Name
                       </label>
                       <input
                         type="text"
@@ -811,7 +836,7 @@ export const CommunityControlCenter = ({
                       <label
                         className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDark ? "text-gray-500" : "text-gray-400"}`}
                       >
-                        Category Label
+                        Category Name
                       </label>
                       <input
                         type="text"
@@ -830,7 +855,7 @@ export const CommunityControlCenter = ({
                       <label
                         className={`block text-xs font-black uppercase tracking-widest mb-2 ${isDark ? "text-gray-500" : "text-gray-400"}`}
                       >
-                        Primary Country
+                        Parent Category
                       </label>
                       <select
                         value={formData.targetParentName}
@@ -842,7 +867,7 @@ export const CommunityControlCenter = ({
                         }
                         className={inputClass(isDark)}
                       >
-                        <option value="">Select Target Region</option>
+                        <option value="">Select Parent Category</option>
                         {countries.map((c) => (
                           <option key={c.id} value={c.name}>
                             {c.name}

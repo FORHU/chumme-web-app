@@ -31,8 +31,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const { activeNav, setActiveNav, settingsExpanded, setSettingsExpanded } =
-    useDashboardStore();
+  const {
+    activeNav,
+    setActiveNav,
+    settingsExpanded,
+    setSettingsExpanded,
+    musicExpanded,
+    setMusicExpanded,
+  } = useDashboardStore();
 
   useEffect(() => {
     const currentNavItem = NAV_ITEMS.find((item) => item.href === pathname);
@@ -42,6 +48,15 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       setActiveNav("Dashboard");
     } else if (pathname.includes("profile")) {
       setActiveNav("Profile");
+    } else if (pathname.includes("/dashboard/music")) {
+      setMusicExpanded(true);
+      if (pathname.includes("/karaoke")) {
+        setActiveNav("Karaoke");
+      } else if (pathname.includes("/song")) {
+        setActiveNav("Song");
+      } else {
+        setActiveNav("Music");
+      }
     } else if (pathname.includes("/dashboard/settings")) {
       if (pathname.endsWith("/roles")) {
         setActiveNav("Roles & Permissions");
@@ -98,6 +113,78 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
             const active = activeNav === item.label;
+            const isMusic = item.label === "Music";
+            const isMusicActive =
+              activeNav === "Music" ||
+              activeNav === "Karaoke" ||
+              activeNav === "Song";
+
+            if (isMusic) {
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => {
+                      setMusicExpanded((prev) => !prev);
+                      setActiveNav("Music");
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                      isMusicActive
+                        ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
+                        : isDark
+                          ? "text-gray-300 hover:bg-gray-800"
+                          : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5 shrink-0" />
+                    <span className="font-medium flex-1 text-left text-sm">
+                      Music
+                    </span>
+                    <motion.div
+                      animate={{ rotate: musicExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {musicExpanded && item.children && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-1 ml-9 space-y-1">
+                          {item.children.map((child) => (
+                            <button
+                              key={child.label}
+                              onClick={() => {
+                                setActiveNav(child.label);
+                                router.push(child.href);
+                              }}
+                              className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${
+                                activeNav === child.label
+                                  ? "text-[#A53860] bg-[#A53860]/10 font-bold"
+                                  : isDark
+                                    ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <child.icon className="w-3.5 h-3.5 shrink-0" />
+                                {child.label}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            }
 
             return (
               <div key={item.label}>
@@ -118,24 +205,22 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
                 {item.children && active && (
                   <div className="pl-7 mt-1 space-y-1">
-                    {item.children.map((child) => {
-                      return (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-                            pathname === child.href
-                              ? "text-[#A53860] bg-[#A53860]/10"
-                              : isDark
-                                ? "text-gray-400 hover:text-gray-200"
-                                : "text-gray-500 hover:text-gray-900"
-                          }`}
-                        >
-                          <child.icon className="w-3.5 h-3.5 shrink-0" />
-                          {child.label}
-                        </Link>
-                      );
-                    })}
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.label}
+                        href={child.href}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+                          pathname === child.href
+                            ? "text-[#A53860] bg-[#A53860]/10"
+                            : isDark
+                              ? "text-gray-400 hover:text-gray-200"
+                              : "text-gray-500 hover:text-gray-900"
+                        }`}
+                      >
+                        <child.icon className="w-3.5 h-3.5 shrink-0" />
+                        {child.label}
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>

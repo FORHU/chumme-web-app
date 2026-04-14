@@ -59,9 +59,14 @@ export const useUpdateCommunitiesCategory = (options?: {
     }) => {
       // TODO: re-add color to payload once backend Joi schema is updated
       // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
-      const res = await api.put(`/api/v1/chumme-categories/${params.id}`, {
-        name: params.name,
-      });
+      const payload: Record<string, unknown> = { name: params.name };
+      if (params.color) {
+        payload.colorSet = { primary: params.color };
+      }
+      const res = await api.put(
+        `/api/v1/chumme-categories/${params.id}`,
+        payload,
+      );
       if (!res.ok)
         throw new Error(
           (res.data as { message?: string })?.message || "Update failed",
@@ -103,9 +108,14 @@ export const useUpdateSubCategory = (options?: { onSuccess?: () => void }) => {
     }) => {
       // TODO: re-add color to payload once backend Joi schema is updated
       // Backend fix needed in: chumme-api/src/controllers/chumme-category.controller.ts
-      const res = await api.put(`/api/v1/chumme-subcategories/${params.id}`, {
-        name: params.name,
-      });
+      const payload: Record<string, unknown> = { name: params.name };
+      if (params.color) {
+        payload.colorSet = { primary: params.color };
+      }
+      const res = await api.put(
+        `/api/v1/chumme-subcategories/${params.id}`,
+        payload,
+      );
       if (!res.ok)
         throw new Error(
           (res.data as { message?: string })?.message || "Update failed",

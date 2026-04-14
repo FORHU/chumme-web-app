@@ -7,6 +7,8 @@ interface DashboardState {
   setSettingsExpanded: (
     expanded: boolean | ((prev: boolean) => boolean),
   ) => void;
+  musicExpanded: boolean;
+  setMusicExpanded: (val: boolean | ((prev: boolean) => boolean)) => void;
 }
 
 export const useDashboardStore = create<DashboardState>((set) => ({
@@ -19,5 +21,10 @@ export const useDashboardStore = create<DashboardState>((set) => ({
         typeof expanded === "function"
           ? expanded(state.settingsExpanded)
           : expanded,
+    })),
+  musicExpanded: false,
+  setMusicExpanded: (val) =>
+    set((state) => ({
+      musicExpanded: typeof val === "function" ? val(state.musicExpanded) : val,
     })),
 }));
