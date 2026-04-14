@@ -19,6 +19,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [artist, setArtist] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [artistError, setArtistError] = useState(false);
+  const [mp3Error, setMp3Error] = useState(false);
 
   const { data, isLoading, isError, refetch } = useSongs();
   const { data: artists = [] } = useArtists();
@@ -38,6 +39,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
     setSelectedArtistId("");
     setAudioFile(null);
     setArtistError(false);
+    setMp3Error(false);
   };
 
   const handleSave = async () => {
@@ -317,21 +319,67 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
                   <label className={labelClass}>
                     Upload Audio File <span className="text-red-500">*</span>
                   </label>
-                  <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${isDark
+                <div className="relative">
+                  <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
+                    isDark
                       ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
                       : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
-                    }`}>
+                  }`}>
                     <input
                       type="file"
-                      accept="audio/*"
+                      accept=".mp3,audio/mpeg"
                       className="sr-only"
-                      onChange={(e) => setAudioFile(e.target.files?.[0] ?? null)}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] ?? null;
+                        if (file && !file.name.toLowerCase().endsWith(".mp3")) {
+                          e.target.value = "";
+                          setAudioFile(null);
+                          setMp3Error(true);
+                          setTimeout(() => setMp3Error(false), 4000);
+                          return;
+                        }
+                        setMp3Error(false);
+                        setAudioFile(file);
+                      }}
                     />
-                    <span className="text-sm">Choose file</span>
-                    <span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-                      {audioFile ? audioFile.name : "No file chosen"}
-                    </span>
+                    {audioFile ? (
+                      <span className={`text-sm truncate pr-6 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                        {audioFile.name}
+                      </span>
+                    ) : (
+                      <>
+                        <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                          Choose file
+                        </span>
+                        <span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+                          No file chosen
+                        </span>
+                      </>
+                    )}
                   </label>
+                  {audioFile && (
+                    <button
+                      type="button"
+                      onClick={() => setAudioFile(null)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors"
+                    >
+                      <X className={`w-4 h-4 ${isDark ? "text-gray-400 hover:text-red-400" : "text-gray-500 hover:text-red-500"}`} />
+                    </button>
+                  )}
+                </div>
+                <p className={`text-xs mt-1.5 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                  Only .mp3 files are accepted
+                </p>
+                {mp3Error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xs mt-1 text-red-500 font-medium"
+                  >
+                    ✕ Invalid file type. Please upload an MP3 file only.
+                  </motion.p>
+                )}
                 </div>
 
                 {uploadSong.isError && (
