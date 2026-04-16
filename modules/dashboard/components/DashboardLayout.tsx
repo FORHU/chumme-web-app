@@ -45,14 +45,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   } = useDashboardStore();
 
   useEffect(() => {
-    const currentNavItem = NAV_ITEMS.find((item) => item.href === pathname);
-    if (currentNavItem) {
-      setActiveNav(currentNavItem.label);
-    } else if (pathname === "/dashboard") {
-      setActiveNav("Dashboard");
-    } else if (pathname.includes("profile")) {
-      setActiveNav("Profile");
-    } else if (pathname.includes("/dashboard/music")) {
+    if (pathname.includes("/dashboard/music")) {
       setMusicExpanded(true);
       if (pathname.includes("/karaoke")) {
         setActiveNav("Karaoke");
@@ -66,13 +59,26 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     } else if (pathname.includes("/dashboard/settings")) {
       if (pathname.endsWith("/roles")) {
         setActiveNav("Roles & Permissions");
-        setSettingsExpanded(true);
       } else if (pathname.endsWith("/apk")) {
         setActiveNav("APK Download");
-        setSettingsExpanded(true);
       } else {
         setActiveNav("Settings");
-        setSettingsExpanded(true);
+      }
+      setSettingsExpanded(true);
+    } else if (pathname.includes("profile")) {
+      setActiveNav("Profile");
+    } else {
+      const currentNavItem = NAV_ITEMS.find((item) => item.href === pathname);
+      const parentNavItem = NAV_ITEMS.find((item) =>
+        item.children?.some((child) => child.href === pathname),
+      );
+
+      if (currentNavItem) {
+        setActiveNav(currentNavItem.label);
+      } else if (parentNavItem) {
+        setActiveNav(parentNavItem.label);
+      } else if (pathname === "/dashboard") {
+        setActiveNav("Dashboard");
       }
     }
   }, [pathname, setActiveNav, setSettingsExpanded, setMusicExpanded]);
@@ -144,13 +150,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       setMusicExpanded((prev) => !prev);
                       setActiveNav("Music");
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                      isMusicActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isMusicActive
                         ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                         : isDark
                           ? "text-gray-300 hover:bg-gray-800"
                           : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
                     <span className="font-medium flex-1 text-left text-sm">
@@ -181,13 +186,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                                 setActiveNav(child.label);
                                 router.push(child.href);
                               }}
-                              className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${
-                                activeNav === child.label
+                              className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === child.label
                                   ? "text-[#A53860] bg-[#A53860]/10 font-bold"
                                   : isDark
                                     ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                              }`}
+                                }`}
                             >
                               <div className="flex items-center gap-2">
                                 <child.icon className="w-3.5 h-3.5 shrink-0" />
@@ -208,13 +212,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Link
                   href={item.href}
                   onClick={() => setActiveNav(item.label)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                    active
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${active
                       ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                       : isDark
                         ? "text-gray-300 hover:bg-gray-800"
                         : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-5 h-5 shrink-0" />
                   {item.label}
@@ -226,13 +229,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       <Link
                         key={child.label}
                         href={child.href}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-                          pathname === child.href
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${pathname === child.href
                             ? "text-[#A53860] bg-[#A53860]/10"
                             : isDark
                               ? "text-gray-400 hover:text-gray-200"
                               : "text-gray-500 hover:text-gray-900"
-                        }`}
+                          }`}
                       >
                         <child.icon className="w-3.5 h-3.5 shrink-0" />
                         {child.label}
@@ -251,15 +253,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 setSettingsExpanded((prev) => !prev);
                 router.push("/dashboard/settings");
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                activeNav === "Settings" ||
-                activeNav === "Roles & Permissions" ||
-                activeNav === "APK Download"
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeNav === "Settings" ||
+                  activeNav === "Roles & Permissions" ||
+                  activeNav === "APK Download"
                   ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                   : isDark
                     ? "text-gray-300 hover:bg-gray-800"
                     : "text-gray-600 hover:bg-gray-100"
-              }`}
+                }`}
             >
               <Settings className="w-5 h-5 shrink-0" />
               <span className="font-medium flex-1 text-left text-sm">
@@ -286,25 +287,23 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <div className="mt-1 ml-9 space-y-1">
                     <button
                       onClick={() => router.push("/dashboard/settings/roles")}
-                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${
-                        activeNav === "Roles & Permissions"
+                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "Roles & Permissions"
                           ? "text-[#A53860] bg-[#A53860]/10 font-bold"
                           : isDark
                             ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                      }`}
+                        }`}
                     >
                       Roles & Permissions
                     </button>
                     <button
                       onClick={() => router.push("/dashboard/settings/apk")}
-                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${
-                        activeNav === "APK Download"
+                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "APK Download"
                           ? "text-[#A53860] bg-[#A53860]/10 font-bold"
                           : isDark
                             ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                      }`}
+                        }`}
                     >
                       APK Download
                     </button>
@@ -324,21 +323,19 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           >
             <button
               onClick={() => setTheme("light")}
-              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${
-                !isDark
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${!isDark
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-400 hover:text-gray-200"
-              }`}
+                }`}
             >
               <Sun className="w-4 h-4" /> Light
             </button>
             <button
               onClick={() => setTheme("dark")}
-              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${
-                isDark
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all ${isDark
                   ? "bg-gray-700 text-white shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
-              }`}
+                }`}
             >
               <Moon className="w-4 h-4" /> Dark
             </button>
@@ -346,11 +343,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <button
             type="button"
             onClick={handleSignOut}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all w-full ${
-              isDark
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all w-full ${isDark
                 ? "text-gray-400 hover:bg-gray-800 hover:text-red-400"
                 : "text-gray-500 hover:bg-red-50 hover:text-red-600"
-            }`}
+              }`}
           >
             <LogOut className="w-4 h-4" />
             Sign Out
@@ -365,33 +361,30 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.45, delay: 0.15 }}
-          className={`sticky top-0 z-20 border-b px-8 py-4 flex items-center gap-4 ${
-            isDark
+          className={`sticky top-0 z-20 border-b px-8 py-4 flex items-center gap-4 ${isDark
               ? "bg-gray-900/95 border-gray-700 backdrop-blur-sm"
               : "bg-white/95 border-gray-200 backdrop-blur-sm"
-          }`}
+            }`}
         >
           {/* Search */}
-          <div className="flex-1 max-w-xl relative">
+          <div className="flex-1 max-w-xl relative ml-auto">
             <Search
               className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
             />
             <input
               type="text"
               placeholder="Search communities, collaborations…"
-              className={`w-full h-11 pl-12 pr-4 rounded-xl border text-sm outline-none transition-all ${
-                isDark
+              className={`w-full h-11 pl-12 pr-4 rounded-xl border text-sm outline-none transition-all ${isDark
                   ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-[#A53860]"
                   : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#A53860]"
-              } focus:ring-2 focus:ring-[#A53860]/10`}
+                } focus:ring-2 focus:ring-[#A53860]/10`}
             />
           </div>
 
           {/* Bell */}
           <button
-            className={`relative p-2 rounded-xl transition-colors ${
-              isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-            }`}
+            className={`relative p-2 rounded-xl transition-colors ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+              }`}
           >
             <Bell
               className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`}
@@ -416,11 +409,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -8 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className={`absolute right-0 top-full mt-2 w-64 rounded-2xl shadow-2xl z-50 overflow-hidden border ${
-                    isDark
+                  className={`absolute right-0 top-full mt-2 w-64 rounded-2xl shadow-2xl z-50 overflow-hidden border ${isDark
                       ? "bg-gray-900 border-gray-700/50"
                       : "bg-white border-gray-200"
-                  }`}
+                    }`}
                 >
                   {/* Profile Info */}
                   <div className={`px-4 py-4 border-b ${isDark ? "border-gray-700/50" : "border-gray-200"}`}>
@@ -443,16 +435,15 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     {[
                       { icon: User, label: "View Profile", action: () => router.push("/dashboard/profile") },
                       { icon: Settings, label: "Settings", action: () => router.push("/dashboard/settings") },
-                      { icon: Bell, label: "Notifications", action: () => {} },
+                      { icon: Bell, label: "Notifications", action: () => { } },
                     ].map(({ icon: Icon, label, action }) => (
                       <button
                         key={label}
                         onClick={() => { action(); setProfileMenuOpen(false); }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                          isDark
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${isDark
                             ? "text-gray-300 hover:text-white hover:bg-gray-800"
                             : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-4 h-4 ${isDark ? "text-gray-500" : "text-gray-400"}`} />
                         {label}

@@ -22,8 +22,8 @@ interface SnackbarProps {
 const iconMap = {
   success: {
     Icon: CheckCircle,
-    color: "text-green-400",
-    bg: "bg-green-500/20 border-green-500/30",
+    color: "text-[#EF88AD]",
+    bg: "bg-[#A53860]/20 border-[#A53860]/30",
   },
   error: {
     Icon: XCircle,
@@ -76,55 +76,41 @@ const SnackbarItem = ({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: 80, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 80, scale: 0.9 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      initial={{ opacity: 0, y: -40, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+      transition={{ type: "spring", damping: 25, stiffness: 350 }}
       className={`relative w-80 rounded-2xl border backdrop-blur-xl shadow-2xl overflow-hidden ${bg} bg-gray-900/90`}
     >
       {/* Content */}
-      <div className="flex items-start gap-3 p-4">
-        <div className={`mt-0.5 shrink-0 ${color}`}>
+      <div className="flex items-center gap-3 p-3 min-h-[56px]">
+        <div className={`shrink-0 ${color}`}>
           <Icon className="w-5 h-5" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 pr-2">
           <p className="text-sm font-semibold text-white leading-tight">
             {message.title}
           </p>
           {message.description && (
-            <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
+            <p className="text-xs text-gray-400 mt-0.5 leading-relaxed line-clamp-2">
               {message.description}
             </p>
           )}
         </div>
         <button
           onClick={() => onDismiss(message.id)}
-          className="shrink-0 p-1 rounded-lg hover:bg-white/10 transition-colors"
+          className="shrink-0 p-1.5 rounded-full hover:bg-white/10 transition-colors"
         >
-          <X className="w-3.5 h-3.5 text-gray-400" />
+          <X className="w-4 h-4 text-gray-400" />
         </button>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-0.5 w-full bg-white/10">
-        <motion.div
-          className={`h-full ${
-            message.type === "error"
-              ? "bg-red-400"
-              : message.type === "success"
-                ? "bg-green-400"
-                : "bg-[#EF88AD]"
-          }`}
-          style={{ width: `${progress}%` }}
-          transition={{ duration: 0.1 }}
-        />
-      </div>
     </motion.div>
   );
 };
 
 export const Snackbar = ({ messages, onDismiss }: SnackbarProps) => (
-  <div className="fixed bottom-6 right-6 z-9999 flex flex-col gap-3 pointer-events-none">
+  <div className="fixed top-6 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-3 pointer-events-none">
     <AnimatePresence mode="popLayout">
       {messages.map((msg) => (
         <div key={msg.id} className="pointer-events-auto">

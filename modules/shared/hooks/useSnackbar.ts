@@ -1,41 +1,10 @@
-import { useState, useCallback } from "react";
-
-import type {
-  SnackbarMessage,
-  SnackbarType,
-} from "@/modules/shared/components/Snackbar";
+import { useCallback } from "react";
+import { useSnackbarStore } from "@/modules/shared/store/useSnackbarStore";
 
 export const useSnackbar = () => {
-  const [messages, setMessages] = useState<SnackbarMessage[]>([]);
-
-  const dismiss = useCallback((id: string) => {
-    setMessages((prev) => prev.filter((m) => m.id !== id));
-  }, []);
-
-  const show = useCallback(
-    ({
-      type,
-      title,
-      description,
-      duration,
-    }: {
-      type: SnackbarType;
-      title: string;
-      description?: string;
-      duration?: number;
-    }) => {
-      const id =
-        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-          ? crypto.randomUUID()
-          : Math.random().toString(36).slice(2) + Date.now().toString(36);
-      setMessages((prev) => [
-        ...prev,
-        { id, type, title, description, duration },
-      ]);
-      return id;
-    },
-    [],
-  );
+  const messages = useSnackbarStore((state) => state.messages);
+  const show = useSnackbarStore((state) => state.show);
+  const dismiss = useSnackbarStore((state) => state.dismiss);
 
   const showDownload = useCallback(
     (filename = "chumme.apk") =>

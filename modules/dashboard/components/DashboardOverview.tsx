@@ -215,46 +215,6 @@ export const DashboardOverview = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Top Communities */}
-      <motion.div
-        initial={{ y: 24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            Top Communities
-          </h3>
-          <a
-            href="/dashboard/communities"
-            className="text-sm text-[#A53860] font-semibold hover:text-[#670D2F] transition-colors"
-          >
-            See All
-          </a>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {topCommunities.map((c) => (
-            <div
-              key={c.name}
-              className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50"
-            >
-              <div className="w-12 h-12 rounded-full bg-linear-to-br from-[#EF88AD] to-[#A53860] flex items-center justify-center text-white font-bold shrink-0">
-                {c.name.substring(0, 2)}
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-gray-900 dark:text-white">
-                  {c.name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {c.members} members
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
     </>
   );
 };

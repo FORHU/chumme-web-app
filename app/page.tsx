@@ -19,8 +19,6 @@ import { useState, useEffect } from "react";
 
 import { apkService } from "@/modules/dashboard/api/apk.service";
 import { useLatestAPK } from "@/modules/dashboard/hooks/useAPK";
-import { Snackbar } from "@/modules/shared/components/Snackbar";
-import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 
 export default function LandingPage() {
   // HYDRATION GUARD
@@ -30,7 +28,6 @@ export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const { messages, dismiss, showDownload } = useSnackbar();
   const { data: latestAPK } = useLatestAPK();
 
   const handleDownloadAPK = async () => {
@@ -51,7 +48,6 @@ export default function LandingPage() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      showDownload(`chumme-v${latestAPK.versionName}.apk`);
     } catch (_err) {
       // fallback to direct fileUrl if presigned URL fails
       if (latestAPK?.fileUrl) {
@@ -614,8 +610,6 @@ export default function LandingPage() {
             </div>
           </div>
         </footer>
-
-        <Snackbar messages={messages} onDismiss={dismiss} />
       </div>
     </div>
   );

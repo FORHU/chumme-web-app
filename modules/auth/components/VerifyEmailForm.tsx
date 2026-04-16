@@ -7,12 +7,14 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { AuthCard } from "@/modules/auth/components/AuthCard";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
+import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 
 const OTP_LENGTH = 6;
 
 export const VerifyEmailForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { showSuccess } = useSnackbar();
   const email = searchParams.get("email") ?? "your email";
 
   const [otp, setOtp] = useState<string[]>(
@@ -57,6 +59,10 @@ export const VerifyEmailForm = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (otp.join("").length === OTP_LENGTH) {
+      showSuccess(
+        "Account Created!",
+        "You have successfully verified your email.",
+      );
       router.push(`/onboarding/details?email=${encodeURIComponent(email)}`);
     }
   };
@@ -119,7 +125,7 @@ export const VerifyEmailForm = () => {
             </h2>
             <p className="text-sm text-gray-600 font-['Poppins',sans-serif]">
               We sent a verification code to{" "}
-              <span className="font-semibold text-gray-900">{email}</span>
+              <span className="font-semibold text-white">{email}</span>
             </p>
           </div>
 
