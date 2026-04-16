@@ -8,31 +8,50 @@ import type {
 
 export const authService = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post<ApiEnvelope<AuthResponse>>(
-      "/api/v1/auth/login",
-      { email, password },
-    );
+    const response = await api.post<any>("/api/v1/auth/login", {
+      email,
+      password,
+    });
+
     if (!response.ok) {
-      throw new Error(response.data?.message || "Login failed");
+      throw new Error(response.data?.message || response.problem || "Login failed");
     }
-    if (!response.data?.data) {
-      throw new Error(response.data?.message || "Login failed");
+
+    const payload = response.data;
+    if (!payload) throw new Error("No response data from server");
+
+    // Handle both { data: { ... } } and { ... } formats
+    if (payload.data && typeof payload.data === "object" && "accessToken" in payload.data) {
+      return payload.data as AuthResponse;
     }
-    return response.data.data;
+    
+    if (typeof payload === "object" && "accessToken" in payload) {
+      return payload as AuthResponse;
+    }
+
+    // Handle verification required case which might be passed through
+    if (payload.data?.requiresVerification || payload.requiresVerification) {
+      return (payload.data || payload) as any;
+    }
+
+    throw new Error("Invalid response format from server");
   },
 
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await api.post<ApiEnvelope<AuthResponse>>(
-      "/api/v1/auth/register",
-      data,
-    );
+    const response = await api.post<any>("/api/v1/auth/register", data);
+
     if (!response.ok) {
-      throw new Error(response.data?.message || "Registration failed");
+      throw new Error(response.data?.message || response.problem || "Registration failed");
     }
-    if (!response.data?.data) {
-      throw new Error(response.data?.message || "Registration failed");
+
+    const payload = response.data;
+    if (!payload) throw new Error("No response data from server");
+
+    if (payload.data && typeof payload.data === "object") {
+      return payload.data as AuthResponse;
     }
-    return response.data.data;
+    
+    return payload as AuthResponse;
   },
 
   getCurrentUser: async (): Promise<User> => {
