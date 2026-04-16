@@ -67,11 +67,7 @@ const stats = [
   },
 ];
 
-const topCommunities = [
-  { name: "Taylor Swift Fans", members: "12k" },
-  { name: "BTS Army", members: "8k" },
-  { name: "Marvel Universe", members: "6k" },
-];
+
 
 interface StatCardProps {
   label: string;

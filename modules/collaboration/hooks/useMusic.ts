@@ -23,15 +23,21 @@ export const useUploadSong = (isKaraoke: boolean) => {
   return useMutation({
     mutationFn: ({
       file,
+      lyricsFile,
+      videoFile,
       meta,
     }: {
       file: File;
+      lyricsFile?: File | null;
+      videoFile?: File | null;
       meta: { title: string; musicArtistId?: string };
     }) =>
       musicService.uploadSong(file, {
         title: meta.title,
         isKaraoke,
         musicArtistId: meta.musicArtistId,
+        lyricsFile,
+        videoFile,
       }),
     onSuccess: () => {
       qc.invalidateQueries({

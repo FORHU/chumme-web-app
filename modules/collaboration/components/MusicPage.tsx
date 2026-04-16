@@ -18,6 +18,9 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [songTitle, setSongTitle] = useState("");
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [lyricsFile, setLyricsFile] = useState<File | null>(null);
+  const [lyricsError, setLyricsError] = useState("");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [artistError, setArtistError] = useState(false);
   const [mp3Error, setMp3Error] = useState(false);
 
@@ -38,6 +41,9 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
 
     setSelectedArtistId("");
     setAudioFile(null);
+    setLyricsFile(null);
+    setLyricsError("");
+    setVideoFile(null);
     setArtistError(false);
     setMp3Error(false);
   };
@@ -52,6 +58,8 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
     try {
       await uploadSong.mutateAsync({
         file: audioFile,
+        lyricsFile,
+        videoFile,
         meta: {
           title: songTitle.trim(),
           musicArtistId: selectedArtistId,
@@ -370,16 +378,92 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
                 <p className={`text-xs mt-1.5 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
                   Only .mp3 files are accepted
                 </p>
-                {mp3Error && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xs mt-1 text-red-500 font-medium"
-                  >
-                    ✕ Invalid file type. Please upload an MP3 file only.
-                  </motion.p>
-                )}
+                  {mp3Error && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-xs mt-1 text-red-500 font-medium"
+                    >
+                      ✕ Invalid file type. Please upload an MP3 file only.
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Lyrics File */}
+                <div>
+                  <label className="text-sm font-semibold mb-2 block text-white">
+                    Upload Lyrics File (JSON) <span className="text-[#A53860]">*</span>
+                  </label>
+                  <div className={`flex items-center gap-3 h-12 px-4 rounded-xl border transition-all ${lyricsFile
+                      ? "border-[#A53860] bg-[#A53860]/10"
+                      : isDark ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-gray-50"
+                    }`}>
+                    {!lyricsFile ? (
+                      <label className="flex items-center gap-3 cursor-pointer w-full">
+                        <span className="text-sm text-gray-400 font-medium">Choose file</span>
+                        <span className="text-sm text-gray-500">No file chosen</span>
+                        <input
+                          type="file"
+                          accept=".json"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file && !file.name.toLowerCase().endsWith(".json")) {
+                              setLyricsError("Only .json files are accepted");
+                              setTimeout(() => setLyricsError(""), 4000);
+                              return;
+                            }
+                            setLyricsFile(file || null);
+                          }}
+                        />
+                      </label>
+                    ) : (
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-sm text-white truncate">{lyricsFile.name}</span>
+                        <button onClick={() => setLyricsFile(null)} className="text-gray-400 hover:text-white transition-colors">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {lyricsError && <p className="text-xs text-red-400 mt-1">{lyricsError}</p>}
+                  {!lyricsError && <p className="text-xs text-gray-500 mt-1">Only .json files are accepted</p>}
+                </div>
+
+                {/* Background Video */}
+                <div>
+                  <label className="text-sm font-semibold mb-2 block text-white">
+                    Upload Background Video
+                  </label>
+                  <div className={`flex items-center gap-3 h-12 px-4 rounded-xl border transition-all ${videoFile
+                      ? "border-[#A53860] bg-[#A53860]/10"
+                      : isDark ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-gray-50"
+                    }`}>
+                    {!videoFile ? (
+                      <label className="flex items-center gap-3 cursor-pointer w-full">
+                        <span className="text-sm text-gray-400 font-medium">Choose file</span>
+                        <span className="text-sm text-gray-500">No file chosen</span>
+                        <input
+                          type="file"
+                          accept=".mp4,.mov,.webm"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            setVideoFile(file || null);
+                          }}
+                        />
+                      </label>
+                    ) : (
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-sm text-white truncate">{videoFile.name}</span>
+                        <button onClick={() => setVideoFile(null)} className="text-gray-400 hover:text-white transition-colors">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Accepted: .mp4, .mov, .webm</p>
                 </div>
 
                 {uploadSong.isError && (
