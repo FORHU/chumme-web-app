@@ -71,6 +71,8 @@ export const musicService = {
       title: string;
       isKaraoke: boolean;
       musicArtistId?: string;
+      lyricsFile?: File | null;
+      videoFile?: File | null;
     },
   ): Promise<MusicTrack> => {
     const baseUrl =
@@ -89,6 +91,13 @@ export const musicService = {
 
     if (meta.musicArtistId) {
       formData.append("musicArtistId", meta.musicArtistId);
+    }
+
+    if (meta.lyricsFile) {
+      formData.append("lyricsFile", meta.lyricsFile);
+    }
+    if (meta.videoFile) {
+      formData.append("videoFile", meta.videoFile);
     }
 
     const response = await fetch(`${baseUrl}/api/v1/music/create`, {

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle, Download, Upload, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export type SnackbarType = "success" | "error" | "download" | "upload";
 
@@ -49,28 +49,12 @@ const SnackbarItem = ({
   message: SnackbarMessage;
   onDismiss: (id: string) => void;
 }) => {
-  const [progress, setProgress] = useState(100);
   const duration = message.duration ?? 4000;
   const { Icon, color, bg } = iconMap[message.type];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev - 100 / (duration / 100);
-        if (next <= 0) {
-          clearInterval(interval);
-          return 0;
-        }
-        return next;
-      });
-    }, 100);
-
     const timeout = setTimeout(() => onDismiss(message.id), duration);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timeout);
   }, [message.id, duration, onDismiss]);
 
   return (

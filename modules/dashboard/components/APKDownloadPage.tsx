@@ -42,7 +42,7 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
   const [loadingAction, setLoadingAction] = useState<Record<string, string>>(
     {},
   );
-  const { messages, dismiss, showDownload, showUpload, showSuccess, showError } =
+  const { messages, dismiss, showSuccess, showError, showUpload } =
     useSnackbar();
 
   const { data: releases, isLoading, isError } = useAPKReleases();
@@ -145,7 +145,7 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     }
   };
 
-  console.log("release object:", releases);
+
 
   return (
     <motion.div
