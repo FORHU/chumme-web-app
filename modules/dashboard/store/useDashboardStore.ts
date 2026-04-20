@@ -9,6 +9,8 @@ interface DashboardState {
   ) => void;
   musicExpanded: boolean;
   setMusicExpanded: (val: boolean | ((prev: boolean) => boolean)) => void;
+  isSidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
 }
 
 export const useDashboardStore = create<DashboardState>((set) => ({
@@ -27,4 +29,6 @@ export const useDashboardStore = create<DashboardState>((set) => ({
     set((state) => ({
       musicExpanded: typeof val === "function" ? val(state.musicExpanded) : val,
     })),
+  isSidebarOpen: false,
+  setSidebarOpen: (open) => set({ isSidebarOpen: open }),
 }));

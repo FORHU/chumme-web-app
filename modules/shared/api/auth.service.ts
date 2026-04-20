@@ -83,6 +83,26 @@ export const authService = {
     await api.post("/api/v1/auth/logout", { refreshToken });
   },
 
+  loginWithGoogle: async (credential: string): Promise<AuthResponse> => {
+    const response = await api.post<any>("/api/v1/auth/google", {
+      credential,
+    });
+    if (!response.ok || !response.data) {
+      throw new Error("Google login failed");
+    }
+    return response.data;
+  },
+
+  loginWithFacebook: async (accessToken: string): Promise<AuthResponse> => {
+    const response = await api.post<any>("/api/v1/auth/facebook", {
+      accessToken,
+    });
+    if (!response.ok || !response.data) {
+      throw new Error("Facebook login failed");
+    }
+    return response.data;
+  },
+
   refreshAccessToken: async (
     refreshToken: string,
   ): Promise<{ accessToken: string; user: User }> => {

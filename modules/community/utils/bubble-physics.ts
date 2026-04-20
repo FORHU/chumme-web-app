@@ -19,9 +19,9 @@ export const distributeBubbles = (
 ) => {
   bubbles.forEach((b, i) => {
     const angle = (i / bubbles.length) * Math.PI * 2;
-    const radius = Math.min(width, height) * 0.3;
-    b.x = width / 2 + Math.cos(angle) * radius;
-    b.y = height / 2 + Math.sin(angle) * radius;
+    const radius = Math.min(width, height) * (width < 640 ? 0.2 : 0.3);
+    b.x = width / 2 + Math.cos(angle) * (radius * (Math.random() * 0.5 + 0.75));
+    b.y = height / 2 + Math.sin(angle) * (radius * (Math.random() * 0.5 + 0.75));
     b.vx = (Math.random() - 0.5) * 2;
     b.vy = (Math.random() - 0.5) * 2;
   });
@@ -64,8 +64,9 @@ export const updatePhysics = (
 
       if (distance < minDistance && distance > 0) {
         const force = (minDistance - distance) / distance;
-        const pushX = dx * force * 0.02;
-        const pushY = dy * force * 0.02;
+        const speedMultiplier = width < 640 ? 0.08 : 0.04;
+        const pushX = dx * force * speedMultiplier;
+        const pushY = dy * force * speedMultiplier;
 
         b.vx -= pushX;
         b.vy -= pushY;
@@ -75,10 +76,11 @@ export const updatePhysics = (
     });
 
     // Towards center attraction (very weak)
-    const dx = width / 2 - b.x;
-    const dy = height / 2 - b.y;
-    b.vx += dx * 0.0001;
-    b.vy += dy * 0.0001;
+    const dxCenter = width / 2 - b.x;
+    const dyCenter = height / 2 - b.y;
+    const centerAttraction = width < 640 ? 0.00005 : 0.0001;
+    b.vx += dxCenter * centerAttraction;
+    b.vy += dyCenter * centerAttraction;
 
     // Stability
     b.vx *= 0.98;

@@ -2,6 +2,7 @@
 import { create } from "zustand";
 
 import { setCachedAccessToken } from "@/modules/shared/api/api-client";
+import { useSnackbarStore } from "@/modules/shared/store/useSnackbarStore";
 import {
   AuthResponse,
   User,
@@ -143,7 +144,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         // Try to refresh user data in the background
         try {
           const freshUser = await authService.getCurrentUser();
-          await setStorageData(USER, freshUser);
+          const isLocal = !!localStorage.getItem(USER);
+          await setStorageData(USER, freshUser, isLocal ? "local" : "session");
           set({ user: freshUser });
         } catch (e) {
           console.warn("[useAuthStore] Background user refresh failed", e);
@@ -158,6 +160,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   _forceLogout() {
     set({ user: null, isAuthenticated: false });
+    useSnackbarStore.getState().show({
+      type: "info",
+      title: "Session Ended",
+      description: "You have been signed out. Please sign in again.",
+    });
   },
 
   async login(email, password, rememberMe = false) {
@@ -181,10 +188,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ user: res.user, isAuthenticated: true }),
       );
       console.info("[useAuthStore] Login successful, state updated");
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       console.error("[useAuthStore] Login failed:", err);
       const message = extractApiErrorMessage(err) || "Invalid credentials";
+      useSnackbarStore.getState().show({
+        type: "error",
+        title: "Login Failed",
+        description: message,
+      });
       return { error: true, message };
     } finally {
       set({ isLoading: false });
@@ -194,17 +211,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   async loginWithGoogle(credential, rememberMe = true) {
     set({ isLoading: true });
     try {
-      const loginWithGoogle = (
-        authService as unknown as {
-          loginWithGoogle?: (credential: string) => Promise<unknown>;
-        }
-      ).loginWithGoogle;
-
-      if (typeof loginWithGoogle !== "function") {
-        throw new Error("Google login is not available");
-      }
-
-      const res: unknown = await loginWithGoogle(credential);
+      const res: unknown = await authService.loginWithGoogle(credential);
 
       if (isVerificationRequiredResult(res)) {
         return { requiresVerification: true, user: res.user };
@@ -217,6 +224,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in with Google",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       const message = extractApiErrorMessage(err) || "Invalid credentials";
@@ -229,17 +241,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   async loginWithFacebook(accessToken, rememberMe = true) {
     set({ isLoading: true });
     try {
-      const loginWithFacebook = (
-        authService as unknown as {
-          loginWithFacebook?: (accessToken: string) => Promise<unknown>;
-        }
-      ).loginWithFacebook;
-
-      if (typeof loginWithFacebook !== "function") {
-        throw new Error("Facebook login is not available");
-      }
-
-      const res: unknown = await loginWithFacebook(accessToken);
+      const res: unknown = await authService.loginWithFacebook(accessToken);
 
       if (isVerificationRequiredResult(res)) {
         return { requiresVerification: true, user: res.user };
@@ -252,6 +254,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in with Facebook",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       const message = extractApiErrorMessage(err) || "Invalid credentials";
@@ -265,6 +272,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       await authService.register(data);
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Account Created",
+        description: "Please verify your email to get started!",
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -287,6 +299,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       ]);
       setCachedAccessToken(null);
       set({ user: null, isAuthenticated: false, isLoading: false });
+      useSnackbarStore.getState().show({
+        type: "info",
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
     }
   },
 
@@ -301,10 +318,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       set({ user: updated });
 
-      // Determine where the user is currently stored to maintain consistency
       const isLocal = !!localStorage.getItem(USER);
       console.debug(`[useAuthStore] Updating user in ${isLocal ? "localStorage" : "sessionStorage"}`);
-      setStorageData(USER, updated, isLocal ? "local" : "session");
+      void setStorageData(USER, updated, isLocal ? "local" : "session");
     }
   },
 }));

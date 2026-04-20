@@ -127,10 +127,11 @@ const InteractiveBubbleCanvas: React.FC<InteractiveBubbleCanvasProps> = ({
         ctx.textBaseline = "middle";
         ctx.globalAlpha = 1;
 
-        // Truncate name if too long
+        // Truncate name based on bubble size
         let displayName = bubble.name;
-        if (displayName.length > 12)
-          displayName = displayName.substring(0, 10) + "..";
+        const maxLen = Math.floor(bubble.radius / 5);
+        if (displayName.length > maxLen)
+          displayName = displayName.substring(0, Math.max(3, maxLen - 2)) + "..";
 
         ctx.fillText(displayName, bubble.x, bubble.y);
 

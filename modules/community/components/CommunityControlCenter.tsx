@@ -13,7 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 import {
@@ -96,6 +96,15 @@ export const CommunityControlCenter = ({
   const [colorOverrides, setColorOverrides] = useState<Record<string, string>>(
     {},
   );
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -309,11 +318,13 @@ export const CommunityControlCenter = ({
           c.color ||
           c.chummeVisualDesign?.colorSet?.primary ||
           getColorForId(c.id, i),
-        size: Math.min(140 + (c.populationCount || 0) / 10, 220),
+        size: isMobile 
+          ? Math.min(80 + (c.populationCount || 0) / 20, 120)
+          : Math.min(140 + (c.populationCount || 0) / 10, 220),
         onClick: () => openEdit("country", c),
         chummeVisualDesign: c.chummeVisualDesign ?? null,
       }));
-  }, [countries, searchQuery, openEdit, colorOverrides]);
+  }, [countries, searchQuery, openEdit, colorOverrides, isMobile]);
 
   const categoryBubbles = useMemo(() => {
     return subcategories
@@ -327,11 +338,13 @@ export const CommunityControlCenter = ({
           s.color ||
           s.chummeVisualDesign?.colorSet?.primary ||
           getColorForId(s.id, i + 5),
-        size: Math.min(120 + (s.populationCount || 0) / 5, 200),
+        size: isMobile
+          ? Math.min(70 + (s.populationCount || 0) / 10, 100)
+          : Math.min(120 + (s.populationCount || 0) / 5, 200),
         onClick: () => openEdit("category", s),
         chummeVisualDesign: s.chummeVisualDesign ?? null,
       }));
-  }, [subcategories, searchQuery, openEdit, colorOverrides]);
+  }, [subcategories, searchQuery, openEdit, colorOverrides, isMobile]);
 
   // ─── Styles ─────────────────────────────────────────────────────────────────
 
