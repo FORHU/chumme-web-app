@@ -13,6 +13,10 @@ import {
   Music2,
   UserRound,
   ClipboardList,
+  Settings,
+  FolderOpen,
+  ShieldCheck,
+  Download,
 } from "lucide-react";
 import type React from "react";
 
@@ -68,4 +72,22 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
   { label: "Profile", href: "/dashboard/profile", icon: User },
+  {
+    label: "Settings",
+    href: "/dashboard/settings",
+    icon: Settings,
+    children: [
+      {
+        label: "Roles & Permissions",
+        href: "/dashboard/settings/roles",
+        icon: ShieldCheck,
+      },
+      { label: "APK Download", href: "/dashboard/settings/apk", icon: Download },
+      {
+        label: "File Viewer",
+        href: "/dashboard/settings/file-viewer",
+        icon: FolderOpen,
+      },
+    ],
+  },
 ];

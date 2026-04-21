@@ -77,8 +77,6 @@ async function persistAuth(
 ) {
   const type: StorageType = rememberMe ? "local" : "session";
 
-  console.info(`[useAuthStore] Persisting auth state. RememberMe: ${rememberMe}, Storage: ${type}`);
-
   // Sanitize user object to ensure no sensitive data is stored
   const sanitizedUser = { ...res.user };
   // @ts-expect-error - removing potentially existing sensitive fields
@@ -144,8 +142,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         // Try to refresh user data in the background
         try {
           const freshUser = await authService.getCurrentUser();
-          const isLocal = !!localStorage.getItem(USER);
-          await setStorageData(USER, freshUser, isLocal ? "local" : "session");
+          const isLocalStorage = !!localStorage.getItem(USER);
+          await setStorageData(USER, freshUser, isLocalStorage ? "local" : "session");
           set({ user: freshUser });
         } catch (e) {
           console.warn("[useAuthStore] Background user refresh failed", e);
@@ -170,24 +168,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   async login(email, password, rememberMe = false) {
     set({ isLoading: true });
     try {
-      console.info("[useAuthStore] Attempting login for:", email);
       const res: unknown = await authService.login(email, password);
-      console.info("[useAuthStore] Login service response:", res);
 
       if (isVerificationRequiredResult(res)) {
-        console.info("[useAuthStore] Verification required");
         return { requiresVerification: true, user: res.user };
       }
 
       if (!isAuthResponse(res)) {
-        console.error("[useAuthStore] Response validation failed. Received:", res);
         throw new Error("Invalid login response format");
       }
 
       await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
-      console.info("[useAuthStore] Login successful, state updated");
       useSnackbarStore.getState().show({
         type: "success",
         title: "Signed in",
@@ -195,7 +188,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
       return { success: true };
     } catch (err: unknown) {
-      console.error("[useAuthStore] Login failed:", err);
       const message = extractApiErrorMessage(err) || "Invalid credentials";
       useSnackbarStore.getState().show({
         type: "error",
@@ -318,9 +310,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       set({ user: updated });
 
-      const isLocal = !!localStorage.getItem(USER);
-      console.debug(`[useAuthStore] Updating user in ${isLocal ? "localStorage" : "sessionStorage"}`);
-      void setStorageData(USER, updated, isLocal ? "local" : "session");
+      const isLocalStorage = !!localStorage.getItem(USER);
+      console.debug(`[useAuthStore] Updating user in ${isLocalStorage ? "localStorage" : "sessionStorage"}`);
+      void setStorageData(USER, updated, isLocalStorage ? "local" : "session");
     }
   },
 }));

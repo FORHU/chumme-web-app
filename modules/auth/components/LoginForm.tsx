@@ -40,7 +40,6 @@ export const LoginForm = () => {
     e.preventDefault();
     setError(null);
     try {
-      console.info("[LoginForm] Submission attempt. RememberMe state:", rememberMe);
       const result = await login(email, password, rememberMe);
       
       if ("error" in result && result.error) {
