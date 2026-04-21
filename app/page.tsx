@@ -32,8 +32,7 @@ export default function LandingPage() {
 
   const handleDownloadAPK = async () => {
     if (!latestAPK?.id) {
-      // fallback if no latest APK is set
-      window.open("/chumme.apk", "_blank", "noopener,noreferrer");
+      // If no APK release is available yet, the button shouldn't be visible
       return;
     }
     try {
@@ -87,9 +86,19 @@ export default function LandingPage() {
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             {/* Logo */}
-            <span className="text-lg sm:text-xl font-semibold tracking-tight bg-linear-to-r from-[#EF88AD] via-[#A53860] to-[#670D2F] bg-clip-text text-transparent">
-              CHUMME
-            </span>
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo.png"
+                alt="Chumme Logo"
+                className="w-8 h-8 object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+              <span className={`font-bold text-xl tracking-wide ${isDark ? "text-white" : "text-black"}`}>
+                CHUMME
+              </span>
+            </div>
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-4">
@@ -109,20 +118,18 @@ export default function LandingPage() {
                     )}
                   </button>
 
-                  <button
-                    onClick={handleDownloadAPK}
-                    disabled={isDownloading}
-                    className={`hidden md:flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 
-                      rounded-full border border-dashed ${isDark ? "border-[#A53860]/40 text-gray-400" : "border-[#A53860]/40 text-gray-600"} 
-                      hover:border-[#A53860] hover:bg-[#A53860]/10 hover:text-[#A53860] transition-all duration-200 disabled:opacity-50`}
-                  >
-                    <Download className="w-3 h-3" />
-                    {isDownloading
-                      ? "Preparing..."
-                      : latestAPK
-                        ? `v${latestAPK.versionName}`
-                        : "Android"}
-                  </button>
+                  {latestAPK && (
+                    <button
+                      onClick={handleDownloadAPK}
+                      disabled={isDownloading}
+                      className={`hidden md:flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 
+                        rounded-full border border-dashed ${isDark ? "border-[#A53860]/40 text-gray-400" : "border-[#A53860]/40 text-gray-600"} 
+                        hover:border-[#A53860] hover:bg-[#A53860]/10 hover:text-[#A53860] transition-all duration-200 disabled:opacity-50`}
+                    >
+                      <Download className="w-3 h-3" />
+                      {isDownloading ? "Preparing..." : `v${latestAPK.versionName}`}
+                    </button>
+                  )}
                 </>
               )}
               <button
@@ -230,23 +237,22 @@ export default function LandingPage() {
                 Get Started
               </button>
 
-              <button
-                onClick={handleDownloadAPK}
-                disabled={isDownloading}
-                className={`flex items-center justify-center gap-2 w-full border border-dashed 
-                  border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
-                  px-4 py-2.5 rounded-lg text-sm transition-all disabled:opacity-50 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
-              >
-                <Download className="w-4 h-4 text-[#A53860]" />
-                {isDownloading ? "Preparing..." : "Download APK"}
-                {latestAPK && (
+              {latestAPK && (
+                <button
+                  onClick={handleDownloadAPK}
+                  disabled={isDownloading}
+                  className={`flex items-center justify-center gap-2 w-full border border-dashed 
+                    border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
+                    px-4 py-2.5 rounded-lg text-sm transition-all disabled:opacity-50 ${isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                >
+                  <Download className="w-4 h-4 text-[#A53860]" />
+                  {isDownloading ? "Preparing..." : "Download APK"}
                   <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#A53860]/20 text-[#A53860] font-mono">
                     v{latestAPK.versionName}
                   </span>
-                )}
-              </button>
+                </button>
+              )}
             </motion.div>
           )}
         </motion.nav>
@@ -296,25 +302,25 @@ export default function LandingPage() {
                 >
                   Start Journey
                 </button>
-                <button
-                  onClick={handleDownloadAPK}
-                  disabled={isDownloading}
-                  className={`w-full sm:w-auto flex items-center justify-center gap-2 border border-dashed 
-                    border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
-                    px-6 sm:px-8 py-3.5 rounded-xl transition-all duration-300 group text-sm sm:text-base disabled:opacity-50`}
-                >
-                  <Download
-                    className={`w-4 h-4 text-[#A53860] ${!isDownloading && "group-hover:animate-bounce"}`}
-                  />
-                  <span className={isDark ? "text-white" : "text-gray-900"}>
-                    {isDownloading ? "Preparing..." : "Download APK"}
-                  </span>
-                  {latestAPK && (
+                {latestAPK && (
+                  <button
+                    onClick={handleDownloadAPK}
+                    disabled={isDownloading}
+                    className={`w-full sm:w-auto flex items-center justify-center gap-2 border border-dashed 
+                      border-[#A53860]/50 hover:border-[#A53860] hover:bg-[#A53860]/10 
+                      px-6 sm:px-8 py-3.5 rounded-xl transition-all duration-300 group text-sm sm:text-base disabled:opacity-50`}
+                  >
+                    <Download
+                      className={`w-4 h-4 text-[#A53860] ${!isDownloading && "group-hover:animate-bounce"}`}
+                    />
+                    <span className={isDark ? "text-white" : "text-gray-900"}>
+                      {isDownloading ? "Preparing..." : "Download APK"}
+                    </span>
                     <span className="text-xs px-1.5 py-0.5 rounded-full bg-[#A53860]/20 text-[#A53860] font-mono">
                       v{latestAPK.versionName}
                     </span>
-                  )}
-                </button>
+                  </button>
+                )}
               </motion.div>
 
               <motion.div

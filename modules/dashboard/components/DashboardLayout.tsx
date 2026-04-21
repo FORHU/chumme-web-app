@@ -32,7 +32,7 @@ interface DashboardLayoutProps {
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const logout = useAuthStore((s) => s.logout);
+  const { user, logout } = useAuthStore();
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
@@ -46,8 +46,26 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     setSettingsExpanded,
     musicExpanded,
     setMusicExpanded,
+    isSidebarOpen,
+    setSidebarOpen,
   } = useDashboardStore();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [pathname, isMobile, setSidebarOpen]);
+
+  // This can be refactored to not use nested loop statements
   useEffect(() => {
     if (pathname.includes("/dashboard/music")) {
       setMusicExpanded(true);
@@ -65,6 +83,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         setActiveNav("Roles & Permissions");
       } else if (pathname.endsWith("/apk")) {
         setActiveNav("APK Download");
+      } else if (pathname.endsWith("/file-viewer")) {
+        setActiveNav("File Viewer");
       } else {
         setActiveNav("Settings");
       }
@@ -97,6 +117,14 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const initials = user?.displayName
+    ? user.displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+    : user?.username?.substring(0, 2).toUpperCase() || "??";
+
   const handleSignOut = async () => {
     try {
       await logout();
@@ -110,29 +138,54 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div
       className={`min-h-screen flex ${isDark ? "bg-linear-to-br from-[#0a0a0a] via-[#1a0510] to-[#0a0a0a]" : "bg-linear-to-br from-[#fce7f3] via-[#fce1ed] to-[#f3e8ff]"}`}
     >
+      {/* Mobile Backdrop */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── Sidebar ── */}
       <motion.aside
-        initial={{ x: -260 }}
-        animate={{ x: 0 }}
-        transition={{ duration: 0.45, ease: "easeOut" }}
-        className={`w-64 shrink-0 flex flex-col border-r h-screen sticky top-0 ${isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
+        initial={false}
+        animate={{
+          x: isSidebarOpen ? 0 : (isMobile ? -264 : 0),
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={`w-64 shrink-0 flex flex-col border-r h-screen fixed lg:sticky top-0 z-50 lg:z-30 ${isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
       >
-        {/* Logo */}
+        {/* Logo & Close Button */}
         <div
-          className={`p-6 border-b flex items-center gap-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}
+          className={`p-6 border-b flex items-center justify-between gap-3 ${isDark ? "border-gray-700" : "border-gray-200"}`}
         >
-          <Image
-            src="/logo.png"
-            alt="Chumme"
-            width={40}
-            height={40}
-            className="object-contain"
-          />
-          <span
-            className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="Chumme"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+            <span
+              className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+            >
+              Chumme
+            </span>
+          </div>
+          
+          {/* Close Sidebar (Mobile Only) */}
+          <button 
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
-            Chumme
-          </span>
+            <X className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+          </button>
         </div>
 
         {/* Nav */}
@@ -299,7 +352,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }`}
                     >
-                      Roles & Permissions
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                        Roles & Permissions
+                      </div>
                     </button>
                     <button
                       onClick={() => router.push("/dashboard/settings/apk")}
@@ -310,7 +366,26 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }`}
                     >
-                      APK Download
+                      <div className="flex items-center gap-2">
+                        <Download className="w-3.5 h-3.5 shrink-0" />
+                        APK Download
+                      </div>
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push("/dashboard/settings/file-viewer")
+                      }
+                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "File Viewer"
+                        ? "text-[#A53860] bg-[#A53860]/10 font-bold"
+                        : isDark
+                          ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <FolderOpen className="w-3.5 h-3.5 shrink-0" />
+                        File Viewer
+                      </div>
                     </button>
                   </div>
                 </motion.div>
@@ -366,11 +441,22 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.45, delay: 0.15 }}
-          className={`sticky top-0 z-20 border-b px-8 py-4 flex items-center gap-4 ${isDark
+          className={`sticky top-0 z-20 border-b px-4 lg:px-8 py-4 flex items-center gap-4 ${isDark
               ? "bg-gray-900/95 border-gray-700 backdrop-blur-sm"
               : "bg-white/95 border-gray-200 backdrop-blur-sm"
             }`}
         >
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className={`lg:hidden p-2 rounded-xl border transition-colors ${isDark
+                ? "bg-gray-800 border-gray-700 hover:bg-gray-700"
+                : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+              }`}
+          >
+            <Menu className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`} />
+          </button>
+
           {/* Search */}
           <div className="flex-1 max-w-xl relative ml-auto">
             <Search
@@ -403,7 +489,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               onClick={() => setProfileMenuOpen((prev) => !prev)}
               className="w-10 h-10 rounded-full border-2 border-[#A53860] bg-linear-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white text-sm font-bold shrink-0 cursor-pointer"
             >
-              JD
+              {initials}
             </button>
 
             {/* Dropdown */}
@@ -423,11 +509,15 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <div className={`px-4 py-4 border-b ${isDark ? "border-gray-700/50" : "border-gray-200"}`}>
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg">
-                        JD
+                        {initials}
                       </div>
                       <div>
-                        <p className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>John Doe</p>
-                        <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>john@chumme.com</p>
+                        <p className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                          {user?.displayName || user?.username || "Chumme User"}
+                        </p>
+                        <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                          {user?.email || "user@chumme.com"}
+                        </p>
                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#A53860]/20 text-[#EF88AD]">
                           Admin
                         </span>
@@ -473,7 +563,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </motion.header>
 
         {/* Page content */}
-        <main className="flex-1 p-8 overflow-auto">{children}</main>
+        <main className="flex-1 p-4 lg:p-8 overflow-auto">{children}</main>
       </div>
     </div>
   );

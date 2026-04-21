@@ -40,8 +40,21 @@ export const LoginForm = () => {
     e.preventDefault();
     setError(null);
     try {
-      await login(email, password);
-      router.replace("/dashboard");
+      const result = await login(email, password, rememberMe);
+      
+      if ("error" in result && result.error) {
+        setError(result.message);
+        return;
+      }
+
+      if ("requiresVerification" in result && result.requiresVerification) {
+        router.push("/verify-email");
+        return;
+      }
+
+      if ("success" in result && result.success) {
+        router.replace("/dashboard");
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Invalid credentials";
@@ -102,7 +115,7 @@ export const LoginForm = () => {
               </button>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
               {error && (
                 <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600">
                   {error}
@@ -123,6 +136,7 @@ export const LoginForm = () => {
                       setEmail(e.target.value)
                     }
                     className="w-full h-12 pl-12 pr-4 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    autoComplete="username"
                     required
                   />
                 </div>
@@ -142,6 +156,7 @@ export const LoginForm = () => {
                       setPassword(e.target.value)
                     }
                     className="w-full h-12 pl-12 pr-12 rounded-xl font-['Poppins',sans-serif] text-sm placeholder:text-gray-400 focus:border-[#A53860] focus:ring-2 focus:ring-[#A53860]/10 transition-all outline-none border bg-white border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    autoComplete="current-password"
                     required
                   />
                   <button

@@ -2,6 +2,7 @@
 import { create } from "zustand";
 
 import { setCachedAccessToken } from "@/modules/shared/api/api-client";
+import { useSnackbarStore } from "@/modules/shared/store/useSnackbarStore";
 import {
   AuthResponse,
   User,
@@ -17,6 +18,7 @@ import {
   getStorageData,
   setStorageData,
   removeStorageData,
+  type StorageType,
 } from "@/modules/shared/utils/storage";
 
 type VerificationRequiredResult = {
@@ -68,11 +70,24 @@ function extractApiErrorMessage(err: unknown): string | undefined {
   return undefined;
 }
 
-async function persistAuth(res: AuthResponse, commit: () => void) {
+async function persistAuth(
+  res: AuthResponse,
+  rememberMe: boolean,
+  commit: () => void,
+) {
+  const type: StorageType = rememberMe ? "local" : "session";
+
+  // Sanitize user object to ensure no sensitive data is stored
+  const sanitizedUser = { ...res.user };
+  // @ts-expect-error - removing potentially existing sensitive fields
+  delete sanitizedUser.password;
+  // @ts-expect-error - token field may not exist on User type but should be removed if present
+  delete sanitizedUser.token;
+
   await Promise.all([
-    setStorageData(ACCESS_TOKEN, res.accessToken),
-    setStorageData(REFRESH_TOKEN, res.refreshToken),
-    setStorageData(USER, res.user),
+    setStorageData(ACCESS_TOKEN, res.accessToken, type),
+    setStorageData(REFRESH_TOKEN, res.refreshToken, type),
+    setStorageData(USER, sanitizedUser, type),
   ]);
   setCachedAccessToken(res.accessToken);
   commit();
@@ -88,9 +103,19 @@ interface AuthState {
   _forceLogout: () => void;
 
   // Public actions
-  login: (email: string, password: string) => Promise<LoginResult>;
-  loginWithGoogle: (credential: string) => Promise<LoginResult>;
-  loginWithFacebook: (accessToken: string) => Promise<LoginResult>;
+  login: (
+    email: string,
+    password: string,
+    rememberMe?: boolean,
+  ) => Promise<LoginResult>;
+  loginWithGoogle: (
+    credential: string,
+    rememberMe?: boolean,
+  ) => Promise<LoginResult>;
+  loginWithFacebook: (
+    accessToken: string,
+    rememberMe?: boolean,
+  ) => Promise<LoginResult>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
@@ -117,7 +142,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         // Try to refresh user data in the background
         try {
           const freshUser = await authService.getCurrentUser();
-          await setStorageData(USER, freshUser);
+          const isLocalStorage = !!localStorage.getItem(USER);
+          await setStorageData(USER, freshUser, isLocalStorage ? "local" : "session");
           set({ user: freshUser });
         } catch (e) {
           console.warn("[useAuthStore] Background user refresh failed", e);
@@ -132,9 +158,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   _forceLogout() {
     set({ user: null, isAuthenticated: false });
+    useSnackbarStore.getState().show({
+      type: "info",
+      title: "Session Ended",
+      description: "You have been signed out. Please sign in again.",
+    });
   },
 
-  async login(email, password) {
+  async login(email, password, rememberMe = false) {
     set({ isLoading: true });
     try {
       const res: unknown = await authService.login(email, password);
@@ -144,35 +175,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       if (!isAuthResponse(res)) {
-        throw new Error("Login failed");
+        throw new Error("Invalid login response format");
       }
 
-      await persistAuth(res, () =>
+      await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       const message = extractApiErrorMessage(err) || "Invalid credentials";
+      useSnackbarStore.getState().show({
+        type: "error",
+        title: "Login Failed",
+        description: message,
+      });
       return { error: true, message };
     } finally {
       set({ isLoading: false });
     }
   },
 
-  async loginWithGoogle(credential) {
+  async loginWithGoogle(credential, rememberMe = true) {
     set({ isLoading: true });
     try {
-      const loginWithGoogle = (
-        authService as unknown as {
-          loginWithGoogle?: (credential: string) => Promise<unknown>;
-        }
-      ).loginWithGoogle;
-
-      if (typeof loginWithGoogle !== "function") {
-        throw new Error("Google login is not available");
-      }
-
-      const res: unknown = await loginWithGoogle(credential);
+      const res: unknown = await authService.loginWithGoogle(credential);
 
       if (isVerificationRequiredResult(res)) {
         return { requiresVerification: true, user: res.user };
@@ -182,9 +213,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error("Login failed");
       }
 
-      await persistAuth(res, () =>
+      await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in with Google",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       const message = extractApiErrorMessage(err) || "Invalid credentials";
@@ -194,20 +230,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  async loginWithFacebook(accessToken) {
+  async loginWithFacebook(accessToken, rememberMe = true) {
     set({ isLoading: true });
     try {
-      const loginWithFacebook = (
-        authService as unknown as {
-          loginWithFacebook?: (accessToken: string) => Promise<unknown>;
-        }
-      ).loginWithFacebook;
-
-      if (typeof loginWithFacebook !== "function") {
-        throw new Error("Facebook login is not available");
-      }
-
-      const res: unknown = await loginWithFacebook(accessToken);
+      const res: unknown = await authService.loginWithFacebook(accessToken);
 
       if (isVerificationRequiredResult(res)) {
         return { requiresVerification: true, user: res.user };
@@ -217,9 +243,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         throw new Error("Login failed");
       }
 
-      await persistAuth(res, () =>
+      await persistAuth(res, rememberMe, () =>
         set({ user: res.user, isAuthenticated: true }),
       );
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Signed in with Facebook",
+        description: `Welcome back${res.user?.displayName ? `, ${res.user.displayName}` : ""}!`,
+      });
       return { success: true };
     } catch (err: unknown) {
       const message = extractApiErrorMessage(err) || "Invalid credentials";
@@ -233,6 +264,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       await authService.register(data);
+      useSnackbarStore.getState().show({
+        type: "success",
+        title: "Account Created",
+        description: "Please verify your email to get started!",
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -255,6 +291,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       ]);
       setCachedAccessToken(null);
       set({ user: null, isAuthenticated: false, isLoading: false });
+      useSnackbarStore.getState().show({
+        type: "info",
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
     }
   },
 
@@ -262,8 +303,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const currentUser = get().user;
     if (currentUser) {
       const updated = { ...currentUser, ...data };
+      
+      // Sanitize before storage
+      // @ts-expect-error - password field may not exist on User type but should be removed if present
+      delete updated.password;
+      
       set({ user: updated });
-      setStorageData(USER, updated);
+
+      const isLocalStorage = !!localStorage.getItem(USER);
+      console.debug(`[useAuthStore] Updating user in ${isLocalStorage ? "localStorage" : "sessionStorage"}`);
+      void setStorageData(USER, updated, isLocalStorage ? "local" : "session");
     }
   },
 }));

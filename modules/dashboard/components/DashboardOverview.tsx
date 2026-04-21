@@ -15,6 +15,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 const engagementData = [
   { name: "Jan 1", moments: 20 },
@@ -90,7 +91,7 @@ const StatCard: FC<StatCardProps> = ({
     initial={{ y: 24, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     transition={{ delay: 0.1 + index * 0.07 }}
-    className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6"
+    className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-2xl p-4 lg:p-6"
   >
     <div className="flex items-center justify-between mb-4">
       <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
@@ -108,6 +109,8 @@ const StatCard: FC<StatCardProps> = ({
 );
 
 export const DashboardOverview = () => {
+  const user = useAuthStore((s) => s.user);
+
   return (
     <>
       {/* Greeting */}
@@ -115,10 +118,13 @@ export const DashboardOverview = () => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45 }}
-        className="mb-8"
+        className="mb-4 lg:mb-8"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-          Good Morning, <span className="text-[#A53860]">Admin</span>
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          Good Morning,{" "}
+          <span className="text-[#A53860]">
+            {user?.displayName?.split(" ")[0] || user?.username || "Admin"}
+          </span>
         </h1>
         <p className="text-gray-500 dark:text-gray-400">
           Here&apos;s what&apos;s happening in your communities today
@@ -126,14 +132,14 @@ export const DashboardOverview = () => {
       </motion.div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
         {stats.map((s, i) => (
           <StatCard key={s.label} {...s} index={i} />
         ))}
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
         {/* Line chart */}
         <motion.div
           initial={{ y: 24, opacity: 0 }}

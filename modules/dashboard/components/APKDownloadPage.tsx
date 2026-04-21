@@ -81,8 +81,7 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     try {
       showUpload("Preparing download...");
       const result = await downloadMutation.mutateAsync(id);
-      const url =
-        typeof result === "string" ? result : result?.data?.url ?? result?.url;
+      const url = result;
       if (!url) return showError("Download URL not available");
 
       const response = await fetch(url, { mode: "cors" });

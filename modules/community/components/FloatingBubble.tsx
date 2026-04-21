@@ -124,9 +124,21 @@ export const FloatingBubble = ({
           boxShadow: `0 0 24px ${glowColor}`,
         }}
       >
+        {/* Name */}
         <div
-          className="text-white font-bold text-center px-4 leading-tight"
-          style={{ fontSize }}
+          className="text-white font-extrabold text-center leading-tight"
+          style={{
+            fontSize: size > 160 ? "22px" : size > 120 ? "19px" : "16px",
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            width: `${size * 0.68}px`,
+            maxWidth: `${size * 0.68}px`,
+            lineHeight: 1.3,
+            whiteSpace: "normal",
+            letterSpacing: "0.02em",
+            color: "#ffffff",
+            fontWeight: 800,
+          } as React.CSSProperties}
         >
           {name}
         </div>
