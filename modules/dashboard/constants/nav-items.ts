@@ -12,14 +12,6 @@ import {
   Mic2,
   Music2,
   UserRound,
-<<<<<<< Updated upstream
-=======
-  Settings,
-  FolderOpen,
-  ShieldCheck,
-  Download,
-  PlayCircle,
->>>>>>> Stashed changes
 } from "lucide-react";
 import type React from "react";
 
