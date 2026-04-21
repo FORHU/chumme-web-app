@@ -10,6 +10,8 @@ import {
   ChevronDown,
   Settings,
   User,
+  Menu,
+  X,
   FolderOpen,
   ShieldCheck,
   Download,
