@@ -86,9 +86,19 @@ export default function LandingPage() {
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             {/* Logo */}
-            <span className="text-lg sm:text-xl font-semibold tracking-tight bg-linear-to-r from-[#EF88AD] via-[#A53860] to-[#670D2F] bg-clip-text text-transparent">
-              CHUMME
-            </span>
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo.png"
+                alt="Chumme Logo"
+                className="w-8 h-8 object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+              <span className={`font-bold text-xl tracking-wide ${isDark ? "text-white" : "text-black"}`}>
+                CHUMME
+              </span>
+            </div>
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-4">
