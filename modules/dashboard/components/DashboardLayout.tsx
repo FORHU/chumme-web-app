@@ -313,7 +313,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeNav === "Settings" ||
                   activeNav === "Roles & Permissions" ||
-                  activeNav === "APK Download"
+                  activeNav === "APK Download" ||
+                  activeNav === "File Viewer"
                   ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                   : isDark
                     ? "text-gray-300 hover:bg-gray-800"

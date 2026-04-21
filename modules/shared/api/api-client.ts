@@ -15,13 +15,19 @@ import {
 } from "@/modules/shared/utils/storage";
 
 export const getApiBaseUrl = () => {
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-    return ""; // Use relative URL on Vercel
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  
+  // If we have an explicit API URL in env, always use it
+  if (envUrl) {
+    return envUrl.replace(/\/$/, "");
   }
-  return (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002").replace(
-    /\/$/,
-    "",
-  );
+
+  // Otherwise, determine based on environment
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    return ""; // Relative URL for Vercel/proxies
+  }
+
+  return "http://localhost:3002";
 };
 
 const API_BASE_URL = getApiBaseUrl();
