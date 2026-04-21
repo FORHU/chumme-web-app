@@ -29,6 +29,36 @@ interface InteractiveBubbleCanvasProps {
   className?: string;
 }
 
+const wrapText = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  stroke?: boolean,
+) => {
+  const words = text.split(" ");
+  let line = "";
+  const lines: string[] = [];
+  for (const word of words) {
+    const testLine = line + word + " ";
+    if (ctx.measureText(testLine).width > maxWidth && line !== "") {
+      lines.push(line.trim());
+      line = word + " ";
+    } else {
+      line = testLine;
+    }
+  }
+  lines.push(line.trim());
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((l, i) => {
+    const ly = startY + i * lineHeight;
+    if (stroke) ctx.strokeText(l, x, ly);
+    ctx.fillText(l, x, ly);
+  });
+};
+
 const InteractiveBubbleCanvas: React.FC<InteractiveBubbleCanvasProps> = ({
   bubbles,
   isDark,
@@ -110,36 +140,82 @@ const InteractiveBubbleCanvas: React.FC<InteractiveBubbleCanvasProps> = ({
       // Draw bubbles (shadows/glows)
       bubbleInstances.forEach((bubble) => {
         ctx.save();
+
+        // Draw bubble shadow/glow
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
-
-        // Glow effect
         ctx.shadowBlur = bubble.isHovered ? 40 : 20;
         ctx.shadowColor = bubble.primaryColor;
-        ctx.fillStyle = bubble.primaryColor;
-        ctx.globalAlpha = 0.8;
+
+        // Background Gradient
+        const gradient = ctx.createLinearGradient(
+          bubble.x - bubble.radius,
+          bubble.y - bubble.radius,
+          bubble.x + bubble.radius,
+          bubble.y + bubble.radius,
+        );
+        gradient.addColorStop(0, bubble.primaryColor);
+        gradient.addColorStop(1, bubble.primaryColor + "bb");
+
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = 0.9;
         ctx.fill();
 
+        // Inner Highlight
+        const highlight = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.2,
+          bubble.y - bubble.radius * 0.3,
+          0,
+          bubble.x,
+          bubble.y,
+          bubble.radius,
+        );
+        highlight.addColorStop(0, "rgba(255, 255, 255, 0.18)");
+        highlight.addColorStop(0.65, "rgba(255, 255, 255, 0)");
+
+        ctx.shadowBlur = 0; // Don't shadow the inner gradients
+        ctx.fillStyle = highlight;
+        ctx.fill();
+
+        // Border
+        ctx.strokeStyle = bubble.isHovered
+          ? "rgba(255, 255, 255, 0.6)"
+          : "rgba(255, 255, 255, 0.3)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
         // Text
+        const size = bubble.radius * 2;
+        const fontSize = size > 160 ? 22 : size > 120 ? 19 : 16;
+
         ctx.fillStyle = "white";
-        ctx.font = `bold ${Math.max(10, bubble.radius / 3)}px Inter, system-ui, sans-serif`;
+        ctx.font = `800 ${fontSize}px Poppins, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.globalAlpha = 1;
 
-        // Truncate name if too long
-        let displayName = bubble.name;
-        if (displayName.length > 12)
-          displayName = displayName.substring(0, 10) + "..";
-
-        ctx.fillText(displayName, bubble.x, bubble.y);
+        wrapText(
+          ctx,
+          bubble.name,
+          bubble.x,
+          bubble.y - 8,
+          bubble.radius * 1.36,
+          fontSize * 1.15,
+          false,
+        );
 
         if (bubble.count !== undefined) {
-          ctx.font = `${Math.max(8, bubble.radius / 5)}px Inter, system-ui, sans-serif`;
+          const countSize = size > 160 ? 11 : size > 120 ? 10 : 9;
+          ctx.font = `bold ${countSize}px Inter, sans-serif`;
+          ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          const displayCount =
+            bubble.count >= 1000
+              ? `${(bubble.count / 1000).toFixed(1)}K`
+              : `${bubble.count} users`;
           ctx.fillText(
-            `${bubble.count} users`,
+            displayCount,
             bubble.x,
-            bubble.y + bubble.radius / 2.5,
+            bubble.y + bubble.radius / 2.2,
           );
         }
 

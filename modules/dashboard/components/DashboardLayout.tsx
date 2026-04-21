@@ -10,6 +10,9 @@ import {
   ChevronDown,
   Settings,
   User,
+  FolderOpen,
+  ShieldCheck,
+  Download,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,6 +64,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         setActiveNav("Roles & Permissions");
       } else if (pathname.endsWith("/apk")) {
         setActiveNav("APK Download");
+      } else if (pathname.endsWith("/file-viewer")) {
+        setActiveNav("File Viewer");
       } else {
         setActiveNav("Settings");
       }
@@ -294,7 +299,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }`}
                     >
-                      Roles & Permissions
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                        Roles & Permissions
+                      </div>
                     </button>
                     <button
                       onClick={() => router.push("/dashboard/settings/apk")}
@@ -305,7 +313,26 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }`}
                     >
-                      APK Download
+                      <div className="flex items-center gap-2">
+                        <Download className="w-3.5 h-3.5 shrink-0" />
+                        APK Download
+                      </div>
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push("/dashboard/settings/file-viewer")
+                      }
+                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "File Viewer"
+                        ? "text-[#A53860] bg-[#A53860]/10 font-bold"
+                        : isDark
+                          ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <FolderOpen className="w-3.5 h-3.5 shrink-0" />
+                        File Viewer
+                      </div>
                     </button>
                   </div>
                 </motion.div>
