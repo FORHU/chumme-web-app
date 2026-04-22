@@ -26,6 +26,7 @@ export interface NavItem {
   href: string;
   icon: React.ElementType;
   children?: NavItem[];
+  can_manage?: boolean;
 }
 
 export const NAV_ITEMS: NavItem[] = [
@@ -46,7 +47,7 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-  { label: "Discover", href: "/dashboard/discover", icon: Compass },
+  { label: "Discovery", href: "/dashboard/discover", icon: Compass },
   {
     label: "Categories",
     href: "#",
@@ -57,12 +58,7 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    label: "Onboarding",
-    href: "/dashboard/onboarding",
-    icon: PlayCircle,
-  },
-  {
-    label: "Music",
+    label: "Entertainment Library",
     href: "#",
     icon: Headphones,
     children: [
@@ -71,11 +67,42 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Artist", href: "/dashboard/music/artist", icon: UserRound },
     ],
   },
+  { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
   {
     label: "Collaborations",
     href: "/dashboard/collaborations",
     icon: UserPlus,
   },
-  { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
-  { label: "Profile", href: "/dashboard/profile", icon: User },
+  {
+    label: "Settings",
+    href: "#",
+    icon: Settings,
+    children: [
+      {
+        label: "Onboarding",
+        href: "/dashboard/onboarding",
+        icon: PlayCircle,
+      },
+      {
+        label: "Roles & Permissions",
+        href: "/dashboard/settings/roles",
+        icon: ShieldCheck,
+      },
+      {
+        label: "APK Downloader",
+        href: "/dashboard/settings/apk",
+        icon: Download,
+      },
+      {
+        label: "User Settings",
+        href: "/dashboard/profile",
+        icon: User,
+      },
+      {
+        label: "File Viewer",
+        href: "/dashboard/settings/file-viewer",
+        icon: FolderOpen,
+      },
+    ],
+  },
 ];
