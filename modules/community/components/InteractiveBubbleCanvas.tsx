@@ -229,37 +229,77 @@ const InteractiveBubbleCanvas: React.FC<InteractiveBubbleCanvasProps> = ({
     return () => cancelAnimationFrame(animationFrameId);
   }, [dimensions, bubbleInstances, isDark]);
 
+  const getPointerPos = (
+    e: React.MouseEvent | React.TouchEvent,
+    canvas: HTMLCanvasElement,
+  ) => {
+    const rect = canvas.getBoundingClientRect();
+    if ("touches" in e) {
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      };
+    }
+    return {
+      x: (e as React.MouseEvent).clientX - rect.left,
+      y: (e as React.MouseEvent).clientY - rect.top,
+    };
+  };
+
+  const findBubbleAt = (x: number, y: number) => {
+    for (const bubble of bubbleInstances) {
+      const dx = x - bubble.x;
+      const dy = y - bubble.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < bubble.radius) {
+        return bubble;
+      }
+    }
+    return null;
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const { x, y } = getPointerPos(e, canvas);
+    const bubble = findBubbleAt(x, y);
 
-    let foundId: string | null = null;
-    bubbleInstances.forEach((bubble) => {
-      const dx = mouseX - bubble.x;
-      const dy = mouseY - bubble.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+    bubbleInstances.forEach((b) => (b.isHovered = false));
 
-      if (distance < bubble.radius) {
-        bubble.isHovered = true;
-        foundId = bubble.id;
-        canvas.style.cursor = "pointer";
-      } else {
-        bubble.isHovered = false;
-      }
-    });
-
-    if (!foundId) canvas.style.cursor = "default";
-    setHoveredId(foundId);
+    if (bubble) {
+      bubble.isHovered = true;
+      canvas.style.cursor = "pointer";
+      setHoveredId(bubble.id);
+    } else {
+      canvas.style.cursor = "default";
+      setHoveredId(null);
+    }
   };
 
-  const handleClick = () => {
-    if (hoveredId) {
-      const bubble = bubbles.find((b) => b.id === hoveredId);
-      bubble?.onClick();
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const { x, y } = getPointerPos(e, canvas);
+    const bubble = findBubbleAt(x, y);
+
+    if (bubble) {
+      setHoveredId(bubble.id);
+      // We don't call onClick here because a touchstart might be the start of a scroll
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const { x, y } = getPointerPos(e, canvas);
+    const bubble = findBubbleAt(x, y);
+
+    if (bubble) {
+      const originalBubble = bubbles.find((b) => b.id === bubble.id);
+      originalBubble?.onClick();
     }
   };
 
@@ -270,6 +310,7 @@ const InteractiveBubbleCanvas: React.FC<InteractiveBubbleCanvasProps> = ({
         width={dimensions.width}
         height={dimensions.height}
         onMouseMove={handleMouseMove}
+        onTouchStart={handleTouchStart}
         onClick={handleClick}
         className="block"
       />

@@ -121,7 +121,7 @@ export const DashboardOverview = () => {
         className="mb-4 lg:mb-8"
       >
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1">
-          Good Morning,{" "}
+          Welcome Back,{" "}
           <span className="text-[#A53860]">
             {user?.displayName?.split(" ")[0] || user?.username || "Admin"}
           </span>
