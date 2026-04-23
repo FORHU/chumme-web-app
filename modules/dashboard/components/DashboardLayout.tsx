@@ -44,10 +44,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const {
     activeNav,
     setActiveNav,
-    settingsExpanded,
-    setSettingsExpanded,
-    musicExpanded,
-    setMusicExpanded,
+    expandedItems,
+    toggleExpanded,
+    setExpanded,
     isSidebarOpen,
     setSidebarOpen,
   } = useDashboardStore();
@@ -67,47 +66,41 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   }, [pathname, isMobile, setSidebarOpen]);
 
-  // This can be refactored to not use nested loop statements
-  useEffect(() => {
-    if (pathname.includes("/dashboard/music")) {
-      setMusicExpanded(true);
-      if (pathname.includes("/karaoke")) {
-        setActiveNav("Karaoke");
-      } else if (pathname.includes("/song")) {
-        setActiveNav("Song");
-      } else if (pathname.includes("/artist")) {
-        setActiveNav("Artist");
-      } else {
-        setActiveNav("Music");
-      }
-    } else if (pathname.includes("/dashboard/settings")) {
-      if (pathname.endsWith("/roles")) {
-        setActiveNav("Roles & Permissions");
-      } else if (pathname.endsWith("/apk")) {
-        setActiveNav("APK Download");
-      } else if (pathname.endsWith("/file-viewer")) {
-        setActiveNav("File Viewer");
-      } else {
-        setActiveNav("Settings");
-      }
-      setSettingsExpanded(true);
-    } else if (pathname.includes("profile")) {
-      setActiveNav("Profile");
-    } else {
-      const currentNavItem = NAV_ITEMS.find((item) => item.href === pathname);
-      const parentNavItem = NAV_ITEMS.find((item) =>
-        item.children?.some((child) => child.href === pathname),
-      );
+  // Permission check
+  const canManage = () => {
+    // Current logic: users are automatically admin
+    return true;
+  };
 
-      if (currentNavItem) {
-        setActiveNav(currentNavItem.label);
-      } else if (parentNavItem) {
-        setActiveNav(parentNavItem.label);
-      } else if (pathname === "/dashboard") {
-        setActiveNav("Dashboard");
+  useEffect(() => {
+    // Find active nav item based on current pathname
+    let found = false;
+    for (const item of NAV_ITEMS) {
+      if (item.href === pathname) {
+        setActiveNav(item.label);
+        found = true;
+        break;
+      }
+      if (item.children) {
+        const child = item.children.find((c) => c.href === pathname);
+        if (child) {
+          setActiveNav(child.label);
+          setExpanded(item.label, true);
+          found = true;
+          break;
+        }
       }
     }
-  }, [pathname, setActiveNav, setSettingsExpanded, setMusicExpanded]);
+
+    if (!found) {
+      if (pathname === "/dashboard") {
+        setActiveNav("Dashboard");
+      } else if (pathname.includes("/dashboard/profile")) {
+        setActiveNav("User Settings");
+        setExpanded("Settings", true);
+      }
+    }
+  }, [pathname, setActiveNav, setExpanded]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -193,24 +186,26 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Nav */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
-            if (item.label === "Settings") return null;
-            const active = activeNav === item.label;
-            const isMusic = item.label === "Music";
-            const isMusicActive =
-              activeNav === "Music" ||
-              activeNav === "Karaoke" ||
-              activeNav === "Song" ||
-              activeNav === "Artist";
+            // Check permissions
+            if (item.can_manage && !canManage()) return null;
 
-            if (isMusic) {
+            const isExpanded = expandedItems[item.label];
+            const hasChildren = item.children && item.children.length > 0;
+            const isParentActive =
+              activeNav === item.label ||
+              item.children?.some((child) => activeNav === child.label);
+
+            if (hasChildren) {
               return (
                 <div key={item.label}>
                   <button
                     onClick={() => {
-                      setMusicExpanded((prev) => !prev);
-                      setActiveNav("Music");
+                      toggleExpanded(item.label);
+                      if (item.href !== "#") {
+                        router.push(item.href);
+                      }
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isMusicActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isParentActive
                         ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                         : isDark
                           ? "text-gray-300 hover:bg-gray-800"
@@ -219,10 +214,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
                     <span className="font-medium flex-1 text-left text-sm">
-                      Music
+                      {item.label}
                     </span>
                     <motion.div
-                      animate={{ rotate: musicExpanded ? 180 : 0 }}
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
                       transition={{ duration: 0.2, ease: "easeInOut" }}
                     >
                       <ChevronDown className="w-4 h-4" />
@@ -230,7 +225,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   </button>
 
                   <AnimatePresence>
-                    {musicExpanded && item.children && (
+                    {isExpanded && item.children && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -272,7 +267,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Link
                   href={item.href}
                   onClick={() => setActiveNav(item.label)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${active
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${activeNav === item.label
                       ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
                       : isDark
                         ? "text-gray-300 hover:bg-gray-800"
@@ -282,119 +277,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   <item.icon className="w-5 h-5 shrink-0" />
                   {item.label}
                 </Link>
-
-                {item.children && active && (
-                  <div className="pl-7 mt-1 space-y-1">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${pathname === child.href
-                            ? "text-[#A53860] bg-[#A53860]/10"
-                            : isDark
-                              ? "text-gray-400 hover:text-gray-200"
-                              : "text-gray-500 hover:text-gray-900"
-                          }`}
-                      >
-                        <child.icon className="w-3.5 h-3.5 shrink-0" />
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })}
-
-          {/* Settings Dropdown */}
-          <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-800">
-            <button
-              onClick={() => {
-                setSettingsExpanded((prev) => !prev);
-                router.push("/dashboard/settings");
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeNav === "Settings" ||
-                  activeNav === "Roles & Permissions" ||
-                  activeNav === "APK Download" ||
-                  activeNav === "File Viewer"
-                  ? "bg-linear-to-r from-[#A53860] to-[#670D2F] text-white shadow-md font-semibold"
-                  : isDark
-                    ? "text-gray-300 hover:bg-gray-800"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <Settings className="w-5 h-5 shrink-0" />
-              <span className="font-medium flex-1 text-left text-sm">
-                Settings
-              </span>
-              <motion.div
-                animate={{ rotate: settingsExpanded ? 180 : 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <ChevronDown className="w-4 h-4" />
-              </motion.div>
-            </button>
-
-            {/* Submenu */}
-            <AnimatePresence>
-              {settingsExpanded && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  <div className="mt-1 ml-9 space-y-1">
-                    <button
-                      onClick={() => router.push("/dashboard/settings/roles")}
-                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "Roles & Permissions"
-                          ? "text-[#A53860] bg-[#A53860]/10 font-bold"
-                          : isDark
-                            ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                        Roles & Permissions
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => router.push("/dashboard/settings/apk")}
-                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "APK Download"
-                          ? "text-[#A53860] bg-[#A53860]/10 font-bold"
-                          : isDark
-                            ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Download className="w-3.5 h-3.5 shrink-0" />
-                        APK Download
-                      </div>
-                    </button>
-                    <button
-                      onClick={() =>
-                        router.push("/dashboard/settings/file-viewer")
-                      }
-                      className={`w-full text-left px-4 py-2.5 rounded-lg text-xs transition-all ${activeNav === "File Viewer"
-                        ? "text-[#A53860] bg-[#A53860]/10 font-bold"
-                        : isDark
-                          ? "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <FolderOpen className="w-3.5 h-3.5 shrink-0" />
-                        File Viewer
-                      </div>
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
         </nav>
 
         {/* Theme toggle + sign out */}

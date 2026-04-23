@@ -3,12 +3,9 @@ import { create } from "zustand";
 interface DashboardState {
   activeNav: string;
   setActiveNav: (nav: string) => void;
-  settingsExpanded: boolean;
-  setSettingsExpanded: (
-    expanded: boolean | ((prev: boolean) => boolean),
-  ) => void;
-  musicExpanded: boolean;
-  setMusicExpanded: (val: boolean | ((prev: boolean) => boolean)) => void;
+  expandedItems: Record<string, boolean>;
+  toggleExpanded: (label: string) => void;
+  setExpanded: (label: string, expanded: boolean) => void;
   isSidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 }
@@ -16,18 +13,20 @@ interface DashboardState {
 export const useDashboardStore = create<DashboardState>((set) => ({
   activeNav: "Dashboard",
   setActiveNav: (nav) => set({ activeNav: nav }),
-  settingsExpanded: false,
-  setSettingsExpanded: (expanded) =>
+  expandedItems: {},
+  toggleExpanded: (label) =>
     set((state) => ({
-      settingsExpanded:
-        typeof expanded === "function"
-          ? expanded(state.settingsExpanded)
-          : expanded,
+      expandedItems: {
+        ...state.expandedItems,
+        [label]: !state.expandedItems[label],
+      },
     })),
-  musicExpanded: false,
-  setMusicExpanded: (val) =>
+  setExpanded: (label, expanded) =>
     set((state) => ({
-      musicExpanded: typeof val === "function" ? val(state.musicExpanded) : val,
+      expandedItems: {
+        ...state.expandedItems,
+        [label]: expanded,
+      },
     })),
   isSidebarOpen: false,
   setSidebarOpen: (open) => set({ isSidebarOpen: open }),
