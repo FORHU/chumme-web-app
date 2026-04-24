@@ -10,12 +10,8 @@ import {
   ChevronDown,
   Settings,
   User,
-  FolderOpen,
-  ShieldCheck,
-  Download,
   Menu,
   X,
-  PlayCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

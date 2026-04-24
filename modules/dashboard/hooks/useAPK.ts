@@ -77,7 +77,7 @@ export const useLatestAPK = () =>
     queryKey: ["apk-latest"],
     queryFn: async () => {
       const releases = await apkService.getAll();
-      return releases.find((r) => r.isLatest) ?? null;
+      return releases.find((release) => release.isLatest) ?? null;
     },
     staleTime: 1000 * 60 * 5, // cache for 5 minutes
   });

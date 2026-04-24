@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, File, FileText, Image as ImageIcon, FileCode,
-  Download, Eye, Trash2, Search, X, AlertCircle,
+  Download, Eye, Trash2, Search, X,
   ZoomIn, ZoomOut, FileCheck,
 } from "lucide-react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
@@ -33,7 +34,7 @@ const getFileIcon = (type: string) => {
 };
 
 const FileViewerPage = () => {
-  const { data: apiFiles = [], isLoading, isError, refetch } = useFiles();
+  const { data: apiFiles = [], isLoading } = useFiles();
   const uploadMutation = useUploadFile();
   const deleteMutation = useDeleteFile();
   const downloadMutation = useFileDownloadUrl();
@@ -81,17 +82,17 @@ const FileViewerPage = () => {
   
   // Combine API results with local storage files (prefer API for same IDs)
   const combinedFiles = Array.from(new Map(
-    [...localFiles, ...(Array.isArray(apiFiles) ? apiFiles : [])].map(f => [f.id, f])
+    [...localFiles, ...(Array.isArray(apiFiles) ? apiFiles : [])].map(file => [file.id, file])
   ).values());
 
   const sortedFiles = combinedFiles.sort((a, b) => 
     new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
   );
 
-  const filteredFiles = sortedFiles.filter((f) => {
-    if (!f) return false;
-    const name = f.name || "Untitled";
-    const category = f.category || "Other";
+  const filteredFiles = sortedFiles.filter((file) => {
+    if (!file) return false;
+    const name = file.name || "Untitled";
+    const category = file.category || "Other";
     const matchSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchCat = selectedCategory === "All" || category === selectedCategory;
     return matchSearch && matchCat;
@@ -114,8 +115,8 @@ const FileViewerPage = () => {
         setSelectedFile(null);
         setUploadModalOpen(false);
       },
-      onError: (err: any) => {
-        showError(err.message || "Upload failed");
+      onError: (error: Error) => {
+        showError(error.message || "Upload failed");
       },
     });
   };
@@ -128,7 +129,7 @@ const FileViewerPage = () => {
       if (file.url?.startsWith("data:")) {
         setTextContent(decodeURIComponent(file.url.split(",")[1] || ""));
       } else if (file.url) {
-        fetch(file.url).then((r) => r.text()).then(setTextContent).catch(() => setTextContent("Error loading content"));
+        fetch(file.url).then((response) => response.text()).then(setTextContent).catch(() => setTextContent("Error loading content"));
       }
     }
   };
@@ -137,11 +138,11 @@ const FileViewerPage = () => {
     deleteMutation.mutate(id, {
       onSuccess: () => {
         showSuccess("File removed");
-        saveToLocal(localFiles.filter(f => f.id !== id));
+        saveToLocal(localFiles.filter(file => file.id !== id));
       },
       onError: () => {
         // Even if server fails, remove from local UI
-        saveToLocal(localFiles.filter(f => f.id !== id));
+        saveToLocal(localFiles.filter(file => file.id !== id));
         showSuccess("File removed locally");
       }
     });
@@ -211,24 +212,24 @@ const FileViewerPage = () => {
             type="text"
             placeholder="Search files..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(event) => setSearchQuery(event.target.value)}
             className={`w-full h-12 pl-12 pr-4 border rounded-xl text-sm transition-all outline-none focus:ring-1 focus:ring-[#A53860] ${
               isDark ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-gray-900"
             }`}
           />
         </div>
         <div className="flex gap-2">
-          {CATEGORIES.map((cat) => (
+          {CATEGORIES.map((category) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              key={category}
+              onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                selectedCategory === cat
+                selectedCategory === category
                   ? "bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white"
                   : isDark ? "bg-gray-800 text-gray-400 hover:text-white" : "bg-gray-100 text-gray-600 hover:text-gray-900"
               }`}
             >
-              {cat}
+              {category}
             </button>
           ))}
         </div>
@@ -303,8 +304,8 @@ const FileViewerPage = () => {
                 </div>
                 <div className="p-6 space-y-5">
                   <div
-                    onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f); }}
-                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDrop={(event) => { event.preventDefault(); setDragOver(false); const file = event.dataTransfer.files[0]; if (file) handleFileSelect(file); }}
+                    onDragOver={(event) => { event.preventDefault(); setDragOver(true); }}
                     onDragLeave={() => setDragOver(false)}
                     className={`border-2 border-dashed rounded-xl p-10 text-center transition-all ${dragOver ? "border-[#A53860] bg-[#A53860]/10" : isDark ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-gray-50"}`}
                   >
@@ -320,7 +321,7 @@ const FileViewerPage = () => {
                     ) : (
                       <>
                         <Upload className={`w-12 h-12 mx-auto mb-4 opacity-40`} />
-                        <p className="font-medium">Drag file here, or <label className="text-[#A53860] cursor-pointer hover:underline">browse<input type="file" onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])} className="hidden" /></label></p>
+                        <p className="font-medium">Drag file here, or <label className="text-[#A53860] cursor-pointer hover:underline">browse<input type="file" onChange={(event) => event.target.files && handleFileSelect(event.target.files[0])} className="hidden" /></label></p>
                         <p className="text-[10px] opacity-40 mt-2 uppercase tracking-wider">Supports: PNG, JPG, GIF, WEBP, PDF, JSON, CSV, TXT</p>
                       </>
                     )}
@@ -351,9 +352,9 @@ const FileViewerPage = () => {
                   <div className="flex items-center gap-2 ml-4">
                     {previewFile.type.startsWith("image/") && (
                        <>
-                         <button onClick={() => setZoom((z) => Math.max(50, z - 10))} className="p-2 hover:bg-gray-500/10"><ZoomOut className="w-5 h-5" /></button>
+                         <button onClick={() => setZoom((zoomLevel) => Math.max(50, zoomLevel - 10))} className="p-2 hover:bg-gray-500/10"><ZoomOut className="w-5 h-5" /></button>
                          <span className="text-sm w-12 text-center">{zoom}%</span>
-                         <button onClick={() => setZoom((z) => Math.min(200, z + 10))} className="p-2 hover:bg-gray-500/10"><ZoomIn className="w-5 h-5" /></button>
+                         <button onClick={() => setZoom((zoomLevel) => Math.min(200, zoomLevel + 10))} className="p-2 hover:bg-gray-500/10"><ZoomIn className="w-5 h-5" /></button>
                        </>
                     )}
                     <button onClick={() => setPreviewFile(null)} className="p-2 hover:bg-gray-500/10"><X className="w-5 h-5" /></button>
@@ -361,8 +362,16 @@ const FileViewerPage = () => {
                 </div>
                 <div className={`flex-1 overflow-auto ${isDark ? "bg-gray-950" : "bg-gray-50"}`}>
                   {previewFile.type.startsWith("image/") && (
-                    <div className="flex items-center justify-center min-h-full p-8">
-                      <img src={previewFile.url} alt={previewFile.name} style={{ transform: `scale(${zoom / 100})` }} className="max-w-full h-auto transition-transform" />
+                    <div className="flex items-center justify-center min-h-full p-8 relative">
+                      <Image 
+                        src={previewFile.url} 
+                        alt={previewFile.name} 
+                        width={800} 
+                        height={600} 
+                        style={{ transform: `scale(${zoom / 100})`, width: 'auto', height: 'auto' }} 
+                        className="max-w-full transition-transform" 
+                        unoptimized
+                      />
                     </div>
                   )}
                   {previewFile.type.includes("pdf") && (

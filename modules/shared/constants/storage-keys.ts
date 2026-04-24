@@ -1,3 +1,6 @@
-export const ACCESS_TOKEN = "access_token";
-export const REFRESH_TOKEN = "refresh_token";
-export const USER = "user";
+export const STORAGE_KEYS = {
+  ACCESS_TOKEN: 'access_token',
+  REFRESH_TOKEN: 'refresh_token',
+  USER: 'user',
+  REMEMBERED_EMAIL: 'remembered_email',
+} as const;

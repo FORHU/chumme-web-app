@@ -4,6 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, X, Upload, Edit, Trash2, Music } from "lucide-react";
 import Image from "next/image";
+import { useArtists } from "@/modules/collaboration/hooks/useMusic";
+import { Pagination } from "@/modules/shared/components/Pagination";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 interface Artist {
   id: string;
@@ -16,11 +20,32 @@ interface Artist {
 const GENRES = ["Pop", "Rock", "Hip-Hop", "R&B", "Country", "K-Pop", "Jazz", "Classical", "Electronic", "Folk"];
 
 const ArtistPage = () => {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const { data: backendArtists = [], isLoading } = useArtists();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
   const [formData, setFormData] = useState({ name: "", genre: "", description: "", imageUrl: "" });
+
+  const [page, setPage] = useState(1);
+  const limit = 6;
+
+  useEffect(() => {
+    if (Array.isArray(backendArtists) && backendArtists.length > 0) {
+      // Map backend data to local Artist interface
+      const mapped = backendArtists.map(a => ({
+        id: a.id || Math.random().toString(),
+        name: a.name || "Unknown Artist",
+        genre: "", 
+        description: "",
+        imageUrl: a.imageUrl || undefined
+      }));
+      setArtists(mapped);
+    }
+  }, [backendArtists]);
 
   const handleOpenModal = (artist?: Artist) => {
     if (artist) {
@@ -59,6 +84,9 @@ const ArtistPage = () => {
       a.genre.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredArtists.length / limit);
+  const paginatedArtists = filteredArtists.slice((page - 1) * limit, page * limit);
+
   return (
     <div>
       {/* Header */}
@@ -91,7 +119,12 @@ const ArtistPage = () => {
       </div>
 
       {/* Artist Grid or Empty State */}
-      {filteredArtists.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center p-20">
+          <div className="w-12 h-12 border-4 border-[#A53860]/20 border-t-[#A53860] rounded-full animate-spin mb-4" />
+          <p className="text-gray-500">Loading artists...</p>
+        </div>
+      ) : filteredArtists.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -118,59 +151,69 @@ const ArtistPage = () => {
           </div>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredArtists.map((artist, index) => (
-            <motion.div
-              key={artist.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white border border-gray-200 hover:bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700/50 dark:hover:bg-gray-800 rounded-xl p-6 transition-all group"
-            >
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full border-2 border-[#A53860] bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                  {artist.imageUrl ? (
-                    <Image
-                      src={artist.imageUrl}
-                      alt={artist.name}
-                      width={64}
-                      height={64}
-                      className="rounded-full object-cover"
-                    />
-                  ) : (
-                    artist.name.substring(0, 2).toUpperCase()
-                  )}
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedArtists.map((artist, index) => (
+              <motion.div
+                key={artist.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white border border-gray-200 hover:bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700/50 dark:hover:bg-gray-800 rounded-xl p-6 transition-all group"
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-full border-2 border-[#A53860] bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                    {artist.imageUrl ? (
+                      <Image
+                        src={artist.imageUrl}
+                        alt={artist.name}
+                        width={64}
+                        height={64}
+                        className="rounded-full object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      (artist.name || "??").substring(0, 2).toUpperCase()
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg mb-1 truncate text-gray-900 dark:text-white">{artist.name}</h3>
+                    {artist.genre && (
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-[#A53860]/20 text-[#EF88AD]">
+                        {artist.genre}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-lg mb-1 truncate text-gray-900 dark:text-white">{artist.name}</h3>
-                  {artist.genre && (
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-[#A53860]/20 text-[#EF88AD]">
-                      {artist.genre}
-                    </span>
-                  )}
+                {artist.description && (
+                  <p className="text-sm mb-4 line-clamp-2 text-gray-500 dark:text-gray-400">{artist.description}</p>
+                )}
+                <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700/30">
+                  <button
+                    onClick={() => handleOpenModal(artist)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-all"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteArtist(artist.id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
                 </div>
-              </div>
-              {artist.description && (
-                <p className="text-sm mb-4 line-clamp-2 text-gray-500 dark:text-gray-400">{artist.description}</p>
-              )}
-              <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-700/30">
-                <button
-                  onClick={() => handleOpenModal(artist)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-all"
-                >
-                  <Edit className="w-4 h-4" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteArtist(artist.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 transition-all"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            isDark={isDark}
+          />
         </div>
       )}
 

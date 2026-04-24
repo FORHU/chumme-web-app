@@ -52,9 +52,9 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
   const setLatestMutation = useAPKSetLatest();
   const setStableMutation = useAPKSetStable();
 
-  const latestRelease = releases?.find((r) => r.isLatest);
+  const latestRelease = releases?.find((release) => release.isLatest);
   const totalDownloads =
-    releases?.reduce((sum, r) => sum + (r.downloadCount ?? 0), 0) ?? 0;
+    releases?.reduce((sum, release) => sum + (release.downloadCount ?? 0), 0) ?? 0;
   const totalVersions = releases?.length ?? 0;
   const lastUpdated = releases?.[0]?.updatedAt
     ? new Date(releases[0].updatedAt).toLocaleDateString("en-US", {
@@ -73,8 +73,8 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     try {
       await uploadMutation.mutateAsync({ file, meta });
       showSuccess("APK Uploaded", `${meta.versionName} uploaded successfully`);
-    } catch (err: unknown) {
-      showError("Upload Failed", (err as Error).message);
+    } catch (error: unknown) {
+      showError("Upload Failed", (error as Error).message);
     }
   };
 
@@ -85,13 +85,13 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
       const url = result;
       if (!url) return showError("Download URL not available");
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `chumme v${version}.apk`;
-      a.rel = "noopener";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `chumme v${version}.apk`;
+      anchor.rel = "noopener";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
 
       showSuccess("Download started");
     } catch {
@@ -103,8 +103,8 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     try {
       await deleteMutation.mutateAsync(id);
       showSuccess("Deleted", "APK release removed successfully");
-    } catch (err: unknown) {
-      showError("Delete Failed", (err as Error).message);
+    } catch (error: unknown) {
+      showError("Delete Failed", (error as Error).message);
     }
   };
 
@@ -113,8 +113,8 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     try {
       await setLatestMutation.mutateAsync(id);
       showSuccess("Updated", "Marked as Latest");
-    } catch (err: unknown) {
-      showError("Failed", (err as Error).message);
+    } catch (error: unknown) {
+      showError("Failed", (error as Error).message);
     } finally {
       setLoadingAction((prev) => {
         const next = { ...prev };
@@ -129,8 +129,8 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
     try {
       await setStableMutation.mutateAsync(id);
       showSuccess("Updated", "Marked as Stable");
-    } catch (err: unknown) {
-      showError("Failed", (err as Error).message);
+    } catch (error: unknown) {
+      showError("Failed", (error as Error).message);
     } finally {
       setLoadingAction((prev) => {
         const next = { ...prev };
@@ -155,7 +155,7 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
             APK Download Center
           </h1>
           <p className={isDark ? "text-gray-400" : "text-gray-600"}>
-            Download and manage Chumme Android application packages
+            Download and manage Chumme Android APK
           </p>
         </div>
         <button
@@ -164,7 +164,7 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-[#A53860] to-[#670D2F] text-white font-medium hover:opacity-90 transition-all text-sm shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Upload className="w-4 h-4" />
-          {uploadMutation.isPending ? "Uploading…" : "Upload New APK"}
+          {uploadMutation.isPending ? "Uploading…" : "Upload APK"}
         </button>
       </div>
 
@@ -491,19 +491,12 @@ export const APKDownloadPage = ({ isDark }: APKDownloadPageProps) => {
                     }
                     className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#A53860] hover:bg-[#D3427B] text-white text-sm font-semibold transition-colors shadow-lg shadow-[#A53860]/20"
                   >
-                    <svg
+                    <Download
                       className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      />
-                    </svg>
+                    />
                     Download APK
                   </button>
 

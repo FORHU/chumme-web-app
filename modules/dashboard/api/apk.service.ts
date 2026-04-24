@@ -1,5 +1,5 @@
 import { api, getApiBaseUrl } from "@/modules/shared/api/api-client";
-import { ACCESS_TOKEN } from "@/modules/shared/constants/storage-keys";
+import { STORAGE_KEYS } from "@/modules/shared/constants/storage-keys";
 import { getStorageData } from "@/modules/shared/utils/storage";
 
 export interface APKRelease {
@@ -29,13 +29,13 @@ export interface APKUploadMeta {
 export const apkService = {
   getAll: async (): Promise<APKRelease[]> => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = await api.get<any>("/api/v1/apk");
-    if (!res.ok)
+    const response = await api.get<any>("/api/v1/apk");
+    if (!response.ok)
       throw new Error(
-        (res.data as { message?: string })?.message ||
+        (response.data as { message?: string })?.message ||
           "Failed to fetch APK releases",
       );
-    const data = res.data;
+    const data = response.data;
     const releases = Array.isArray(data?.releases)
       ? data.releases
       : Array.isArray(data?.data)
@@ -59,7 +59,7 @@ export const apkService = {
     // Use fetch directly — apisauce can strip Content-Type boundary on FormData
     const baseUrl = getApiBaseUrl();
 
-    const token = await getStorageData<string>(ACCESS_TOKEN);
+    const token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
 
     const response = await fetch(`${baseUrl}/api/v1/apk/upload`, {
@@ -71,35 +71,35 @@ export const apkService = {
       body: formData,
     });
 
-    const json = await response.json();
+    const jsonResponse = await response.json();
 
     if (!response.ok) {
       // Log full backend error for debugging
-      console.error("APK upload 400 details:", JSON.stringify(json, null, 2));
+      console.error("APK upload 400 details:", JSON.stringify(jsonResponse, null, 2));
       throw new Error(
-        json?.message || json?.error || json?.details || "Upload failed",
+        jsonResponse?.message || jsonResponse?.error || jsonResponse?.details || "Upload failed",
       );
     }
 
-    return json?.data ?? json;
+    return jsonResponse?.data ?? jsonResponse;
   },
 
   update: async (
     id: string,
     meta: Partial<APKUploadMeta>,
   ): Promise<APKRelease> => {
-    const res = await api.put<{ data: APKRelease }>(`/api/v1/apk/${id}`, meta);
-    if (!res.ok)
+    const response = await api.put<{ data: APKRelease }>(`/api/v1/apk/${id}`, meta);
+    if (!response.ok)
       throw new Error(
-        (res.data as { message?: string })?.message || "Update failed",
+        (response.data as { message?: string })?.message || "Update failed",
       );
-    return (res.data as { data: APKRelease }).data;
+    return (response.data as { data: APKRelease }).data;
   },
 
   setLatest: async (id: string): Promise<APKRelease> => {
     const baseUrl = getApiBaseUrl();
 
-    const token = await getStorageData<string>(ACCESS_TOKEN);
+    const token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
 
     const response = await fetch(`${baseUrl}/api/v1/apk/${id}/set-latest`, {
@@ -111,15 +111,15 @@ export const apkService = {
       body: JSON.stringify({}),
     });
 
-    const json = await response.json();
-    if (!response.ok) throw new Error(json?.message || "Failed to set latest");
-    return json?.data ?? json;
+    const jsonResponse = await response.json();
+    if (!response.ok) throw new Error(jsonResponse?.message || "Failed to set latest");
+    return jsonResponse?.data ?? jsonResponse;
   },
 
   setStable: async (id: string): Promise<APKRelease> => {
     const baseUrl = getApiBaseUrl();
 
-    const token = await getStorageData<string>(ACCESS_TOKEN);
+    const token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
 
     const response = await fetch(`${baseUrl}/api/v1/apk/${id}/set-stable`, {
@@ -131,15 +131,15 @@ export const apkService = {
       body: JSON.stringify({}),
     });
 
-    const json = await response.json();
-    if (!response.ok) throw new Error(json?.message || "Failed to set stable");
-    return json?.data ?? json;
+    const jsonResponse = await response.json();
+    if (!response.ok) throw new Error(jsonResponse?.message || "Failed to set stable");
+    return jsonResponse?.data ?? jsonResponse;
   },
 
   getDownloadUrl: async (id: string): Promise<string> => {
     const baseUrl = getApiBaseUrl();
 
-    const token = await getStorageData<string>(ACCESS_TOKEN);
+    const token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
 
     const response = await fetch(`${baseUrl}/api/v1/apk/download/${id}`, {
@@ -149,18 +149,18 @@ export const apkService = {
       },
     });
 
-    const json = await response.json();
+    const jsonResponse = await response.json();
     if (!response.ok)
-      throw new Error(json?.message || "Failed to get download URL");
+      throw new Error(jsonResponse?.message || "Failed to get download URL");
 
     // Handle all possible response shapes
     const url =
-      json?.url ??
-      json?.data?.url ??
-      json?.downloadUrl ??
-      json?.data?.downloadUrl ??
-      json?.presignedUrl ??
-      json?.data?.presignedUrl ??
+      jsonResponse?.url ??
+      jsonResponse?.data?.url ??
+      jsonResponse?.downloadUrl ??
+      jsonResponse?.data?.downloadUrl ??
+      jsonResponse?.presignedUrl ??
+      jsonResponse?.data?.presignedUrl ??
       null;
 
     if (!url) throw new Error("Download URL not found in response");
@@ -169,10 +169,10 @@ export const apkService = {
 
   remove: async (id: string): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = await api.delete<any>(`/api/v1/apk/${id}`);
-    if (!res.ok)
+    const response = await api.delete<any>(`/api/v1/apk/${id}`);
+    if (!response.ok)
       throw new Error(
-        (res.data as { message?: string })?.message || "Delete failed",
+        (response.data as { message?: string })?.message || "Delete failed",
       );
   },
 };

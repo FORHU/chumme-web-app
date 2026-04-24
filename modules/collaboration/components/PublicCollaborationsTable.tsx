@@ -3,17 +3,17 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
-import type { PublicCollab } from "@/modules/collaboration/types";
+import type { PublicCollaboration } from "@/modules/collaboration/types";
 
-export interface PublicCollabsTableProps {
+export interface PublicCollaborationsTableProps {
   isDarkMode: boolean;
-  collabs: PublicCollab[];
+  collaborations: PublicCollaboration[];
 }
 
-export const PublicCollabsTable = ({
+export const PublicCollaborationsTable = ({
   isDarkMode,
-  collabs,
-}: PublicCollabsTableProps) => {
+  collaborations,
+}: PublicCollaborationsTableProps) => {
   return (
     <motion.div
       key="public"
@@ -36,7 +36,7 @@ export const PublicCollabsTable = ({
                 <th
                   className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
                 >
-                  Collab Title
+                  Collaboration Title
                 </th>
                 <th
                   className={`px-6 py-4 text-left text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
@@ -71,52 +71,52 @@ export const PublicCollabsTable = ({
               </tr>
             </thead>
             <tbody>
-              {collabs.map((collab) => (
+              {collaborations.map((collaboration) => (
                 <tr
-                  key={collab.id}
+                  key={collaboration.id}
                   className={`border-t ${isDarkMode ? "border-gray-700/50" : "border-gray-200/50"}`}
                 >
                   <td
                     className={`px-6 py-4 ${isDarkMode ? "text-white" : "text-gray-900"} font-medium`}
                   >
-                    {collab.title}
+                    {collaboration.title}
                   </td>
                   <td
                     className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                   >
-                    {collab.creator}
+                    {collaboration.creator}
                   </td>
                   <td
                     className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                   >
-                    {collab.category}
+                    {collaboration.category}
                   </td>
                   <td
                     className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                   >
-                    {collab.participants}
+                    {collaboration.participants}
                   </td>
                   <td
                     className={`px-6 py-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                   >
-                    {collab.startDate}
+                    {collaboration.startDate}
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        collab.status === "Approved"
+                        collaboration.status === "Approved"
                           ? "bg-green-500/20 text-green-600"
-                          : collab.status === "Pending"
+                          : collaboration.status === "Pending"
                             ? "bg-yellow-500/20 text-yellow-600"
                             : "bg-red-500/20 text-red-600"
                       }`}
                     >
-                      {collab.status}
+                      {collaboration.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      {collab.status === "Pending" && (
+                      {collaboration.status === "Pending" && (
                         <>
                           <button className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 transition-colors">
                             Approve

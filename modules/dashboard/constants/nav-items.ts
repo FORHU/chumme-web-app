@@ -3,7 +3,6 @@ import {
   Compass,
   Users,
   Star,
-  UserPlus,
   MessageSquare,
   User,
   Activity,
@@ -47,7 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
-  { label: "Discovery", href: "/dashboard/discover", icon: Compass },
+  { label: "Discover", href: "/dashboard/discover", icon: Compass },
   {
     label: "Categories",
     href: "#",
@@ -65,14 +64,10 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Karaoke", href: "/dashboard/music/karaoke", icon: Mic2 },
       { label: "Song", href: "/dashboard/music/song", icon: Music2 },
       { label: "Artist", href: "/dashboard/music/artist", icon: UserRound },
+      { label: "Collaboration", href: "/dashboard/music/collaboration", icon: Users },
     ],
   },
   { label: "Chumme AI Chat", href: "/dashboard/ai-chat", icon: MessageSquare },
-  {
-    label: "Collaborations",
-    href: "/dashboard/collaborations",
-    icon: UserPlus,
-  },
   {
     label: "Settings",
     href: "#",

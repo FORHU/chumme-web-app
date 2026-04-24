@@ -3,11 +3,11 @@
 import { motion } from "framer-motion";
 import { Eye, Ban, Trash2 } from "lucide-react";
 
-import type { CollabRoom } from "@/modules/collaboration/types";
+import type { CollaborationRoom } from "@/modules/collaboration/types";
 
 export interface RoomsTableProps {
   isDarkMode: boolean;
-  rooms: CollabRoom[];
+  rooms: CollaborationRoom[];
 }
 
 export const RoomsTable = ({ isDarkMode, rooms }: RoomsTableProps) => {

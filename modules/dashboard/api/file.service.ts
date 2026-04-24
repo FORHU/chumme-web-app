@@ -1,5 +1,5 @@
 import { api, getApiBaseUrl } from "@/modules/shared/api/api-client";
-import { ACCESS_TOKEN } from "@/modules/shared/constants/storage-keys";
+import { STORAGE_KEYS } from "@/modules/shared/constants/storage-keys";
 import { getStorageData } from "@/modules/shared/utils/storage";
 
 export interface FileRecord {
@@ -24,13 +24,13 @@ export const fileService = {
   getAll: async (): Promise<FileRecord[]> => {
     try {
       // We try the standard path, but ignore failures for the UI's sake
-      const res = await api.get("/api/v1/files");
-      if (res.ok) {
-        const data = res.data as any;
-        const result = data?.files ?? data?.data ?? data;
+      const response = await api.get("/api/v1/files");
+      if (response.ok) {
+        const data = response.data as Record<string, unknown>;
+        const result = (data?.files ?? data?.data ?? data) as FileRecord[];
         return Array.isArray(result) ? result : [];
       }
-    } catch (err) {
+    } catch (_error) {
       // Silent fail - UI uses local cache
     }
     return [];
@@ -41,24 +41,24 @@ export const fileService = {
    */
   upload: async (file: File): Promise<FileRecord> => {
     const baseUrl = getApiBaseUrl();
-    const token = await getStorageData<string>(ACCESS_TOKEN);
+    const token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(`${baseUrl}/api/v1/files/upload`, {
+    const response = await fetch(`${baseUrl}/api/v1/files/upload`, {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formData,
     });
 
-    const json = await res.json();
-    if (!res.ok) {
-      throw new Error(json?.message || json?.error || "Upload failed");
+    const jsonResponse = await response.json();
+    if (!response.ok) {
+      throw new Error(jsonResponse?.message || jsonResponse?.error || "Upload failed");
     }
 
     // Backend returns { message, file: { id, filename, fileUrl, ... } }
-    const raw = json?.file ?? json?.data ?? json;
+    const raw = jsonResponse?.file ?? jsonResponse?.data ?? jsonResponse;
     
     const getCategory = (mime: string) => {
       if (mime?.startsWith("image/")) return "Images";
@@ -82,15 +82,15 @@ export const fileService = {
     // Attempt deletion but don't crash if endpoint is 404
     try {
       await api.delete(`/api/v1/files/${id}`);
-    } catch (e) {
+    } catch (_error) {
       console.warn("Server deletion failed, removing locally only.");
     }
   },
 
   getDownloadUrl: async (id: string): Promise<string> => {
-    const res = await api.get(`/api/v1/files/download/${id}`);
-    const data = res.data as any;
+    const response = await api.get(`/api/v1/files/download/${id}`);
+    const data = response.data as Record<string, unknown>;
     // Fallback logic for various URL shapes
-    return data?.url ?? data?.fileUrl ?? data?.downloadUrl ?? data;
+    return (data?.url ?? data?.fileUrl ?? data?.downloadUrl ?? data) as string;
   },
 };

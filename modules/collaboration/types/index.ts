@@ -1,4 +1,4 @@
-export interface CollabRoom {
+export interface CollaborationRoom {
   id: string;
   name: string;
   type: "Public" | "Private";
@@ -8,7 +8,7 @@ export interface CollabRoom {
   status: "Active" | "Ended";
 }
 
-export interface PublicCollab {
+export interface PublicCollaboration {
   id: string;
   title: string;
   creator: string;
@@ -72,7 +72,7 @@ export type TabId =
   | "songs"
   | "recordings"
   | "reports";
-export type CollabPage = "rooms" | "music" | "karaoke";
+export type CollaborationPage = "rooms" | "music" | "karaoke";
 export type KaraokeTabId = "songs" | "recordings";
 
 export interface Report {

@@ -1,6 +1,6 @@
 "use client";
 
-interface CollabStatsProps {
+interface CollaborationStatsProps {
   isDarkMode: boolean;
 }
 
@@ -12,7 +12,7 @@ const STATS = [
   { label: "Total Recordings", value: "1,250" },
 ];
 
-export function CollabStats({ isDarkMode }: CollabStatsProps) {
+export function CollaborationStats({ isDarkMode }: CollaborationStatsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
       {STATS.map((stat, index) => (

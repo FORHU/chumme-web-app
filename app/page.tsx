@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import {
   Heart,
   Brain,
@@ -11,7 +12,7 @@ import {
   TrendingUp,
   Moon,
   Sun,
-  Download,
+  Download
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -39,15 +40,15 @@ export default function LandingPage() {
       setIsDownloading(true);
       const url = await apkService.getDownloadUrl(latestAPK.id);
       // Create a temporary anchor and click it to trigger download
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `chumme-v${latestAPK.versionName}.apk`;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (_err) {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `chumme-v${latestAPK.versionName}.apk`;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    } catch (_error) {
       // fallback to direct fileUrl if presigned URL fails
       if (latestAPK?.fileUrl) {
         window.open(latestAPK.fileUrl, "_blank", "noopener,noreferrer");
@@ -87,12 +88,14 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 src="/logo.png"
                 alt="Chumme Logo"
-                className="w-8 h-8 object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
+                width={32}
+                height={32}
+                className="object-contain"
+                onError={(event) => {
+                  (event.target as HTMLImageElement).style.display = "none";
                 }}
               />
               <span className={`font-bold text-xl tracking-wide ${isDark ? "text-white" : "text-black"}`}>

@@ -6,17 +6,17 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 
 import { AddSongModal } from "@/modules/collaboration/components/AddSongModal";
-import { CollabStats } from "@/modules/collaboration/components/CollabStats";
+import { CollaborationStats } from "@/modules/collaboration/components/CollaborationStats";
 import { LiveMonitor } from "@/modules/collaboration/components/LiveMonitor";
 import { PrivateRoomsTable } from "@/modules/collaboration/components/PrivateRoomsTable";
-import { PublicCollabsTable } from "@/modules/collaboration/components/PublicCollabsTable";
+import { PublicCollaborationsTable } from "@/modules/collaboration/components/PublicCollaborationsTable";
 import { RecordingsTable } from "@/modules/collaboration/components/RecordingsTable";
 import { ReportsPanel } from "@/modules/collaboration/components/ReportsPanel";
 import { RoomsTable } from "@/modules/collaboration/components/RoomsTable";
 import { SongLibrary } from "@/modules/collaboration/components/SongLibrary";
 import {
   mockRooms,
-  mockPublicCollabs,
+  mockPublicCollaborations,
   mockSongs,
   mockRecordings,
 } from "@/modules/collaboration/constants/mock-data";
@@ -56,7 +56,7 @@ export const CollaborationManager = () => {
         </p>
       </div>
 
-      <CollabStats isDarkMode={isDarkMode} />
+      <CollaborationStats isDarkMode={isDarkMode} />
 
       <div className="flex gap-2 mb-6 overflow-x-auto">
         {TABS.map((tab) => (
@@ -85,15 +85,15 @@ export const CollaborationManager = () => {
           <RoomsTable isDarkMode={isDarkMode} rooms={mockRooms} />
         )}
         {activeTab === "public" && (
-          <PublicCollabsTable
+          <PublicCollaborationsTable
             isDarkMode={isDarkMode}
-            collabs={mockPublicCollabs}
+            collaborations={mockPublicCollaborations}
           />
         )}
         {activeTab === "private" && (
           <PrivateRoomsTable
             isDarkMode={isDarkMode}
-            rooms={mockRooms.filter((r) => r.type === "Private")}
+            rooms={mockRooms.filter((room) => room.type === "Private")}
           />
         )}
         {activeTab === "songs" && (

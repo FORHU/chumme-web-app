@@ -7,7 +7,7 @@ import type {
 
 interface SnackbarState {
   messages: SnackbarMessage[];
-  show: (params: {
+  show: (parameters: {
     type: SnackbarType;
     title: string;
     description?: string;
@@ -40,6 +40,6 @@ export const useSnackbarStore = create<SnackbarState>((set) => ({
   },
   dismiss: (id) =>
     set((state) => ({
-      messages: state.messages.filter((m) => m.id !== id),
+      messages: state.messages.filter((message) => message.id !== id),
     })),
 }));

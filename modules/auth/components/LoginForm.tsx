@@ -10,6 +10,7 @@ import { AuthCard } from "@/modules/auth/components/AuthCard";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
+import { STORAGE_KEYS } from "@/modules/shared/constants/storage-keys";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 export const LoginForm = () => {
@@ -17,7 +18,7 @@ export const LoginForm = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
 
   const { login, isLoading, isAuthenticated } = useAuthStore();
@@ -26,6 +27,12 @@ export const LoginForm = () => {
 
   useEffect(() => {
     setMounted(true);
+    // Load remembered email
+    const savedEmail = localStorage.getItem(STORAGE_KEYS.REMEMBERED_EMAIL);
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
   }, []);
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,6 +47,11 @@ export const LoginForm = () => {
     e.preventDefault();
     setError(null);
     try {
+      if (rememberMe) {
+        localStorage.setItem(STORAGE_KEYS.REMEMBERED_EMAIL, email);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.REMEMBERED_EMAIL);
+      }
       const result = await login(email, password, rememberMe);
       
       if ("error" in result && result.error) {

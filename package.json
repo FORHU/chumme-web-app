@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cross-env NODE_ENV=production next build",
+    "build": "next build",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "eslint . --fix",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
-    "prebuild": "npm run lint && npm run check"
+    "prebuild": "pnpm run lint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",

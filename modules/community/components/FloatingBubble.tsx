@@ -75,7 +75,6 @@ export const FloatingBubble = ({
     onDragEnd?.(id);
   };
 
-  const fontSize = size > 160 ? "18px" : size > 120 ? "15px" : "13px";
   const countSize = size > 160 ? "24px" : size > 120 ? "20px" : "16px";
 
   return (

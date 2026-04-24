@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon } from "lucide-react";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
@@ -81,7 +82,7 @@ const OnboardingContentPage = () => {
       : url || editingContent?.thumbnail || "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=300&fit=crop";
 
     if (editingContent) {
-      setContents((prev) => prev.map((c) => c.id === editingContent.id ? { ...c, title: title.trim(), type, description: description.trim(), thumbnail, url: uploadMethod === "url" ? url : undefined } : c));
+      setContents((prev) => prev.map((content) => content.id === editingContent.id ? { ...content, title: title.trim(), type, description: description.trim(), thumbnail, url: uploadMethod === "url" ? url : undefined } : content));
       showSuccess(`${title} updated successfully`);
     } else {
       setContents((prev) => [...prev, { id: Date.now().toString(), title: title.trim(), type, description: description.trim(), thumbnail, url: uploadMethod === "url" ? url : undefined }]);
@@ -91,9 +92,9 @@ const OnboardingContentPage = () => {
   };
 
   const handleDelete = (id: string) => {
-    const content = contents.find((c) => c.id === id);
-    setContents((prev) => prev.filter((c) => c.id !== id));
-    showSuccess(`${content?.title} removed`);
+    const contentItem = contents.find((content) => content.id === id);
+    setContents((prev) => prev.filter((content) => content.id !== id));
+    showSuccess(`${contentItem?.title} removed`);
   };
 
   return (
@@ -149,7 +150,7 @@ const OnboardingContentPage = () => {
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-[#A53860]/20 to-[#670D2F]/20">
-                  <img src={content.thumbnail} alt={content.title} className="w-full h-full object-cover" />
+                  <Image src={content.thumbnail} alt={content.title} fill className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute top-3 left-3">
                     <div className="px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm flex items-center gap-2">
@@ -189,7 +190,7 @@ const OnboardingContentPage = () => {
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ type: "spring", duration: 0.4 }}
                 className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
               >
                 {/* Modal Header */}
                 <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 z-10 flex items-center justify-between">
@@ -212,19 +213,19 @@ const OnboardingContentPage = () => {
                   {/* Title */}
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Title <span className="text-red-500">*</span></label>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter content title" className="w-full h-12 px-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] focus:ring-1 focus:ring-[#A53860] outline-none transition-all" />
+                    <input type="text" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Enter content title" className="w-full h-12 px-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] focus:ring-1 focus:ring-[#A53860] outline-none transition-all" />
                   </div>
 
                   {/* Type */}
                   <div>
                     <label className="block text-sm font-semibold mb-3 text-gray-900 dark:text-white">Content Type <span className="text-red-500">*</span></label>
                     <div className="grid grid-cols-2 gap-4">
-                      {(["video", "image"] as const).map((t) => (
-                        <button key={t} type="button" onClick={() => setType(t)} className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${type === t ? "border-[#A53860] bg-[#A53860]/10" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"}`}>
-                          <div className={`p-2 rounded-lg ${type === t ? "bg-[#A53860]" : "bg-gray-100 dark:bg-gray-700"}`}>
-                            {t === "video" ? <Video className={`w-5 h-5 ${type === t ? "text-white" : "text-gray-400 dark:text-gray-500"}`} /> : <ImageIcon className={`w-5 h-5 ${type === t ? "text-white" : "text-gray-400 dark:text-gray-500"}`} />}
+                      {(["video", "image"] as const).map((contentType) => (
+                        <button key={contentType} type="button" onClick={() => setType(contentType)} className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${type === contentType ? "border-[#A53860] bg-[#A53860]/10" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"}`}>
+                          <div className={`p-2 rounded-lg ${type === contentType ? "bg-[#A53860]" : "bg-gray-100 dark:bg-gray-700"}`}>
+                            {contentType === "video" ? <Video className={`w-5 h-5 ${type === contentType ? "text-white" : "text-gray-400 dark:text-gray-500"}`} /> : <ImageIcon className={`w-5 h-5 ${type === contentType ? "text-white" : "text-gray-400 dark:text-gray-500"}`} />}
                           </div>
-                          <span className={`font-medium capitalize ${type === t ? "text-[#A53860] dark:text-[#EF88AD]" : "text-gray-600 dark:text-gray-300"}`}>{t}</span>
+                          <span className={`font-medium capitalize ${type === contentType ? "text-[#A53860] dark:text-[#EF88AD]" : "text-gray-600 dark:text-gray-300"}`}>{contentType}</span>
                         </button>
                       ))}
                     </div>
@@ -234,14 +235,14 @@ const OnboardingContentPage = () => {
                   <div>
                     <label className="block text-sm font-semibold mb-3 text-gray-900 dark:text-white">Upload Method</label>
                     <div className="flex gap-3 mb-4">
-                      {(["file", "url"] as const).map((m) => (
-                        <button key={m} type="button" onClick={() => setUploadMethod(m)} className={`flex-1 px-4 py-2 rounded-xl border font-medium transition-all ${uploadMethod === m ? "border-[#A53860] bg-[#A53860] text-white" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
-                          {m === "file" ? "Upload File" : "Use URL"}
+                      {(["file", "url"] as const).map((method) => (
+                        <button key={method} type="button" onClick={() => setUploadMethod(method)} className={`flex-1 px-4 py-2 rounded-xl border font-medium transition-all ${uploadMethod === method ? "border-[#A53860] bg-[#A53860] text-white" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
+                          {method === "file" ? "Upload File" : "Use URL"}
                         </button>
                       ))}
                     </div>
                     {uploadMethod === "file" ? (
-                      <div onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f); }} onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? "border-[#A53860] bg-[#A53860]/10" : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"}`}>
+                      <div onDrop={(event) => { event.preventDefault(); setIsDragging(false); const file = event.dataTransfer.files[0]; if (file) handleFileSelect(file); }} onDragOver={(event) => { event.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? "border-[#A53860] bg-[#A53860]/10" : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"}`}>
                         {file ? (
                           <div className="flex items-center justify-center gap-4">
                             <FileCheck className="w-10 h-10 text-[#A53860]" />
@@ -254,7 +255,7 @@ const OnboardingContentPage = () => {
                         ) : (
                           <>
                             <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400 dark:text-gray-500" />
-                            <p className="font-medium text-gray-900 dark:text-white mb-1">Drop your {type} here, or <label className="text-[#A53860] dark:text-[#EF88AD] cursor-pointer hover:underline">browse<input type="file" accept={type === "video" ? "video/*" : "image/*"} onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])} className="hidden" /></label></p>
+                            <p className="font-medium text-gray-900 dark:text-white mb-1">Drop your {type} here, or <label className="text-[#A53860] dark:text-[#EF88AD] cursor-pointer hover:underline">browse<input type="file" accept={type === "video" ? "video/*" : "image/*"} onChange={(event) => event.target.files && handleFileSelect(event.target.files[0])} className="hidden" /></label></p>
                             <p className="text-sm text-gray-500">Max: {type === "video" ? "100MB" : "10MB"}</p>
                           </>
                         )}
@@ -262,7 +263,7 @@ const OnboardingContentPage = () => {
                     ) : (
                       <div className="relative">
                         <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
-                        <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder={`Enter ${type} URL`} className="w-full h-12 pl-12 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] outline-none transition-all" />
+                        <input type="url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder={`Enter ${type} URL`} className="w-full h-12 pl-12 pr-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] outline-none transition-all" />
                       </div>
                     )}
                   </div>
@@ -270,7 +271,7 @@ const OnboardingContentPage = () => {
                   {/* Description */}
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Description <span className="text-sm font-normal text-gray-400">(Optional)</span></label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Add a brief description" rows={3} className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] focus:ring-1 focus:ring-[#A53860] outline-none transition-all resize-none" />
+                    <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Add a brief description" rows={3} className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-[#A53860] focus:ring-1 focus:ring-[#A53860] outline-none transition-all resize-none" />
                   </div>
                 </div>
 

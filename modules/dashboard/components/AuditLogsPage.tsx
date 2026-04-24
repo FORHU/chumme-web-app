@@ -4,17 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
   Filter, 
-  ChevronRight, 
   Clock, 
-  User, 
   Database, 
   CheckCircle2, 
   XCircle, 
-  AlertCircle,
   MoreHorizontal,
   Download,
   Calendar,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState, useMemo } from "react";
@@ -179,7 +176,7 @@ export function AuditLogsPage() {
               type="text" 
               placeholder="Search by user, target, or details..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(event) => setSearchQuery(event.target.value)}
               className={`w-full h-11 pl-10 pr-4 rounded-xl text-sm outline-none transition-all ${
                 isDarkMode 
                   ? "bg-gray-800 border-gray-700 text-white focus:border-[#A53860]" 
@@ -193,7 +190,7 @@ export function AuditLogsPage() {
               <Filter className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
               <select 
                 value={filterAction}
-                onChange={(e) => setFilterAction(e.target.value)}
+                onChange={(event) => setFilterAction(event.target.value)}
                 className={`h-11 pl-10 pr-8 rounded-xl text-sm appearance-none outline-none cursor-pointer transition-all ${
                   isDarkMode 
                     ? "bg-gray-800 border-gray-700 text-white focus:border-[#A53860]" 
@@ -201,7 +198,7 @@ export function AuditLogsPage() {
                 }`}
               >
                 <option value="ALL">All Actions</option>
-                {actions.map(a => <option key={a} value={a}>{a}</option>)}
+                {actions.map(action => <option key={action} value={action}>{action}</option>)}
               </select>
             </div>
 
@@ -209,7 +206,7 @@ export function AuditLogsPage() {
               <Database className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`} />
               <select 
                 value={filterModule}
-                onChange={(e) => setFilterModule(e.target.value)}
+                onChange={(event) => setFilterModule(event.target.value)}
                 className={`h-11 pl-10 pr-8 rounded-xl text-sm appearance-none outline-none cursor-pointer transition-all ${
                   isDarkMode 
                     ? "bg-gray-800 border-gray-700 text-white focus:border-[#A53860]" 
@@ -217,7 +214,7 @@ export function AuditLogsPage() {
                 }`}
               >
                 <option value="ALL">All Modules</option>
-                {modules.map(m => <option key={m} value={m}>{m}</option>)}
+                {modules.map(moduleName => <option key={moduleName} value={moduleName}>{moduleName}</option>)}
               </select>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import type {
-  CollabRoom,
-  PublicCollab,
+  CollaborationRoom,
+  PublicCollaboration,
   Song,
   Recording,
   MusicSong,
@@ -9,7 +9,7 @@ import type {
   Report,
 } from "@/modules/collaboration/types";
 
-export const mockRooms: CollabRoom[] = [
+export const mockRooms: CollaborationRoom[] = [
   {
     id: "1",
     name: "Kpop Night Room",
@@ -48,7 +48,7 @@ export const mockRooms: CollabRoom[] = [
   },
 ];
 
-export const mockPublicCollabs: PublicCollab[] = [
+export const mockPublicCollaborations: PublicCollaboration[] = [
   {
     id: "1",
     title: "Global K-Pop Collab",

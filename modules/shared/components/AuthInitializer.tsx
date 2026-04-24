@@ -14,7 +14,16 @@ export const AuthInitializer = ({ children }: AuthInitializerProps) => {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    useAuthStore.getState()._init();
+    useAuthStore.getState().initialize();
+  }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      useAuthStore.getState()._forceLogout();
+    };
+
+    window.addEventListener("unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("unauthorized", handleUnauthorized);
   }, []);
 
   return <>{children}</>;

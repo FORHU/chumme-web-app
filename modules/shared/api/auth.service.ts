@@ -3,55 +3,62 @@ import type {
   AuthResponse,
   RegisterRequest,
   User,
-  ApiEnvelope,
 } from "@/modules/shared/api/api.types";
 
 export const authService = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post<any>("/api/v1/auth/login", {
+    const response = await api.post<Record<string, unknown>>("/api/v1/auth/login", {
       email,
       password,
     });
 
     if (!response.ok) {
-      throw new Error(response.data?.message || response.problem || "Login failed");
+      throw new Error((response.data?.message as string) || response.problem || "Login failed");
     }
 
-    const payload = response.data;
+    const payload = response.data as {
+      data?: { accessToken?: string; requiresVerification?: boolean };
+      accessToken?: string;
+      requiresVerification?: boolean;
+    };
     if (!payload) throw new Error("No response data from server");
 
     // Handle both { data: { ... } } and { ... } formats
     if (payload.data && typeof payload.data === "object" && "accessToken" in payload.data) {
-      return payload.data as AuthResponse;
+      return payload.data as unknown as AuthResponse;
     }
     
     if (typeof payload === "object" && "accessToken" in payload) {
-      return payload as AuthResponse;
+      return payload as unknown as AuthResponse;
     }
 
     // Handle verification required case which might be passed through
     if (payload.data?.requiresVerification || payload.requiresVerification) {
-      return (payload.data || payload) as any;
+      return (payload.data || payload) as unknown as AuthResponse;
     }
 
     throw new Error("Invalid response format from server");
   },
 
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await api.post<any>("/api/v1/auth/register", data);
+    const response = await api.post<Record<string, unknown>>("/api/v1/auth/register", data);
 
     if (!response.ok) {
-      throw new Error(response.data?.message || response.problem || "Registration failed");
+      throw new Error((response.data?.message as string) || response.problem || "Registration failed");
     }
 
-    const payload = response.data;
+    const payload = response.data as {
+      data?: { accessToken?: string; requiresVerification?: boolean };
+      accessToken?: string;
+      requiresVerification?: boolean;
+    };
     if (!payload) throw new Error("No response data from server");
 
     if (payload.data && typeof payload.data === "object") {
-      return payload.data as AuthResponse;
+      return payload.data as unknown as AuthResponse;
     }
     
-    return payload as AuthResponse;
+    return payload as unknown as AuthResponse;
   },
 
   getCurrentUser: async (): Promise<User> => {
@@ -71,11 +78,11 @@ export const authService = {
     if (typeof payload === "object" && "data" in payload) {
       const envelope = payload as { data?: unknown };
       if (envelope.data && typeof envelope.data === "object") {
-        return envelope.data as User;
+        return envelope.data as unknown as User;
       }
     }
-
-    if (typeof payload === "object") return payload as User;
+    
+    if (typeof payload === "object") return payload as unknown as User;
     throw new Error("Failed to fetch user");
   },
 
@@ -84,7 +91,7 @@ export const authService = {
   },
 
   loginWithGoogle: async (credential: string): Promise<AuthResponse> => {
-    const response = await api.post<any>("/api/v1/auth/google", {
+    const response = await api.post<AuthResponse>("/api/v1/auth/google", {
       credential,
     });
     if (!response.ok || !response.data) {
@@ -94,7 +101,7 @@ export const authService = {
   },
 
   loginWithFacebook: async (accessToken: string): Promise<AuthResponse> => {
-    const response = await api.post<any>("/api/v1/auth/facebook", {
+    const response = await api.post<AuthResponse>("/api/v1/auth/facebook", {
       accessToken,
     });
     if (!response.ok || !response.data) {

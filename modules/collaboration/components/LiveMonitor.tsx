@@ -1,10 +1,10 @@
 "use client";
 
-import type { CollabRoom } from "@/modules/collaboration/types";
+import type { CollaborationRoom } from "@/modules/collaboration/types";
 
 export interface LiveMonitorProps {
   isDarkMode: boolean;
-  rooms: CollabRoom[];
+  rooms: CollaborationRoom[];
 }
 
 export const LiveMonitor = ({ isDarkMode, rooms }: LiveMonitorProps) => {
@@ -26,7 +26,7 @@ export const LiveMonitor = ({ isDarkMode, rooms }: LiveMonitorProps) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {rooms
-          .filter((r) => r.status === "Active")
+          .filter((room) => room.status === "Active")
           .slice(0, 3)
           .map((room) => (
             <div

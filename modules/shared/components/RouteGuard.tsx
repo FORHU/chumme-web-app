@@ -18,9 +18,14 @@ export const RouteGuard = ({
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || isLoading) return;
 
     if (requireAuth && !isAuthenticated) {
       router.replace("/auth");
@@ -38,9 +43,9 @@ export const RouteGuard = ({
     ) {
       router.replace("/dashboard");
     }
-  }, [isAuthenticated, isLoading, requireAuth, router, pathname]);
+  }, [isAuthenticated, isLoading, requireAuth, router, pathname, mounted]);
 
-  if (isLoading) {
+  if (!mounted || isLoading) {
     return (
       <div className="min-h-screen bg-background-primary flex items-center justify-center">
         <ChummeLoader />

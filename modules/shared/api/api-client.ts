@@ -2,12 +2,11 @@
 import { create } from "apisauce";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 
+import { STORAGE_KEYS } from "@/modules/shared/constants/storage-keys";
 import {
-  ACCESS_TOKEN,
-  REFRESH_TOKEN,
-  USER,
-} from "@/modules/shared/constants/storage-keys";
-import { useAuthStore } from "@/modules/shared/store/useAuthStore";
+  getCachedAccessToken,
+  setCachedAccessToken,
+} from "@/modules/shared/api/token-cache";
 import {
   getStorageData,
   setStorageData,
@@ -33,12 +32,7 @@ export const getApiBaseUrl = () => {
 const API_BASE_URL = getApiBaseUrl();
 
 
-// In-memory token cache to avoid hitting localStorage on every request
-let _cachedAccessToken: string | null = null;
-
-export const setCachedAccessToken = (token: string | null) => {
-  _cachedAccessToken = token;
-};
+// setCachedAccessToken is now imported from token-cache.ts
 
 export const api = create({
   baseURL: API_BASE_URL,
@@ -52,11 +46,13 @@ export const api = create({
 // Request interceptor — attach auth token
 api.axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    if (!_cachedAccessToken && typeof window !== "undefined") {
-      _cachedAccessToken = await getStorageData<string>(ACCESS_TOKEN);
+    let token = getCachedAccessToken();
+    if (!token && typeof window !== "undefined") {
+      token = await getStorageData<string>(STORAGE_KEYS.ACCESS_TOKEN);
+      if (token) setCachedAccessToken(token);
     }
-    if (_cachedAccessToken) {
-      config.headers.Authorization = `Bearer ${_cachedAccessToken}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -79,23 +75,24 @@ api.axiosInstance.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      const rt = await getStorageData<string>(REFRESH_TOKEN);
-      if (rt) {
+      const refreshToken = await getStorageData<string>(STORAGE_KEYS.REFRESH_TOKEN);
+      if (refreshToken) {
         try {
-          const refreshRes = await fetch(
+          const refreshResponse = await fetch(
             `${API_BASE_URL}/api/v1/auth/refresh-token`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ refreshToken: rt }),
+              body: JSON.stringify({ refreshToken: refreshToken }),
             },
           );
 
-          if (refreshRes.ok) {
-            const data = await refreshRes.json();
+          if (refreshResponse.ok) {
+            const data = await refreshResponse.json();
             if (data?.accessToken) {
-              await setStorageData(ACCESS_TOKEN, data.accessToken);
-              _cachedAccessToken = data.accessToken;
+              const isInLocal = !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+              await setStorageData(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken, isInLocal ? "local" : "session");
+              setCachedAccessToken(data.accessToken);
 
               originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
               return api.axiosInstance(originalRequest);
@@ -111,11 +108,12 @@ api.axiosInstance.interceptors.response.use(
 
       // Both tokens invalid — cleanup and potentially redirect
       console.warn("[api-client] Token refresh failed. Cleaning up session.");
-      await removeStorageData(ACCESS_TOKEN);
-      await removeStorageData(REFRESH_TOKEN);
-      await removeStorageData(USER);
-      _cachedAccessToken = null;
-      useAuthStore.getState()._forceLogout();
+      await removeStorageData(STORAGE_KEYS.ACCESS_TOKEN);
+      await removeStorageData(STORAGE_KEYS.REFRESH_TOKEN);
+      await removeStorageData(STORAGE_KEYS.USER);
+      setCachedAccessToken(null);
+      // We no longer call useAuthStore directly to avoid circular dependencies.
+      // Instead, we rely on the event below.
 
       // Dispatch a custom event for the UI to respond to if needed
       if (typeof window !== "undefined") {

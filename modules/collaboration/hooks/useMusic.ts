@@ -4,17 +4,17 @@ import { musicService } from "@/modules/collaboration/api/music.service";
 const SONGS_KEY  = ["music-songs"];
 const KARAOKE_KEY = ["music-karaoke"];
 
-export const useSongs = () =>
+export const useSongs = (params?: { page?: number; limit?: number; search?: string }) =>
   useQuery({
-    queryKey: SONGS_KEY,
-    queryFn: () => musicService.getSongs({ isKaraoke: false, limit: 50 }),
+    queryKey: [...SONGS_KEY, params],
+    queryFn: () => musicService.getSongs({ ...params, isKaraoke: false }),
     staleTime: 2 * 60 * 1000,
   });
 
-export const useKaraokeSongs = () =>
+export const useKaraokeSongs = (params?: { page?: number; limit?: number; search?: string }) =>
   useQuery({
-    queryKey: KARAOKE_KEY,
-    queryFn: () => musicService.getSongs({ isKaraoke: true, limit: 50 }),
+    queryKey: [...KARAOKE_KEY, params],
+    queryFn: () => musicService.getSongs({ ...params, isKaraoke: true }),
     staleTime: 2 * 60 * 1000,
   });
 

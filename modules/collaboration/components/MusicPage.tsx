@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, X, RefreshCw } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
+import { Pagination } from "@/modules/shared/components/Pagination";
 
 interface MusicPageProps {
   isDark?: boolean;
@@ -16,6 +17,8 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [songTitle, setSongTitle] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [lyricsFile, setLyricsFile] = useState<File | null>(null);
@@ -24,7 +27,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [artistError, setArtistError] = useState(false);
   const [mp3Error, setMp3Error] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useSongs();
+  const { data, isLoading, isError, refetch } = useSongs({ page, limit });
   const { data: artists = [] } = useArtists();
   const uploadSong = useUploadSong(false);
   const deleteSong = useDeleteSong(false);
@@ -190,55 +193,64 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
       ) : (
         <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
           }`}>
-          <table className="w-full">
-            <thead className={isDark ? "bg-gray-900" : "bg-gray-50"}>
-              <tr>
-                {["Title", "Artist", "Album", "Genre", "Duration", "Actions"].map((h) => (
-                  <th
-                    key={h}
-                    className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className={`divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
-              {songs.map((song) => (
-                <tr
-                  key={song.id}
-                  className={isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"}
-                >
-                  <td className={`px-6 py-4 font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
-                    {song.title}
-                  </td>
-                  <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                    {song.musicArtist?.name ?? "—"}
-                  </td>
-                  <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                    {song.musicAlbum?.album ?? "—"}
-                  </td>
-                  <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                    {song.musicAlbum?.genre ?? "—"}
-                  </td>
-                  <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                    {formatDuration(song.duration)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleDelete(song.id)}
-                      disabled={deleteSong.isPending}
-                      className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${isDark ? "hover:bg-red-500/20" : "hover:bg-red-50"
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className={isDark ? "bg-gray-900/50" : "bg-gray-50"}>
+                <tr>
+                  {["Title", "Artist", "Album", "Genre", "Duration", "Actions"].map((h) => (
+                    <th
+                      key={h}
+                      className={`px-6 py-4 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"
                         }`}
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </button>
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className={`divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
+                {songs.map((song) => (
+                  <tr
+                    key={song.id}
+                    className={`group transition-colors ${isDark ? "hover:bg-gray-700/50" : "hover:bg-gray-50"}`}
+                  >
+                    <td className={`px-6 py-4 font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
+                      {song.title}
+                    </td>
+                    <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                      {song.musicArtist?.name ?? "—"}
+                    </td>
+                    <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                      {song.musicAlbum?.album ?? "—"}
+                    </td>
+                    <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                      {song.musicAlbum?.genre ?? "—"}
+                    </td>
+                    <td className={`px-6 py-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                      {formatDuration(song.duration)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handleDelete(song.id)}
+                        disabled={deleteSong.isPending}
+                        className={`p-2 rounded-lg transition-all disabled:opacity-50 ${isDark ? "hover:bg-red-500/10" : "hover:bg-red-50"
+                          }`}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination
+            currentPage={page}
+            totalPages={data?.meta?.totalPages ?? 1}
+            onPageChange={setPage}
+            isDark={isDark}
+          />
         </div>
       )}
 
