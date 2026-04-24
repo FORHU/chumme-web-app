@@ -304,92 +304,39 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Moon className="w-4 h-4" /> Dark
             </button>
           </div>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all w-full ${isDark
-                ? "text-gray-400 hover:bg-gray-800 hover:text-red-400"
-                : "text-gray-500 hover:bg-red-50 hover:text-red-600"
-              }`}
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
-        </div>
-      </motion.aside>
-
-      {/* ── Main column ── */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <motion.header
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.45, delay: 0.15 }}
-          className={`sticky top-0 z-20 border-b px-4 lg:px-8 py-4 flex items-center gap-4 ${isDark
-              ? "bg-gray-900/95 border-gray-700 backdrop-blur-sm"
-              : "bg-white/95 border-gray-200 backdrop-blur-sm"
-            }`}
-        >
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className={`lg:hidden p-2 rounded-xl border transition-colors ${isDark
-                ? "bg-gray-800 border-gray-700 hover:bg-gray-700"
-                : "bg-gray-50 border-gray-200 hover:bg-gray-100"
-              }`}
-          >
-            <Menu className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`} />
-          </button>
-
-          {/* Search */}
-          <div className="flex-1 max-w-xl relative ml-auto">
-            <Search
-              className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
-            />
-            <input
-              type="text"
-              placeholder="Search communities, collaborations…"
-              className={`w-full h-11 pl-12 pr-4 rounded-xl border text-sm outline-none transition-all ${isDark
-                  ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-[#A53860]"
-                  : "bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#A53860]"
-                } focus:ring-2 focus:ring-[#A53860]/10`}
-            />
-          </div>
-
-          {/* Bell */}
-          <button
-            className={`relative p-2 rounded-xl transition-colors ${isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
-              }`}
-          >
-            <Bell
-              className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`}
-            />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#A53860]" />
-          </button>
-
-          {/* Avatar */}
+          {/* Profile Display Section */}
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setProfileMenuOpen((prev) => !prev)}
-              className="w-10 h-10 rounded-full border-2 border-[#A53860] bg-linear-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white text-sm font-bold shrink-0 cursor-pointer"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all w-full text-left"
             >
-              {initials}
+              <div className="w-10 h-10 rounded-full border-2 border-[#A53860] bg-linear-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white text-sm font-bold shrink-0">
+                {initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-bold truncate ${isDark ? "text-white" : "text-gray-900"}`}>
+                  {user?.displayName || user?.username || "Chumme User"}
+                </p>
+                <p className={`text-xs truncate ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                  {user?.email || "user@chumme.com"}
+                </p>
+              </div>
             </button>
 
-            {/* Dropdown */}
+            {/* Dropdown (Adjusted for Sidebar Position) */}
             <AnimatePresence>
               {profileMenuOpen && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -8 }}
+                  initial={{ opacity: 0, scale: 0.95, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 8 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className={`absolute right-0 top-full mt-2 w-64 rounded-2xl shadow-2xl z-50 overflow-hidden border ${isDark
+                  className={`absolute bottom-full left-0 mb-2 w-64 rounded-2xl shadow-2xl z-50 overflow-hidden border ${isDark
                       ? "bg-gray-900 border-gray-700/50"
                       : "bg-white border-gray-200"
                     }`}
                 >
-                  {/* Profile Info */}
+                  {/* Profile Info (In Dropdown too, for consistency) */}
                   <div className={`px-4 py-4 border-b ${isDark ? "border-gray-700/50" : "border-gray-200"}`}>
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg">
@@ -444,6 +391,35 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               )}
             </AnimatePresence>
           </div>
+        </div>
+      </motion.aside>
+
+      {/* ── Main column ── */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Header */}
+        <motion.header
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.45, delay: 0.15 }}
+          className={`sticky top-0 z-20 border-b px-4 lg:px-8 py-4 flex items-center gap-4 ${isDark
+              ? "bg-gray-900/95 border-gray-700 backdrop-blur-sm"
+              : "bg-white/95 border-gray-200 backdrop-blur-sm"
+            }`}
+        >
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className={`lg:hidden p-2 rounded-xl border transition-colors ${isDark
+                ? "bg-gray-800 border-gray-700 hover:bg-gray-700"
+                : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+              }`}
+          >
+            <Menu className={`w-5 h-5 ${isDark ? "text-gray-300" : "text-gray-600"}`} />
+          </button>
+
+
+
+
         </motion.header>
 
         {/* Page content */}
