@@ -349,7 +349,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                           {user?.email || "user@chumme.com"}
                         </p>
                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#A53860]/20 text-[#EF88AD]">
-                          {(user as any)?.role === "ADMIN" ? "Admin" : "Creator"}
+                          {(user as { role?: string })?.role === "ADMIN" ? "Admin" : "Creator"}
                         </span>
                       </div>
                     </div>

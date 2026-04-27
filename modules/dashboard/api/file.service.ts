@@ -16,19 +16,52 @@ export interface FileRecord {
  * fileService handles uploads to the server and provides a fallback
  * for listing files since the backend GET endpoint is not yet implemented.
  */
+type RawFileResponse = Record<string, unknown>;
+
+const normalizeFile = (raw: RawFileResponse, fallbackFile?: File): FileRecord => {
+  const getCategory = (mime: string) => {
+    if (mime?.startsWith("image/")) return "Images";
+    if (mime?.includes("pdf") || mime?.includes("text")) return "Documents";
+    if (mime?.includes("json") || mime?.includes("csv")) return "Data";
+    return "Other";
+  };
+
+  let name = (raw?.filename ?? raw?.name ?? fallbackFile?.name ?? "Untitled") as string;
+  
+  // If name is too short (1 or 2 letters), complete it
+  if (name.length > 0 && name.length < 3) {
+    const extension = (raw?.type as string)?.split("/")[1] || "file";
+    name = `${name} (File).${extension}`;
+  }
+
+  return {
+    id: (raw?.id ?? `file-${Date.now()}`) as string,
+    name,
+    type: (raw?.type ?? fallbackFile?.type ?? "application/octet-stream") as string,
+    size: (raw?.size ?? fallbackFile?.size ?? 0) as number,
+    uploadDate: (raw?.createdAt ?? raw?.uploadDate ?? new Date().toISOString()) as string,
+    url: (raw?.fileUrl ?? raw?.url ?? "") as string,
+    category: (raw?.category ?? getCategory((raw?.type ?? fallbackFile?.type ?? "") as string)) as string,
+  };
+};
+
+/**
+ * fileService handles uploads to the server and provides a fallback
+ * for listing files since the backend GET endpoint is not yet implemented.
+ */
 export const fileService = {
   /**
-   * Fetches files from the server. Currently returns empty array 
-   * since the backend listing endpoint is not yet active.
+   * Fetches files from the server.
    */
   getAll: async (): Promise<FileRecord[]> => {
     try {
-      // We try the standard path, but ignore failures for the UI's sake
       const response = await api.get("/api/v1/files");
       if (response.ok) {
-        const data = response.data as Record<string, unknown>;
-        const result = (data?.files ?? data?.data ?? data) as FileRecord[];
-        return Array.isArray(result) ? result : [];
+        const data = response.data as RawFileResponse;
+        const rawFiles = (data?.files ?? data?.data ?? data) as RawFileResponse[];
+        if (Array.isArray(rawFiles)) {
+          return rawFiles.map((f: RawFileResponse) => normalizeFile(f));
+        }
       }
     } catch (_error) {
       // Silent fail - UI uses local cache
@@ -57,25 +90,8 @@ export const fileService = {
       throw new Error(jsonResponse?.message || jsonResponse?.error || "Upload failed");
     }
 
-    // Backend returns { message, file: { id, filename, fileUrl, ... } }
-    const raw = jsonResponse?.file ?? jsonResponse?.data ?? jsonResponse;
-    
-    const getCategory = (mime: string) => {
-      if (mime?.startsWith("image/")) return "Images";
-      if (mime?.includes("pdf") || mime?.includes("text")) return "Documents";
-      if (mime?.includes("json") || mime?.includes("csv")) return "Data";
-      return "Other";
-    };
-
-    return {
-      id: raw?.id ?? `file-${Date.now()}`,
-      name: raw?.filename ?? raw?.name ?? file.name,
-      type: raw?.type ?? file.type,
-      size: raw?.size ?? file.size,
-      uploadDate: raw?.createdAt ?? raw?.uploadDate ?? new Date().toISOString(),
-      url: raw?.fileUrl ?? raw?.url ?? "",
-      category: raw?.category ?? getCategory(raw?.type ?? file.type),
-    };
+    const raw = (jsonResponse?.file ?? jsonResponse?.data ?? jsonResponse) as RawFileResponse;
+    return normalizeFile(raw, file);
   },
 
   delete: async (id: string): Promise<void> => {

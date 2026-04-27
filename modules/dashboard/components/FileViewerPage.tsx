@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
+import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 import { useFiles, useUploadFile, useDeleteFile, useFileDownloadUrl } from "../hooks/useFiles";
 import { FileRecord } from "../api/file.service";
 
@@ -49,6 +50,8 @@ const FileViewerPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [zoom, setZoom] = useState(100);
   const [textContent, setTextContent] = useState("");
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { resolvedTheme } = useTheme();
   const { messages, dismiss, showSuccess, showError } = useSnackbar();
 
@@ -81,8 +84,10 @@ const FileViewerPage = () => {
   const isDark = mounted ? resolvedTheme === "dark" : true;
   
   // Combine API results with local storage files (prefer API for same IDs)
+  // API data takes precedence - so we put localFiles first, then apiFiles overrides
+  const apiFilesArray = Array.isArray(apiFiles) ? apiFiles : [];
   const combinedFiles = Array.from(new Map(
-    [...localFiles, ...(Array.isArray(apiFiles) ? apiFiles : [])].map(file => [file.id, file])
+    [...localFiles, ...apiFilesArray].map(file => [file.id, file])
   ).values());
 
   const sortedFiles = combinedFiles.sort((a, b) => 
@@ -135,15 +140,26 @@ const FileViewerPage = () => {
   };
 
   const handleDelete = (id: string) => {
+    setFileToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!fileToDelete) return;
+    const id = fileToDelete;
     deleteMutation.mutate(id, {
       onSuccess: () => {
         showSuccess("File removed");
         saveToLocal(localFiles.filter(file => file.id !== id));
+        setIsDeleteModalOpen(false);
+        setFileToDelete(null);
       },
       onError: () => {
         // Even if server fails, remove from local UI
         saveToLocal(localFiles.filter(file => file.id !== id));
         showSuccess("File removed locally");
+        setIsDeleteModalOpen(false);
+        setFileToDelete(null);
       }
     });
   };
@@ -278,7 +294,7 @@ const FileViewerPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <button onClick={() => handlePreview(file)} className={`p-2 rounded-lg ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`} title="Preview"><Eye className="w-5 h-5" /></button>
                 <button 
                   onClick={() => downloadMutation.mutate(file.id, { onSuccess: (url) => window.open(url, "_blank"), onError: () => showError("Download failed") })} 
@@ -392,6 +408,16 @@ const FileViewerPage = () => {
       </AnimatePresence>
 
       <Snackbar messages={messages} onDismiss={dismiss} />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => { setIsDeleteModalOpen(false); setFileToDelete(null); }}
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteMutation.isPending}
+        isDark={isDark}
+        title="Delete File"
+        description={`Are you sure you want to delete "${combinedFiles.find(f => f.id === fileToDelete)?.name ?? "this file"}"`+"? This action cannot be undone."}
+      />
     </div>
   );
 };
