@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
-import { Pagination } from "@/modules/shared/components/Pagination";
+import { SearchBar } from "@/modules/shared/components/SearchBar";
+import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 
 interface MusicPageProps {
   isDark?: boolean;
@@ -16,9 +17,11 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const isDark = isDarkProp ?? resolvedTheme === "dark";
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [songToDelete, setSongToDelete] = useState<string | null>(null);
   const [songTitle, setSongTitle] = useState("");
-  const [page, setPage] = useState(1);
-  const limit = 10;
+  const [search, setSearch] = useState("");
+  const limit = 1000;
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioDuration, setAudioDuration] = useState<number | null>(null);
@@ -28,7 +31,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [mp3Error, setMp3Error] = useState(false);
   const [jsonError, setJsonError] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useSongs({ page, limit });
+  const { data, isLoading, isError, refetch } = useSongs({ search, limit });
   const { data: artists = [] } = useArtists();
   const uploadSong = useUploadSong(false);
   const deleteSong = useDeleteSong(false);
@@ -38,6 +41,34 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [genre, setGenre] = useState("");
 
   const songs = data?.data ?? [];
+
+  useEffect(() => {
+    const main = document.querySelector("main");
+    if (main) {
+      const originalMainClass = main.className;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      
+      main.classList.add("!h-full", "!overflow-hidden", "!flex", "!flex-col", "!p-0");
+      
+      const mainColumn = main.parentElement;
+      if (mainColumn) {
+        mainColumn.classList.add("!h-screen", "!overflow-hidden");
+      }
+
+      return () => {
+        main.className = originalMainClass;
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        if (mainColumn) {
+          mainColumn.classList.remove("!h-screen", "!overflow-hidden");
+        }
+      };
+    }
+  }, []);
 
   const labelClass = `block text-sm font-medium mb-2 ${isDark ? "text-gray-300" : "text-gray-700"
     }`;
@@ -96,11 +127,19 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteSong.mutateAsync(id);
-    } catch (err: unknown) {
-      console.error("[MusicPage] Delete error:", err);
+  const handleDelete = (id: string) => {
+    setSongToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (songToDelete) {
+      deleteSong.mutate(songToDelete, {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setSongToDelete(null);
+        },
+      });
     }
   };
 
@@ -112,17 +151,27 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pt-8">
+    <div className="w-full flex-1 flex flex-col min-h-0 p-4 lg:p-8">
       {/* Header & Stats — same layout as KaraokePage */}
       <div className="flex flex-col lg:flex-row lg:items-end gap-6 mb-6">
         {/* Action Button */}
         <div className="shrink-0">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white text-sm font-medium hover:opacity-90 flex items-center gap-2 transition-all shadow-md"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white text-sm font-medium hover:opacity-90 flex items-center gap-2 transition-all shadow-md h-12"
           >
             <Plus className="w-4 h-4" /> Add Song
           </button>
+        </div>
+
+        {/* Search Bar */}
+        <div className="flex-1 max-w-md">
+          <SearchBar
+            placeholder="Search for songs or artists..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClear={() => setSearch("")}
+          />
         </div>
 
         {/* Compact Stats Grid */}
@@ -190,17 +239,15 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
           </p>
         </div>
       ) : (
-        <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-          }`}>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className={isDark ? "bg-gray-900/50" : "bg-gray-50"}>
+        <div className={`flex-1 min-h-0 rounded-xl border overflow-hidden shadow-sm flex flex-col ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}>
+          <div className="overflow-y-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className={`sticky top-0 z-10 ${isDark ? "bg-gray-900" : "bg-gray-50"}`}>
                 <tr>
                   {["Title", "Artist", "Album", "Genre", "Duration", "Actions"].map((h) => (
                     <th
                       key={h}
-                      className={`px-4 py-2.5 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"
-                        }`}
+                      className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"}`}
                     >
                       {h}
                     </th>
@@ -243,13 +290,6 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
               </tbody>
             </table>
           </div>
-
-          <Pagination
-            currentPage={page}
-            totalPages={data?.meta?.totalPages ?? 1}
-            onPageChange={setPage}
-            isDark={isDark}
-          />
         </div>
       )}
 
@@ -576,6 +616,16 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteSong.isPending}
+        isDark={isDark}
+        title="Delete Song"
+        description={`Are you sure you want to delete ${songs.find(s => s.id === songToDelete)?.title ?? "this song"}? This will remove it from the library.`}
+      />
     </div>
   );
 };

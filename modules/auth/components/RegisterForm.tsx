@@ -9,7 +9,6 @@ import { AuthCard } from "@/modules/auth/components/AuthCard";
 import { AuthLayout } from "@/modules/auth/components/AuthLayout";
 import { ChummeLoader } from "@/modules/shared/components/ChummeLoader";
 import { RouteGuard } from "@/modules/shared/components/RouteGuard";
-import { STORAGE_KEYS } from "@/modules/shared/constants/storage-keys";
 import { useAuthStore } from "@/modules/shared/store/useAuthStore";
 
 export const RegisterForm = () => {
@@ -26,15 +25,6 @@ export const RegisterForm = () => {
 
   const { register, isLoading } = useAuthStore();
   const router = useRouter();
-
-  React.useEffect(() => {
-    if (!email) {
-      const savedEmail = localStorage.getItem(STORAGE_KEYS.REMEMBERED_EMAIL);
-      if (savedEmail) {
-        setEmail(savedEmail);
-      }
-    }
-  }, [email]);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
