@@ -6,6 +6,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "d1r17mifoniiby.cloudfront.net",
+      },
+      {
+        protocol: "https",
         hostname: "yt3.ggpht.com",
       },
       {

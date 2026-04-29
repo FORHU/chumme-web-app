@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { useOnboardingContents, useUploadOnboardingContent, useUpdateOnboardingContent, useDeleteOnboardingContent } from "../hooks/useOnboarding";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon } from "lucide-react";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
@@ -9,23 +9,32 @@ import { Snackbar } from "@/modules/shared/components/Snackbar";
 
 interface OnboardingContent {
   id: string;
-  title: string;
+  key?: string;
+  title?: string;
   type: "video" | "image";
-  thumbnail: string;
+  thumbnail?: string;
   description?: string;
   url?: string;
 }
 
-const MOCK_CONTENTS: OnboardingContent[] = [
-  { id: "1", title: "Welcome to Chumme", type: "video", thumbnail: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=300&fit=crop", description: "Introduction to the Chumme platform" },
-  { id: "2", title: "Create Your Profile", type: "image", thumbnail: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=300&fit=crop", description: "Step-by-step profile setup guide" },
-  { id: "3", title: "Join Communities", type: "video", thumbnail: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop", description: "Learn how to find and join fan communities" },
+const ONBOARDING_SLOTS = [
+  { key: "onboarding_video_1", fallbackLabel: "Slot 1" },
+  { key: "onboarding_video_2", fallbackLabel: "Slot 2" },
+  { key: "onboarding_video_3", fallbackLabel: "Slot 3" },
+  { key: "onboarding_video_4", fallbackLabel: "Slot 4" },
 ];
 
+const LIVE_KEYS = ["onboarding_video_1", "onboarding_video_2", "onboarding_video_3", "onboarding_video_4"];
+
 const OnboardingContentPage = () => {
-  const [contents, setContents] = useState<OnboardingContent[]>(MOCK_CONTENTS);
+  const { data: contents = [], isLoading, refetch } = useOnboardingContents();
+  const uploadMutation = useUploadOnboardingContent();
+  const updateMutation = useUpdateOnboardingContent();
+  const deleteMutation = useDeleteOnboardingContent();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContent, setEditingContent] = useState<OnboardingContent | null>(null);
+  const [activeSlot, setActiveSlot] = useState<typeof ONBOARDING_SLOTS[0] | null>(null);
   const { messages, dismiss, showSuccess, showError } = useSnackbar();
 
   // Modal form state
@@ -42,16 +51,24 @@ const OnboardingContentPage = () => {
     setUploadMethod("file"); setUrl(""); setFile(null);
   };
 
-  const handleOpenModal = (content?: OnboardingContent) => {
+  const handleOpenModal = (content?: OnboardingContent, slot?: typeof ONBOARDING_SLOTS[0]) => {
+    if (slot) setActiveSlot(slot);
     if (content) {
       setEditingContent(content);
-      setTitle(content.title);
-      setType(content.type);
-      setDescription(content.description || "");
-      setUrl(content.url || "");
+      setTitle(content.title ?? "");           // ← real title from API
+      setType(content.type ?? "video");
+      setDescription(content.description ?? ""); // ← real description from API
+      setUrl(content.url ?? "");
+      setUploadMethod("file");
+      setFile(null);
     } else {
       setEditingContent(null);
-      resetForm();
+      setTitle("");
+      setDescription("");
+      setType("video");
+      setUploadMethod("file");
+      setFile(null);
+      setUrl("");
     }
     setIsModalOpen(true);
   };
@@ -59,6 +76,7 @@ const OnboardingContentPage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingContent(null);
+    setActiveSlot(null);
     resetForm();
   };
 
@@ -74,27 +92,56 @@ const OnboardingContentPage = () => {
 
   const handleSave = () => {
     if (!title.trim()) { showError("Title is required"); return; }
-    if (uploadMethod === "file" && !file && !editingContent) { showError(`Please upload a ${type} file`); return; }
-    if (uploadMethod === "url" && !url.trim()) { showError(`Please enter a ${type} URL`); return; }
 
-    const thumbnail = file
-      ? URL.createObjectURL(file)
-      : url || editingContent?.thumbnail || "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=300&fit=crop";
+    const slotKey = activeSlot?.key ?? editingContent?.key ?? `onboarding_${type}_${Date.now()}`;
 
-    if (editingContent) {
-      setContents((prev) => prev.map((content) => content.id === editingContent.id ? { ...content, title: title.trim(), type, description: description.trim(), thumbnail, url: uploadMethod === "url" ? url : undefined } : content));
-      showSuccess(`${title} updated successfully`);
-    } else {
-      setContents((prev) => [...prev, { id: Date.now().toString(), title: title.trim(), type, description: description.trim(), thumbnail, url: uploadMethod === "url" ? url : undefined }]);
-      showSuccess(`${title} added to onboarding`);
+    if (file) {
+      uploadMutation.mutate(
+        { file, key: slotKey, type, title: title.trim(), description: description.trim() },
+        {
+          onSuccess: () => {
+            showSuccess(`${title} saved`);
+            handleCloseModal();
+            setTimeout(() => refetch(), 500);
+          },
+          onError: (err: any) => showError(`Upload failed: ${err.message}`),
+        }
+      );
+      return;
     }
-    handleCloseModal();
+
+    if (editingContent?.id) {
+      updateMutation.mutate(
+        {
+          id: editingContent.id,
+          type,
+          title: title.trim(),
+          description: description.trim(),
+          url: url.trim() || editingContent.url,
+        },
+        {
+          onSuccess: () => {
+            showSuccess(`${title} updated`);
+            handleCloseModal();
+            setTimeout(() => refetch(), 500);
+          },
+          onError: (err: any) => showError(`Update failed: ${err.message}`),
+        }
+      );
+      return;
+    }
+
+    showError("Please select a file to upload");
   };
 
   const handleDelete = (id: string) => {
-    const contentItem = contents.find((content) => content.id === id);
-    setContents((prev) => prev.filter((content) => content.id !== id));
-    showSuccess(`${contentItem?.title} removed`);
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        showSuccess("Content removed");
+        setTimeout(() => refetch(), 500);
+      },
+      onError: () => showError("Delete failed"),
+    });
   };
 
   return (
@@ -105,78 +152,142 @@ const OnboardingContentPage = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Onboarding Content</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">Manage videos and images for user onboarding experience</p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold px-6 h-11 rounded-xl transition-all"
-        >
-          <Plus className="w-5 h-5" />
-          Add Content
-        </button>
+
+      </div>
+
+      {/* Live Status Summary */}
+      <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-700/50 dark:bg-gray-800/50 dark:border-gray-700/50 bg-white border-gray-200">
+        <div className="flex items-center gap-2">
+          <motion.div
+            animate={{ scale: [1, 1.3, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-3 h-3 rounded-full bg-green-400"
+          />
+          <span className="text-sm font-semibold text-white dark:text-white text-gray-900">
+            {contents.filter(c => c.key && LIVE_KEYS.includes(c.key)).length} / 4 Slots Live
+          </span>
+        </div>
+        <div className="h-4 w-px bg-gray-700 dark:bg-gray-700 bg-gray-300" />
+        <span className="text-xs text-gray-400 dark:text-gray-400 text-gray-500">
+          Mobile app onboarding updates instantly when a slot is uploaded
+        </span>
+        {/* Progress bar */}
+        <div className="flex-1 h-2 bg-gray-700 dark:bg-gray-700 bg-gray-200 rounded-full overflow-hidden ml-2">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${(contents.filter(c => c.key && LIVE_KEYS.includes(c.key)).length / 4) * 100}%` }}
+            transition={{ duration: 0.5 }}
+            className="h-full bg-gradient-to-r from-[#A53860] to-green-400 rounded-full"
+          />
+        </div>
       </div>
 
       {/* Grid or Empty */}
-      {contents.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/30 p-16 text-center"
-        >
-          <div className="max-w-md mx-auto">
-            <div className="p-6 rounded-full bg-gray-100 dark:bg-gray-800 w-fit mx-auto mb-6">
-              <Video className="w-12 h-12 text-gray-400 dark:text-gray-500" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No onboarding content yet</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">Get started by adding your first onboarding video or image</p>
-            <button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold px-6 h-11 rounded-xl inline-flex items-center gap-2 transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              Add your first content
-            </button>
-          </div>
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
-            {contents.map((content, index) => (
-              <motion.div
-                key={content.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-white border border-gray-200 dark:bg-gray-800/50 dark:border-gray-700/50 rounded-xl overflow-hidden group transition-all hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                {/* Thumbnail */}
-                <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-[#A53860]/20 to-[#670D2F]/20">
-                  <Image src={content.thumbnail} alt={content.title} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute top-3 left-3">
-                    <div className="px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm flex items-center gap-2">
-                      {content.type === "video" ? <Video className="w-4 h-4 text-white" /> : <ImageIcon className="w-4 h-4 text-white" />}
-                      <span className="text-xs font-medium text-white capitalize">{content.type}</span>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                    <button onClick={() => handleOpenModal(content)} className="p-3 rounded-lg bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
-                      <Edit className="w-5 h-5 text-white" />
-                    </button>
-                    <button onClick={() => handleDelete(content.id)} className="p-3 rounded-lg bg-red-500/80 backdrop-blur-sm hover:bg-red-600 transition-colors">
-                      <Trash2 className="w-5 h-5 text-white" />
-                    </button>
-                  </div>
-                </div>
-                {/* Info */}
-                <div className="p-5">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-1 truncate">{content.title}</h3>
-                  {content.description && <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{content.description}</p>}
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+      {isLoading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-[#A53860] border-t-transparent rounded-full animate-spin" />
         </div>
       )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {ONBOARDING_SLOTS.map((slot, index) => {
+          const uploaded = contents.find((c) => c.key === slot.key);
+
+          // Use real API data — title and description come from the uploaded asset
+          const displayLabel = uploaded?.title ?? slot.fallbackLabel;
+          const displayDescription = uploaded?.description ?? "No description yet";
+
+          return (
+            <motion.div
+              key={slot.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-gray-800/50 border border-gray-700/50 dark:bg-gray-800/50 dark:border-gray-700/50 bg-white border-gray-200 rounded-xl overflow-hidden"
+            >
+              {/* Video or Placeholder */}
+              <div className="relative aspect-video bg-gray-900">
+                {uploaded?.url ? (
+                  <>
+                    {uploaded.type === "video" ? (
+                      <video
+                        key={uploaded.url} // force remount when URL changes
+                        src={uploaded.url}
+                        className="w-full h-full object-cover"
+                        controls
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img
+                        src={uploaded.url}
+                        alt={displayLabel}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    <button
+                      onClick={() => handleDelete(uploaded.id)}
+                      className="absolute top-3 right-3 p-2 rounded-lg bg-red-500/80 hover:bg-red-600 text-white transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(uploaded, slot)}
+                      className="absolute top-3 left-3 p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleOpenModal(undefined, slot)}
+                    className="w-full h-full flex flex-col items-center justify-center gap-3 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    <Upload className="w-10 h-10" />
+                    <span className="text-sm font-medium">Upload Content</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Slot Info — shows REAL data */}
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br from-[#A53860] to-[#670D2F] flex-shrink-0">
+                    {index + 1}
+                  </span>
+                  <h3 className="font-bold text-white dark:text-white text-gray-900">{displayLabel}</h3>
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-400 text-gray-500">{displayDescription}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-600 mt-1 font-mono">{slot.key}</p>
+
+                {/* Status */}
+                <div className="mt-3">
+                  {uploaded ? (
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/30">
+                      <motion.div
+                        animate={{ scale: [1, 1.3, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="w-2.5 h-2.5 rounded-full bg-green-400 flex-shrink-0"
+                      />
+                      <div>
+                        <p className="text-xs font-semibold text-green-400">Live on Mobile App</p>
+                        <p className="text-xs text-green-400/70">Onboarding screen {index + 1}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-700/30 border border-gray-700/50">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gray-600 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-semibold text-gray-400">Not Uploaded</p>
+                        <p className="text-xs text-gray-500">Mobile app showing default content</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
 
       {/* Add/Edit Modal */}
       <AnimatePresence>
@@ -277,8 +388,17 @@ const OnboardingContentPage = () => {
 
                 {/* Actions */}
                 <div className="px-8 py-6 border-t border-gray-100 dark:border-gray-800 flex gap-4">
-                  <button onClick={handleSave} className="flex-1 h-11 bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold rounded-xl transition-all">
-                    {editingContent ? "Save Changes" : "Save Content"}
+                  <button
+                    onClick={() => {
+                      console.log("[SaveButton] clicked");
+                      handleSave();
+                    }}
+                    disabled={uploadMutation.isPending || updateMutation.isPending}
+                    className="flex-1 h-11 bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+                  >
+                    {uploadMutation.isPending || updateMutation.isPending
+                      ? "Saving..."
+                      : editingContent ? "Save Changes" : "Save Content"}
                   </button>
                   <button onClick={handleCloseModal} className="px-6 h-11 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-all">
                     Cancel
