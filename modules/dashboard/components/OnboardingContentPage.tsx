@@ -390,7 +390,6 @@ const OnboardingContentPage = () => {
                 <div className="px-8 py-6 border-t border-gray-100 dark:border-gray-800 flex gap-4">
                   <button
                     onClick={() => {
-                      console.log("[SaveButton] clicked");
                       handleSave();
                     }}
                     disabled={uploadMutation.isPending || updateMutation.isPending}
