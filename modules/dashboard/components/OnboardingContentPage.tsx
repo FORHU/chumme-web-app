@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useOnboardingContents, useUploadOnboardingContent, useUpdateOnboardingContent, useDeleteOnboardingContent } from "../hooks/useOnboarding";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon } from "lucide-react";
+import { Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon } from "lucide-react";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
 
@@ -104,7 +105,7 @@ const OnboardingContentPage = () => {
             handleCloseModal();
             setTimeout(() => refetch(), 500);
           },
-          onError: (err: any) => showError(`Upload failed: ${err.message}`),
+          onError: (err: Error) => showError(`Upload failed: ${err.message}`),
         }
       );
       return;
@@ -125,7 +126,7 @@ const OnboardingContentPage = () => {
             handleCloseModal();
             setTimeout(() => refetch(), 500);
           },
-          onError: (err: any) => showError(`Update failed: ${err.message}`),
+          onError: (err: Error) => showError(`Update failed: ${err.message}`),
         }
       );
       return;
@@ -218,9 +219,11 @@ const OnboardingContentPage = () => {
                         preload="metadata"
                       />
                     ) : (
-                      <img
+                      <Image
                         src={uploaded.url}
                         alt={displayLabel}
+                        width={800}
+                        height={450}
                         className="w-full h-full object-cover"
                       />
                     )}

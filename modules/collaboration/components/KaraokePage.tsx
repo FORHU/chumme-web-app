@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useKaraokeSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
 import type { KaraokeTabId } from "@/modules/collaboration/types";
 import { SearchBar } from "@/modules/shared/components/SearchBar";
+import { useDebounce } from "@/modules/shared/hooks/useDebounce";
 import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 
 interface KaraokePageProps {
@@ -22,6 +23,7 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
   const [songToDelete, setSongToDelete] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<KaraokeTabId>("songs");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const limit = 1000; // Large limit for "1 page" experience
 
   const [songTitle, setSongTitle]     = useState("");
@@ -34,7 +36,7 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
   const [mp3Error, setMp3Error] = useState(false);
   const [jsonError, setJsonError] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useKaraokeSongs({ search, limit });
+  const { data, isLoading, isError, refetch } = useKaraokeSongs({ search: debouncedSearch, limit });
   const uploadSong  = useUploadSong(true);
   const deleteSong  = useDeleteSong(true);
   const { data: artists = [] } = useArtists();

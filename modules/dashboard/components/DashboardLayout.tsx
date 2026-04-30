@@ -157,11 +157,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         >
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-              <img
+              <Image
                 src="/logo.png"
                 alt="Chumme"
+                width={32}
+                height={32}
                 className="w-8 h-8 object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
               />
               <span className="font-bold text-xl tracking-wide text-white">CHUMME</span>
             </div>
@@ -368,7 +369,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                           {user?.email || "user@chumme.com"}
                         </p>
                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#A53860]/20 text-[#EF88AD]">
-                          {(user as any)?.role === "ADMIN" ? "Admin" : "Creator"}
+                          {user?.role === "ADMIN" ? "Admin" : "Creator"}
                         </span>
                       </div>
                     </div>

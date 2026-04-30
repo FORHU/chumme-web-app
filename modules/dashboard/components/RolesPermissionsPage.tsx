@@ -6,7 +6,6 @@ import {
   BadgeCheck,
   Edit,
   Trash2,
-  Plus,
   X,
 } from "lucide-react";
 import { useState } from "react";

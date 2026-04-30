@@ -24,6 +24,7 @@ export interface User {
   avatarUrl?: string;
   onboardingCompleted: boolean;
   artistCount?: number;
+  role?: string;
 }
 
 export interface AuthResponse {

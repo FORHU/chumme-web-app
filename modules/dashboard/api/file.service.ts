@@ -27,11 +27,16 @@ const normalizeFile = (raw: RawFileResponse, fallbackFile?: File): FileRecord =>
   };
 
   let name = (raw?.filename ?? raw?.name ?? fallbackFile?.name ?? "Untitled") as string;
-  
+
   // If name is too short (1 or 2 letters), complete it
   if (name.length > 0 && name.length < 3) {
     const extension = (raw?.type as string)?.split("/")[1] || "file";
     name = `${name} (File).${extension}`;
+  }
+
+  let url = (raw?.fileUrl ?? raw?.url ?? "") as string;
+  if (url && url.startsWith("/")) {
+    url = `${getApiBaseUrl()}${url}`;
   }
 
   return {
@@ -40,7 +45,7 @@ const normalizeFile = (raw: RawFileResponse, fallbackFile?: File): FileRecord =>
     type: (raw?.type ?? fallbackFile?.type ?? "application/octet-stream") as string,
     size: (raw?.size ?? fallbackFile?.size ?? 0) as number,
     uploadDate: (raw?.createdAt ?? raw?.uploadDate ?? new Date().toISOString()) as string,
-    url: (raw?.fileUrl ?? raw?.url ?? "") as string,
+    url,
     category: (raw?.category ?? getCategory((raw?.type ?? fallbackFile?.type ?? "") as string)) as string,
   };
 };
@@ -107,6 +112,12 @@ export const fileService = {
     const response = await api.get(`/api/v1/files/download/${id}`);
     const data = response.data as Record<string, unknown>;
     // Fallback logic for various URL shapes
-    return (data?.url ?? data?.fileUrl ?? data?.downloadUrl ?? data) as string;
+    let downloadUrl = (data?.url ?? data?.fileUrl ?? data?.downloadUrl ?? data) as string;
+    
+    if (downloadUrl && typeof downloadUrl === 'string' && downloadUrl.startsWith("/")) {
+      downloadUrl = `${getApiBaseUrl()}${downloadUrl}`;
+    }
+    
+    return downloadUrl;
   },
 };

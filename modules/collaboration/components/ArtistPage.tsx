@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, X, Upload, Edit, Trash2, Music } from "lucide-react";
 import Image from "next/image";
 import { useArtists, useCreateArtist, useUpdateArtist, useDeleteArtist } from "@/modules/collaboration/hooks/useMusic";
+import { useDebounce } from "@/modules/shared/hooks/useDebounce";
 import { Pagination } from "@/modules/shared/components/Pagination";
 import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 import { useTheme } from "next-themes";
@@ -23,12 +24,14 @@ const ArtistPage = () => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const { data: fetchedArtists = [], isLoading } = useArtists();
   const createArtist = useCreateArtist();
   const updateArtist = useUpdateArtist();
   const deleteArtist = useDeleteArtist();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedQuery = useDebounce(searchQuery, 500);
+
+  const { data: fetchedArtists = [], isLoading } = useArtists({ search: debouncedQuery });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [artistToDelete, setArtistToDelete] = useState<string | null>(null);
@@ -36,6 +39,11 @@ const ArtistPage = () => {
   const [formData, setFormData] = useState({ name: "", genre: "", description: "", imageUrl: "" });
 
   const [page, setPage] = useState(1);
+
+  // Reset to page 1 whenever the debounced search changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQuery]);
   const limit = 6;
 
   const artists: Artist[] = fetchedArtists.map(fetchedArtist => ({
@@ -102,8 +110,8 @@ const ArtistPage = () => {
 
   const filteredArtists = artists.filter(
     (artist) =>
-      artist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      artist.genre.toLowerCase().includes(searchQuery.toLowerCase())
+      artist.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+      artist.genre.toLowerCase().includes(debouncedQuery.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredArtists.length / limit);

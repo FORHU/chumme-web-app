@@ -6,6 +6,7 @@ import { Plus, Trash2, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
 import { SearchBar } from "@/modules/shared/components/SearchBar";
+import { useDebounce } from "@/modules/shared/hooks/useDebounce";
 import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 
 interface MusicPageProps {
@@ -21,6 +22,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [songToDelete, setSongToDelete] = useState<string | null>(null);
   const [songTitle, setSongTitle] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const limit = 1000;
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -31,7 +33,7 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
   const [mp3Error, setMp3Error] = useState(false);
   const [jsonError, setJsonError] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useSongs({ search, limit });
+  const { data, isLoading, isError, refetch } = useSongs({ search: debouncedSearch, limit });
   const { data: artists = [] } = useArtists();
   const uploadSong = useUploadSong(false);
   const deleteSong = useDeleteSong(false);

@@ -17,8 +17,8 @@ export const onboardingService = {
   getAll: async (): Promise<OnboardingContent[]> => {
     const response = await api.get("/api/v1/system-assets");
     if (response.ok) {
-      const data = response.data as any;
-      const assets = data?.assets ?? data?.data ?? (Array.isArray(data) ? data : []);
+      const data = response.data as Record<string, unknown>;
+      const assets = (data?.assets ?? data?.data ?? (Array.isArray(data) ? data : [])) as OnboardingContent[];
       // Filter out soft-deleted assets
       return assets.filter((a: OnboardingContent) => !a.isDeleted);
     }
@@ -79,7 +79,7 @@ export const onboardingService = {
     description?: string;
     url?: string;
   }): Promise<OnboardingContent> => {
-    const payload: Record<string, any> = {};
+    const payload: Record<string, unknown> = {};
     if (type !== undefined) payload.type = type;
     if (title !== undefined) payload.title = title;
     if (description !== undefined) payload.description = description;
@@ -88,12 +88,12 @@ export const onboardingService = {
     const response = await api.patch(`/api/v1/system-assets/${id}`, payload);
 
     if (response.ok) {
-      const data = response.data as any;
-      return data?.asset ?? data?.data ?? data;
+      const data = response.data as Record<string, unknown>;
+      return (data?.asset ?? data?.data ?? data) as OnboardingContent;
     }
 
     console.error("[Onboarding] update error:", response.problem, response.status, response.data);
-    throw new Error((response.data as any)?.message ?? "Update failed");
+    throw new Error((response.data as Record<string, unknown>)?.message as string ?? "Update failed");
   },
 
   // Delete asset — DELETE /api/v1/system-assets/:id
@@ -102,7 +102,7 @@ export const onboardingService = {
 
     if (!response.ok) {
       console.error("[Onboarding] delete error:", response.problem, response.status);
-      throw new Error((response.data as any)?.message ?? "Delete failed");
+      throw new Error((response.data as Record<string, unknown>)?.message as string ?? "Delete failed");
     }
   },
 };

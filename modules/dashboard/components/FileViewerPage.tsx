@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
 import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
-import { useFiles, useUploadFile, useDeleteFile, useFileDownloadUrl } from "../hooks/useFiles";
+import { useFiles, useUploadFile, useDeleteFile } from "../hooks/useFiles";
 import { FileRecord } from "../api/file.service";
 
 const CACHE_KEY = "chumme_file_cache";
@@ -38,7 +38,6 @@ const FileViewerPage = () => {
   const { data: apiFiles = [], isLoading } = useFiles();
   const uploadMutation = useUploadFile();
   const deleteMutation = useDeleteFile();
-  const downloadMutation = useFileDownloadUrl();
 
   const [mounted, setMounted] = useState(false);
   const [localFiles, setLocalFiles] = useState<FileRecord[]>([]);
@@ -166,6 +165,20 @@ const FileViewerPage = () => {
 
   const formatJSON = (text: string) => {
     try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return text; }
+  };
+
+  const handleForceDownload = (url: string, filename: string) => {
+    showSuccess(`Starting download for ${filename}...`);
+    
+    // Use our internal Next.js proxy to bypass S3 CORS and force a download prompt
+    const proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+    
+    const link = document.createElement("a");
+    link.href = proxyUrl;
+    link.download = filename; // This acts as a fallback, but the server header forces it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Safe Render Guard
@@ -297,7 +310,7 @@ const FileViewerPage = () => {
               <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <button onClick={() => handlePreview(file)} className={`p-2 rounded-lg ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`} title="Preview"><Eye className="w-5 h-5" /></button>
                 <button 
-                  onClick={() => downloadMutation.mutate(file.id, { onSuccess: (url) => window.open(url, "_blank"), onError: () => showError("Download failed") })} 
+                  onClick={() => { if (file.url) handleForceDownload(file.url, file.name); else showError("No URL available for this file"); }} 
                   className={`p-2 rounded-lg ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`} title="Download"
                 ><Download className="w-5 h-5" /></button>
                 <button onClick={() => handleDelete(file.id)} className={`p-2 rounded-lg ${isDark ? "hover:bg-red-900/30 text-red-400" : "hover:bg-red-50 text-red-600"}`} title="Delete"><Trash2 className="w-5 h-5" /></button>
@@ -359,6 +372,7 @@ const FileViewerPage = () => {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPreviewFile(null)} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" />
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className={`border shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col rounded-2xl ${isDark ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`} onClick={(e) => e.stopPropagation()}>
                 <div className={`px-6 py-4 border-b flex items-center justify-between ${isDark ? "border-gray-700" : "border-gray-200"}`}>
                   <div className="min-w-0 flex-1">

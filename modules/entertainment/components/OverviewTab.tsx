@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ChevronDown, ChevronRight, Search } from "lucide-react";
 import { useState } from "react";
 
+import { useDebounce } from "@/modules/shared/hooks/useDebounce";
+
 import type { EntertainmentCategory } from "@/modules/entertainment/types/api.types";
 
 export interface OverviewTabProps {
@@ -23,9 +25,10 @@ export const OverviewTab = ({
   categories,
 }: OverviewTabProps) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   console.warn(categories);
   const filteredCategories = categories.filter((cat) => {
-    const term = searchTerm.toLowerCase();
+    const term = debouncedSearchTerm.toLowerCase();
     if (!term) return true;
 
     // Match category name
@@ -149,7 +152,7 @@ export const OverviewTab = ({
                 key={cat.id}
                 category={cat}
                 isDark={isDark}
-                searchTerm={searchTerm}
+                searchTerm={debouncedSearchTerm}
               />
             ))}
           </div>
@@ -162,7 +165,7 @@ export const OverviewTab = ({
               className={`text-sm font-medium ${isDark ? "text-gray-400" : "text-gray-600"}`}
             >
               No results for {'"'}
-              {searchTerm}
+              {debouncedSearchTerm}
               {'"'}
             </p>
             <p

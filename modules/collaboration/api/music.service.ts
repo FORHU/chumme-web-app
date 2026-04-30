@@ -59,8 +59,16 @@ export const musicService = {
     return res.data!;
   },
 
-  getArtists: async (): Promise<ArtistOption[]> => {
-    const res = await api.get<ArtistsResponse>("/api/v1/artists");
+  getArtists: async (params?: { search?: string; page?: number; limit?: number }): Promise<ArtistOption[]> => {
+    const query = new URLSearchParams();
+    if (params?.page)     query.set("page",      String(params.page));
+    if (params?.limit)    query.set("limit",     String(params.limit));
+    if (params?.search)   query.set("search",    params.search);
+
+    const queryString = query.toString();
+    const endpoint = queryString ? `/api/v1/artists?${queryString}` : "/api/v1/artists";
+    
+    const res = await api.get<ArtistsResponse>(endpoint);
     if (!res.ok) {
       if (process.env.NODE_ENV === "development") {
         console.warn("[musicService.getArtists] Request failed:", res.status, res.data);

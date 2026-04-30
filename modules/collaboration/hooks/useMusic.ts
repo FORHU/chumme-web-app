@@ -1,19 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { musicService } from "@/modules/collaboration/api/music.service";
 
-const SONGS_KEY  = ["music-songs"];
+const SONGS_KEY   = ["music-songs"];
 const KARAOKE_KEY = ["music-karaoke"];
 
+// Primitive values in queryKey so React Query compares by value, not reference.
 export const useSongs = (params?: { page?: number; limit?: number; search?: string }) =>
   useQuery({
-    queryKey: [...SONGS_KEY, params],
+    queryKey: [...SONGS_KEY, params?.page, params?.limit, params?.search ?? ""],
     queryFn: () => musicService.getSongs({ ...params, isKaraoke: false }),
     staleTime: 2 * 60 * 1000,
   });
 
 export const useKaraokeSongs = (params?: { page?: number; limit?: number; search?: string }) =>
   useQuery({
-    queryKey: [...KARAOKE_KEY, params],
+    queryKey: [...KARAOKE_KEY, params?.page, params?.limit, params?.search ?? ""],
     queryFn: () => musicService.getSongs({ ...params, isKaraoke: true }),
     staleTime: 2 * 60 * 1000,
   });
@@ -43,9 +44,7 @@ export const useUploadSong = (isKaraoke: boolean) => {
         videoFile,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY,
-      });
+      queryClient.invalidateQueries({ queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY });
     },
   });
 };
@@ -55,17 +54,15 @@ export const useDeleteSong = (isKaraoke: boolean) => {
   return useMutation({
     mutationFn: (id: string) => musicService.deleteSong(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY,
-      });
+      queryClient.invalidateQueries({ queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY });
     },
   });
 };
 
-export const useArtists = () =>
+export const useArtists = (params?: { search?: string; page?: number; limit?: number }) =>
   useQuery({
-    queryKey: ["artists"],
-    queryFn: musicService.getArtists,
+    queryKey: ["artists", params?.page, params?.limit, params?.search ?? ""],
+    queryFn: () => musicService.getArtists(params),
     staleTime: 5 * 60 * 1000,
   });
 
