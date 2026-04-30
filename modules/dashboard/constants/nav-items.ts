@@ -17,6 +17,7 @@ import {
   FolderOpen,
   ShieldCheck,
   Download,
+  Radio,
 } from "lucide-react";
 import type React from "react";
 
@@ -54,6 +55,11 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Communities", href: "/dashboard/communities", icon: Users },
       { label: "Entertainment", href: "/dashboard/entertainment", icon: Star },
+      {
+        label: "Live Video API",
+        href: "/dashboard/categories/live-video",
+        icon: Radio,
+      },
     ],
   },
   {
