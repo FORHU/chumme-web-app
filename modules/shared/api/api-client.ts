@@ -15,7 +15,7 @@ import {
 
 export const getApiBaseUrl = () => {
   const envUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  
+
   // If we have an explicit API URL in env, always use it
   if (envUrl) {
     return envUrl.replace(/\/$/, "");

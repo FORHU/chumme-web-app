@@ -1,14 +1,32 @@
 import { api } from "@/modules/shared/api/api-client";
+import type { Stream } from "@/modules/entertainment/types/api.types";
 
 export const entertainmentService = {
   // ── Categories ──────────────────────────────────────────────────────────
 
   getEntertainmentCategories: async () => {
-    const res = await api.get<{ categories: unknown[] }>(
+    const res = await api.get<{ categories: Record<string, unknown>[] }>(
       "/api/v1/chumme-categories/entertainment",
     );
     if (!res.ok) throw new Error("Failed to fetch entertainment categories");
-    return res.data!.categories;
+
+    const rawCategories = res.data?.categories || [];
+
+    // Map nested visual design emojiIcon to imageUrl for UI compatibility at all levels
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    return rawCategories.map((cat: any) => ({
+      ...cat,
+      imageUrl: cat.chummeVisualDesign?.emojiIcon || cat.imageUrl,
+      chummeSubCategories: cat.chummeSubCategories?.map((sub: any) => ({
+        ...sub,
+        imageUrl: sub.chummeVisualDesign?.emojiIcon || sub.imageUrl,
+        chummeTopicCategories: sub.chummeTopicCategories?.map((topic: any) => ({
+          ...topic,
+          imageUrl: topic.chummeVisualDesign?.emojiIcon || topic.imageUrl,
+        })),
+      })),
+    }));
+    /* eslint-enable @typescript-eslint/no-explicit-any */
   },
 
   createCategory: async (data: {
@@ -22,7 +40,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to create category",
+        "Failed to create category",
       );
     return res.data;
   },
@@ -46,7 +64,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to update category",
+        "Failed to update category",
       );
     return res.data;
   },
@@ -57,7 +75,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to delete category",
+        "Failed to delete category",
       );
     return res.data;
   },
@@ -75,7 +93,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to create subcategory",
+        "Failed to create subcategory",
       );
     return res.data;
   },
@@ -99,7 +117,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to update subcategory",
+        "Failed to update subcategory",
       );
     return res.data;
   },
@@ -110,7 +128,7 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message ||
-          "Failed to delete subcategory",
+        "Failed to delete subcategory",
       );
     return res.data;
   },
@@ -122,8 +140,16 @@ export const entertainmentService = {
     chummeSubCategoryId: string;
     note?: string;
     isAd: boolean;
+    imageUrl?: string;
   }) => {
-    const res = await api.post("/api/v1/chumme-topic-categories", data);
+    const payload = {
+      name: data.name,
+      chummeSubCategoryId: data.chummeSubCategoryId,
+      note: data.note,
+      isAd: data.isAd,
+      emojiIcon: data.imageUrl,
+    };
+    const res = await api.post("/api/v1/chumme-topic-categories", payload);
 
     if (!res.ok)
       throw new Error(
@@ -134,9 +160,15 @@ export const entertainmentService = {
 
   updateTopicCategory: async (
     id: string,
-    data: { name?: string; note?: string },
+    data: { name?: string; note?: string; imageUrl?: string },
   ) => {
-    const res = await api.patch(`/api/v1/chumme-topic-categories/${id}`, data);
+    const payload = {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.note !== undefined && { note: data.note }),
+      ...(data.imageUrl !== undefined && { emojiIcon: data.imageUrl }),
+    };
+
+    const res = await api.patch(`/api/v1/chumme-topic-categories/${id}`, payload);
 
     if (!res.ok)
       throw new Error(
@@ -151,6 +183,36 @@ export const entertainmentService = {
     if (!res.ok)
       throw new Error(
         (res.data as { message?: string })?.message || "Failed to delete topic",
+      );
+    return res.data;
+  },
+
+  // ── Streams ──────────────────────────────────────────────────────────────
+
+  getLiveStreams: async (): Promise<Stream[]> => {
+    const res = await api.get<{ data?: Stream[]; artists?: Stream[]; streams?: Stream[] }>(
+      "/api/v1/artists/live",
+    );
+    if (!res.ok) throw new Error("Failed to fetch live streams");
+
+    // Support multiple formats: direct array, { data: [] }, or { artists: [] }
+    const data = res.data;
+    if (Array.isArray(data)) return data;
+    if (data?.data && Array.isArray(data.data)) return data.data;
+    if (data?.artists && Array.isArray(data.artists)) return data.artists;
+    if (data?.streams && Array.isArray(data.streams)) return data.streams;
+
+    return [];
+  },
+
+  updateStreamAction: async (id: string, action: "start" | "stop" | "pause") => {
+    const res = await api.post(`/api/v1/entertainment/streams/${id}/action`, {
+      action,
+    });
+    if (!res.ok)
+      throw new Error(
+        (res.data as { message?: string })?.message ||
+        `Failed to ${action} stream`,
       );
     return res.data;
   },

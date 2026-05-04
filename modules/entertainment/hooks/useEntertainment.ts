@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { entertainmentService } from "@/modules/entertainment/api/entertainment.service";
-import type { EntertainmentCategory } from "@/modules/entertainment/types/api.types";
+import type { EntertainmentCategory, Stream } from "@/modules/entertainment/types/api.types";
 
 const QUERY_KEY = ["entertainment-categories"];
+const STREAMS_QUERY_KEY = ["entertainment-streams"];
 
 export const useEntertainmentCategories = () => {
   return useQuery<EntertainmentCategory[]>({
@@ -90,7 +91,7 @@ export const useUpdateTopicCategory = () => {
       data,
     }: {
       id: string;
-      data: { name?: string; note?: string };
+      data: { name?: string; note?: string; imageUrl?: string };
     }) => entertainmentService.updateTopicCategory(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
@@ -101,5 +102,28 @@ export const useDeleteTopicCategory = () => {
   return useMutation({
     mutationFn: entertainmentService.deleteTopicCategory,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+  });
+};
+
+export const useLiveStreams = () => {
+  return useQuery<Stream[]>({
+    queryKey: STREAMS_QUERY_KEY,
+    queryFn: entertainmentService.getLiveStreams,
+    refetchInterval: 30000, // Refresh every 30 seconds for live data
+  });
+};
+
+export const useStreamAction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: string;
+      action: "start" | "stop" | "pause";
+    }) => entertainmentService.updateStreamAction(id, action),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: STREAMS_QUERY_KEY }),
   });
 };

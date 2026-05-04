@@ -70,6 +70,7 @@ export const EntertainmentModal = ({
 }: EntertainmentModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -106,6 +107,7 @@ export const EntertainmentModal = ({
     if (modalData.item) {
       setName((modalData.item.name as string) || "");
       setDescription((modalData.item.description as string) || "");
+      setImageUrl((modalData.item.imageUrl as string) || "");
       setSelectedCategoryId((modalData.item.chummeCategoryId as string) || "");
       setSelectedSubcategoryId(
         (modalData.item.chummeSubCategoryId as string) || "",
@@ -114,6 +116,7 @@ export const EntertainmentModal = ({
     } else {
       setName("");
       setDescription("");
+      setImageUrl("");
       setSelectedCategoryId(categories[0]?.id || "");
       setSelectedSubcategoryId(subcategories[0]?.id || "");
       setKeywords([]);
@@ -192,12 +195,17 @@ export const EntertainmentModal = ({
             chummeSubCategoryId: selectedSubcategoryId,
             note: description.trim() || undefined,
             isAd: false,
+            imageUrl: imageUrl.trim() || undefined,
           });
           break;
         case "edit-topic":
           await updateTopicCategory.mutateAsync({
             id: modalData.item!.id,
-            data: { name: name.trim(), note: description.trim() || undefined },
+            data: {
+              name: name.trim(),
+              note: description.trim() || undefined,
+              imageUrl: imageUrl.trim() || undefined,
+            },
           });
           break;
         default:
@@ -377,6 +385,26 @@ export const EntertainmentModal = ({
                       </option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {/* Image URL (Only for Topics) */}
+              {(modalData.type === "add-topic" ||
+                modalData.type === "edit-topic") && (
+                <div>
+                  <label className={labelClass}>Image URL</label>
+                  <input
+                    type="url"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className={inputClass}
+                  />
+                  <p
+                    className={`text-[10px] mt-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+                  >
+                    Optional: Provide a square image URL for the topic avatar.
+                  </p>
                 </div>
               )}
 

@@ -43,9 +43,9 @@ export const SubcategoriesTab = ({
   }`;
 
   return (
-    <div>
+    <div className="flex-1 flex flex-col min-h-0">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 shrink-0">
         <div>
           <h2
             className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
@@ -62,14 +62,14 @@ export const SubcategoriesTab = ({
         </div>
         <button
           onClick={() => setModalData({ type: "create-subcategory" })}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-[#A53860] to-[#670D2F] text-white font-medium hover:opacity-90 transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-linear-to-r from-[#A53860] to-[#670D2F] text-white font-medium hover:opacity-90 transition-all shadow-sm h-11"
         >
           <Plus className="w-4 h-4" /> Add Subcategory
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="relative mb-6">
+      <div className="relative mb-6 shrink-0">
         <Search
           className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${
             isDark ? "text-gray-500" : "text-gray-400"
@@ -80,10 +80,10 @@ export const SubcategoriesTab = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search subcategories, parent category, keywords..."
-          className={`w-full h-10 pl-9 pr-10 rounded-lg border text-sm outline-none transition-all ${
+          className={`w-full h-11 pl-9 pr-10 rounded-xl border text-sm outline-none transition-all ${
             isDark
-              ? "bg-gray-900 border-gray-700 text-white placeholder-gray-500 focus:border-[#A53860]"
-              : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#A53860]"
+              ? "bg-gray-900/50 border-gray-700 text-white placeholder-gray-500 focus:border-[#A53860]"
+              : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#A53860]"
           } focus:ring-2 focus:ring-[#A53860]/10`}
         />
         {searchTerm && (
@@ -101,16 +101,16 @@ export const SubcategoriesTab = ({
       </div>
 
       {/* Subcategory Cards */}
-      <div className="space-y-3">
+      <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3">
         {filteredSubcategories.length === 0 ? (
-          <div className="py-12 text-center">
+          <div className="py-20 text-center">
             <Search
-              className={`w-8 h-8 mx-auto mb-3 ${isDark ? "text-gray-600" : "text-gray-300"}`}
+              className={`w-12 h-12 mx-auto mb-4 ${isDark ? "text-gray-700" : "text-gray-200"}`}
             />
             <p
-              className={`text-sm font-medium ${isDark ? "text-gray-400" : "text-gray-600"}`}
+              className={`text-lg font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}
             >
-              No results for &ldquo;{debouncedSearchTerm}&rdquo;
+              No results found
             </p>
           </div>
         ) : (
