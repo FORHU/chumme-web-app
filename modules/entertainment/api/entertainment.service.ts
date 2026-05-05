@@ -205,9 +205,10 @@ export const entertainmentService = {
     return [];
   },
 
-  updateStreamAction: async (id: string, action: "start" | "stop" | "pause") => {
-    const res = await api.post(`/api/v1/entertainment/streams/${id}/action`, {
-      action,
+  updateStreamAction: async (artistId: string, action: "start" | "stop" | "pause") => {
+    // There is no dedicated /action endpoint; we update the artist's isLive status instead.
+    const res = await api.put(`/api/v1/artists/${artistId}`, {
+      isLive: action === "start",
     });
     if (!res.ok)
       throw new Error(

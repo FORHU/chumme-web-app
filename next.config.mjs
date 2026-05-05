@@ -20,6 +20,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "dev-chumme.s3.ap-southeast-1.amazonaws.com",
+      },
     ],
   },
   async rewrites() {

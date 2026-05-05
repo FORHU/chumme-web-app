@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play, Square, Users, Eye, Activity, Wifi, Clock,
@@ -23,6 +23,18 @@ export default function LiveVideoAPIPage() {
 
   // Use API data, ensure it's always an array to prevent crashes
   const allStreams = Array.isArray(apiStreams) ? apiStreams : [];
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (selectedStreamId) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedStreamId]);
   
   // Filter streams based on search
   const filteredStreams = allStreams.filter(s => 
@@ -67,9 +79,10 @@ export default function LiveVideoAPIPage() {
     },
   ];
 
-  const handleStreamAction = async (streamId: string, action: "start" | "stop") => {
+  const handleStreamAction = async (stream: Stream, action: "start" | "stop") => {
     try {
-      await streamActionMutation.mutateAsync({ id: streamId, action });
+      const artistId = stream.artistId || stream.id; // fallback to stream.id just in case
+      await streamActionMutation.mutateAsync({ artistId, action });
       showSuccess(`Action ${action} sent successfully`);
     } catch (_error) {
       showError(`Failed to perform ${action} action`);
@@ -257,12 +270,12 @@ export default function LiveVideoAPIPage() {
               onClick={() => setSelectedStreamId(null)}
               className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
             />
-            <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-0 sm:p-4 pointer-events-none">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden pointer-events-auto flex flex-col"
+                className="bg-white border-0 sm:border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-none sm:rounded-2xl shadow-2xl w-full max-w-5xl h-[100dvh] sm:h-auto sm:max-h-[95vh] overflow-hidden pointer-events-auto flex flex-col"
               >
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-gray-900 z-10 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -347,7 +360,7 @@ export default function LiveVideoAPIPage() {
                        <button
                          onClick={() => {
                            if (window.confirm("Are you sure you want to stop this stream? It will be removed from the mobile app immediately.")) {
-                             handleStreamAction(selectedStream.id, "stop");
+                             handleStreamAction(selectedStream, "stop");
                            }
                          }}
                          className="w-full py-4 rounded-xl font-bold bg-white dark:bg-gray-800 border-2 border-red-500/20 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2"

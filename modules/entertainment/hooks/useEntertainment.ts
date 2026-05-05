@@ -117,12 +117,12 @@ export const useStreamAction = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
+      artistId,
       action,
     }: {
-      id: string;
+      artistId: string;
       action: "start" | "stop" | "pause";
-    }) => entertainmentService.updateStreamAction(id, action),
+    }) => entertainmentService.updateStreamAction(artistId, action),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: STREAMS_QUERY_KEY }),
   });
