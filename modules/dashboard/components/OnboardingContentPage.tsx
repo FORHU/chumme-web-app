@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useOnboardingContents, useUploadOnboardingContent, useUpdateOnboardingContent, useDeleteOnboardingContent } from "../hooks/useOnboarding";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon } from "lucide-react";
+import { Edit, Trash2, Video, Image as ImageIcon, Upload, X, FileCheck, Link as LinkIcon, Plus } from "lucide-react";
 import { useSnackbar } from "@/modules/shared/hooks/useSnackbar";
 import { Snackbar } from "@/modules/shared/components/Snackbar";
 
@@ -81,6 +81,15 @@ const OnboardingContentPage = () => {
     resetForm();
   };
 
+  const handleInsertMedia = () => {
+    const emptySlot = ONBOARDING_SLOTS.find(slot => !contents.some(c => c.key === slot.key));
+    if (emptySlot) {
+      handleOpenModal(undefined, emptySlot);
+    } else {
+      showError("All onboarding slots are full. Please delete an existing content first.");
+    }
+  };
+
   const handleFileSelect = (selectedFile: File) => {
     const allowed = type === "video"
       ? ["video/mp4", "video/webm", "video/ogg"]
@@ -148,12 +157,18 @@ const OnboardingContentPage = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Onboarding Content</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">Manage videos and images for user onboarding experience</p>
         </div>
-
+        <button
+          onClick={handleInsertMedia}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#A53860] to-[#670D2F] hover:opacity-90 text-white font-semibold rounded-xl shadow-lg transition-all whitespace-nowrap"
+        >
+          <Plus className="w-5 h-5" />
+          Insert Media
+        </button>
       </div>
 
       {/* Live Status Summary */}

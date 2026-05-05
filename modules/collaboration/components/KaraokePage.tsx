@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, X, Music, Mic, Clock, Disc } from "lucide-react";
+import { Plus, Trash2, X, Music, Mic, Clock, Disc, Pencil, Layout } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useKaraokeSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
+import { useKaraokeSongs, useUploadSong, useDeleteSong, useArtists, useUpdateSong } from "@/modules/collaboration/hooks/useMusic";
 import type { KaraokeTabId } from "@/modules/collaboration/types";
 import { SearchBar } from "@/modules/shared/components/SearchBar";
 import { useDebounce } from "@/modules/shared/hooks/useDebounce";
@@ -19,6 +19,8 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
   const isDark = isDarkProp ?? resolvedTheme === "dark";
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const [songToEdit, setSongToEdit] = useState<import("../api/music.service").MusicTrack | null>(null);
+  const isEditing = !!songToEdit;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [songToDelete, setSongToDelete] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<KaraokeTabId>("songs");
@@ -32,12 +34,16 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
   const [audioDuration, setAudioDuration] = useState<number | null>(null);
   const [lyricsFile, setLyricsFile]   = useState<File | null>(null);
   const [videoFile, setVideoFile]     = useState<File | null>(null);
+  const [imageFile, setImageFile]     = useState<File | null>(null);
   const [artistError, setArtistError] = useState(false);
   const [mp3Error, setMp3Error] = useState(false);
   const [jsonError, setJsonError] = useState(false);
+  const [album, setAlbum] = useState("");
+  const [genre, setGenre] = useState("");
 
   const { data, isLoading, isError, refetch } = useKaraokeSongs({ search: debouncedSearch, limit });
   const uploadSong  = useUploadSong(true);
+  const updateSong  = useUpdateSong(true);
   const deleteSong  = useDeleteSong(true);
   const { data: artists = [] } = useArtists();
 
@@ -92,39 +98,62 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
     });
 
   const resetForm = () => {
+    setSongToEdit(null);
     setSongTitle("");
     setSelectedArtistId("");
     setAudioFile(null);
     setAudioDuration(null);
     setLyricsFile(null);
     setVideoFile(null);
+    setImageFile(null);
     setArtistError(false);
     setMp3Error(false);
     setJsonError(false);
+    setAlbum("");
+    setGenre("");
   };
 
   const handleSave = async () => {
-    if (!songTitle.trim() || !audioFile || !lyricsFile) return;
+    if (!songTitle.trim()) return;
+    if (!isEditing && (!audioFile || !lyricsFile)) return;
     if (!selectedArtistId) {
       setArtistError(true);
       return;
     }
     setArtistError(false);
     try {
-      await uploadSong.mutateAsync({
-        file: audioFile,
-        lyricsFile,
-        videoFile,
-        meta: {
-          title: songTitle.trim(),
-          musicArtistId: selectedArtistId,
-          duration: audioDuration ?? undefined,
-        },
-      });
+      if (isEditing) {
+        await updateSong.mutateAsync({
+          id: songToEdit.id,
+          data: {
+            title: songTitle.trim(),
+            musicArtistId: selectedArtistId,
+            album: album || undefined,
+            genre: genre || undefined,
+            imageFile: imageFile || undefined,
+            lyricsFile: lyricsFile || undefined,
+            audioFile: audioFile || undefined,
+          },
+        });
+      } else {
+        await uploadSong.mutateAsync({
+          file: audioFile!,
+          lyricsFile,
+          videoFile,
+          imageFile,
+          meta: {
+            title: songTitle.trim(),
+            musicArtistId: selectedArtistId,
+            album: album || undefined,
+            genre: genre || undefined,
+            duration: audioDuration ?? undefined,
+          },
+        });
+      }
       resetForm();
       setShowAddModal(false);
     } catch (err: unknown) {
-      console.error("[KaraokePage] Upload error:", err);
+      console.error("[KaraokePage] Save error:", err);
     }
   };
 
@@ -260,7 +289,7 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                 isDark ? "bg-gray-900/40 border-gray-700/50 backdrop-blur-xl" : "bg-white/80 border-gray-200 backdrop-blur-md"
               }`}>
                 <div className="overflow-y-auto flex-1 custom-scrollbar">
-                  <table className="w-full text-left border-separate border-spacing-y-2 px-4">
+                  <table className="w-full text-left border-separate border-spacing-y-1.5 px-4">
                     <thead className={`sticky top-0 z-20 ${isDark ? "bg-gray-900/90" : "bg-gray-50/90"} backdrop-blur-md`}>
                       <tr>
                         {[
@@ -269,14 +298,28 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                           { label: "Duration", icon: Clock },
                           { label: "Type", icon: Disc },
                           { label: "Actions", icon: null }
-                        ].map((h) => (
-                          <th key={h.label} className={`px-4 py-4 text-[10px] font-semibold uppercase tracking-widest ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                            <div className="flex items-center gap-2">
-                              {h.icon && <h.icon className="w-3 h-3" />}
-                              {h.label}
-                            </div>
-                          </th>
-                        ))}
+                        ].map((h) => {
+                          const isCentered = ["Duration", "Type", "Actions"].includes(h.label);
+                          const widths: Record<string, string> = {
+                            "Title": "w-[40%]",
+                            "Artist": "w-[25%]",
+                            "Duration": "w-[15%]",
+                            "Type": "w-[15%]",
+                            "Actions": "w-[5%]"
+                          };
+                          return (
+                            <th
+                              key={h.label}
+                              className={`px-4 py-4 text-[10px] font-semibold uppercase tracking-widest ${isDark ? "text-gray-400" : "text-gray-500"} ${isCentered ? "text-center" : ""} ${widths[h.label] || ""}`}
+                            >
+                              <div className={`flex items-center gap-2 ${isCentered ? "justify-center" : ""}`}>
+                                {h.icon && <h.icon className="w-3 h-3" />}
+                                {h.label}
+                                {isCentered && h.icon && <div className="w-3" />} {/* Spacer to balance icon */}
+                              </div>
+                            </th>
+                          );
+                        })}
                       </tr>
                     </thead>
                     <tbody>
@@ -294,35 +337,61 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                                 : "bg-gray-50/50 hover:bg-white hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]"
                             }`}
                           >
-                            <td className="px-4 py-4 first:rounded-l-xl">
+                            <td className="px-4 py-2.5 first:rounded-l-xl">
                               <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-lg ${isDark ? "bg-gray-700/50" : "bg-white shadow-sm"}`}>
-                                  <Music className="w-4 h-4 text-[#A53860]" />
+                                <div className={`w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center ${isDark ? "bg-gray-700/50" : "bg-white shadow-sm"}`}>
+                                  {(song.imageUrl || (song.metaData as any)?.imageUrl) ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img 
+                                      src={(song.imageUrl || (song.metaData as any)?.imageUrl) as string} 
+                                      alt="" 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <Mic className="w-5 h-5 text-[#A53860]" />
+                                  )}
                                 </div>
                                 <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>{song.title}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4">
+                            <td className="px-4 py-2.5">
                               <div className="flex items-center gap-2 text-sm font-medium">
                                 <span className={isDark ? "text-gray-300" : "text-gray-700"}>{song.musicArtist?.name ?? "—"}</span>
                               </div>
                             </td>
-                            <td className={`px-4 py-4 text-sm font-mono ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                            <td className={`px-4 py-2.5 text-sm font-mono text-center ${isDark ? "text-gray-400" : "text-gray-500"}`}>
                               {formatDuration(song.duration)}
                             </td>
-                            <td className="px-4 py-4">
-                              <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white shadow-sm">
+                            <td className="px-4 py-2.5 text-center">
+                              <span className="inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white shadow-sm">
                                 Karaoke
                               </span>
                             </td>
-                            <td className="px-4 py-4 last:rounded-r-xl">
-                              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <td className="px-4 py-2.5 last:rounded-r-xl">
+                              <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => {
+                                    setSongToEdit(song);
+                                    setSongTitle(song.title);
+                                    setSelectedArtistId(song.musicArtist?.id || "");
+                                    setAlbum(song.album || song.musicAlbum?.album || "");
+                                    setGenre(song.genre || song.musicAlbum?.genre || "");
+                                    setShowAddModal(true);
+                                  }}
+                                  className={`p-2.5 rounded-xl transition-all ${
+                                    isDark ? "bg-gray-700/50 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"
+                                  }`}
+                                  title="Edit"
+                                >
+                                  <Pencil className="w-4 h-4 text-gray-500 hover:text-[#A53860] transition-colors" />
+                                </button>
                                 <button
                                   onClick={() => handleDelete(song.id)}
                                   disabled={deleteSong.isPending}
                                   className={`p-2.5 rounded-xl transition-all ${
                                     isDark ? "bg-red-500/10 hover:bg-red-500/20" : "bg-red-50 hover:bg-red-100"
                                   } disabled:opacity-50`}
+                                  title="Delete"
                                 >
                                   <Trash2 className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
                                 </button>
@@ -376,8 +445,9 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                   : "bg-white border border-gray-200"
               }`}
             >
-              <h3 className={`text-xl font-bold mb-6 ${isDark ? "text-white" : "text-gray-900"}`}>
-                Add Karaoke Song
+              <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? "text-white" : "text-gray-900"}`}>
+                <Mic className="w-6 h-6 text-[#A53860]" />
+                {isEditing ? "Edit Karaoke Song" : "Add Karaoke Song"}
               </h3>
 
               <div className="space-y-5">
@@ -430,176 +500,171 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                   </div>
                 </div>
 
-                {/* Audio File */}
-                <div>
-                  <label className={labelClass}>
-                    Upload Karaoke Audio <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
-                      isDark
-                        ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
-                        : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
-                    }`}>
-                      <input
-                        type="file"
-                        accept=".mp3,audio/mpeg"
-                        className="sr-only"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0] ?? null;
-                          if (file && !file.name.toLowerCase().endsWith(".mp3")) {
-                            e.target.value = "";
-                            setAudioFile(null);
-                            setAudioDuration(null);
-                            setMp3Error(true);
-                            setTimeout(() => setMp3Error(false), 4000);
-                            return;
-                          }
-                          setMp3Error(false);
-                          setAudioFile(file);
-                          if (file) {
-                            const dur = await extractDuration(file);
-                            setAudioDuration(dur);
-                          } else {
-                            setAudioDuration(null);
-                          }
-                        }}
-                      />
-                      {audioFile ? (
-                        <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                          {audioFile.name}
-                        </span>
-                      ) : (
-                        <>
-                          <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span>
-                          <span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span>
-                        </>
-                      )}
+                {/* Unified Assets Section (Add & Edit) */}
+                <div className="space-y-4 pt-4 border-t border-gray-700/30">
+                  <h4 className={`text-xs font-bold uppercase tracking-widest ${isDark ? "text-[#A53860]" : "text-[#A53860]"}`}>
+                    Karaoke Assets
+                  </h4>
+                  
+                  {/* Audio File */}
+                  <div>
+                    <label className={labelClass}>
+                      {isEditing ? "Replace Karaoke Audio (Optional)" : "Upload Karaoke Audio"} <span className="text-red-500">*</span>
                     </label>
-                    {audioFile && (
-                      <button
-                        type="button"
-                        onClick={() => setAudioFile(null)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors"
-                      >
-                        <X className={`w-4 h-4 ${isDark ? "text-gray-400 hover:text-red-400" : "text-gray-500 hover:text-red-500"}`} />
-                      </button>
-                    )}
+                    <div className="relative">
+                      <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
+                        isDark
+                          ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
+                          : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
+                      }`}>
+                        <input
+                          type="file"
+                          accept=".mp3,audio/mpeg"
+                          className="sr-only"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && !file.name.toLowerCase().endsWith(".mp3")) {
+                              e.target.value = "";
+                              setAudioFile(null);
+                              setAudioDuration(null);
+                              setMp3Error(true);
+                              setTimeout(() => setMp3Error(false), 4000);
+                              return;
+                            }
+                            setMp3Error(false);
+                            setAudioFile(file);
+                            if (file) {
+                              const dur = await extractDuration(file);
+                              setAudioDuration(dur);
+                            }
+                          }}
+                        />
+                        {audioFile ? (
+                          <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>{audioFile.name}</span>
+                        ) : (
+                          <><span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span><span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span></>
+                        )}
+                      </label>
+                      {audioFile && (
+                        <button type="button" onClick={() => { setAudioFile(null); setAudioDuration(null); }} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors">
+                          <X className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+                        </button>
+                      )}
+                    </div>
+                    {mp3Error && <p className="text-xs mt-1 text-red-500 font-medium">✕ Invalid file type. Please upload an MP3 file only.</p>}
                   </div>
-                  <p className={`text-xs mt-1.5 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                    Only .mp3 files are accepted
-                  </p>
-                  {mp3Error && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="text-xs mt-1 text-red-500 font-medium flex items-center gap-1"
-                    >
-                      ✕ Invalid file type. Please upload an MP3 file only.
-                    </motion.p>
-                  )}
-                </div>
 
-                {/* Lyrics File */}
-                <div>
-                  <label className={labelClass}>
-                    Upload Lyrics File (JSON) <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
-                      isDark
-                        ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
-                        : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
-                    }`}>
-                      <input
-                        type="file"
-                        accept=".json,application/json"
-                        className="sr-only"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] ?? null;
-                          if (file && !file.name.toLowerCase().endsWith(".json")) {
-                            e.target.value = "";
-                            setLyricsFile(null);
-                            setJsonError(true);
-                            setTimeout(() => setJsonError(false), 4000);
-                            return;
-                          }
-                          setJsonError(false);
-                          setLyricsFile(file);
-                        }}
-                      />
-                      {lyricsFile ? (
-                        <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                          {lyricsFile.name}
-                        </span>
-                      ) : (
-                        <>
-                          <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span>
-                          <span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No .json file chosen</span>
-                        </>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Cover Image */}
+                    <div>
+                      <label className={labelClass}>{isEditing ? "Replace Cover Image (Optional)" : "Upload Cover Image (Optional)"}</label>
+
+                      {isEditing && (songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl) && (
+                        <div className="mb-3 flex items-center gap-4 p-3 rounded-xl border border-dashed border-gray-700/50 bg-gray-800/20">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img 
+                            src={(songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl) as string} 
+                            alt="Current cover" 
+                            className="w-16 h-16 rounded-lg object-cover shadow-lg border border-gray-700"
+                          />
+                          <div className="flex flex-col">
+                            <span className={`text-xs font-bold uppercase tracking-tight ${isDark ? "text-[#A53860]" : "text-[#A53860]"}`}>Current Image</span>
+                            <span className="text-[10px] text-gray-500 italic truncate max-w-[150px]">
+                              {(songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl)?.split("/").pop()}
+                            </span>
+                          </div>
+                        </div>
                       )}
-                    </label>
-                    {lyricsFile && (
-                      <button
-                        type="button"
-                        onClick={() => setLyricsFile(null)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors"
-                      >
-                        <X className={`w-4 h-4 ${isDark ? "text-gray-400 hover:text-red-400" : "text-gray-500 hover:text-red-500"}`} />
-                      </button>
-                    )}
+
+                      <div className="relative">
+                        <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
+                          isDark
+                            ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
+                            : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
+                        }`}>
+                          <input type="file" accept="image/*" className="sr-only" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
+                          {imageFile ? (
+                            <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>{imageFile.name}</span>
+                          ) : (
+                            <><span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span><span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span></>
+                          )}
+                        </label>
+                        {imageFile && (
+                          <button type="button" onClick={() => setImageFile(null)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors">
+                            <X className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Lyrics JSON */}
+                    <div>
+                      <label className={labelClass}>{isEditing ? "Replace Lyrics JSON (Optional)" : "Upload Lyrics JSON (Optional)"} <span className="text-red-500">*</span></label>
+                      
+                      {isEditing && (songToEdit?.metaData as any)?.lyricsUrl && (
+                        <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400">
+                          <Clock className="w-3 h-3" />
+                          <span>Lyrics linked: {(songToEdit?.metaData as any).lyricsUrl.split("/").pop()}</span>
+                        </div>
+                      )}
+
+                      <div className="relative">
+                        <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
+                          isDark
+                            ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
+                            : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
+                        }`}>
+                          <input type="file" accept=".json,application/json" className="sr-only" onChange={(e) => {
+                            const f = e.target.files?.[0] ?? null;
+                            if (f && !f.name.toLowerCase().endsWith(".json")) { e.target.value = ""; return; }
+                            setLyricsFile(f);
+                          }} />
+                          {lyricsFile ? (
+                            <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>{lyricsFile.name}</span>
+                          ) : (
+                            <><span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span><span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span></>
+                          )}
+                        </label>
+                        {lyricsFile && (
+                          <button type="button" onClick={() => setLyricsFile(null)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors">
+                            <X className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+                          </button>
+                        )}
+                      </div>
+                      {jsonError && <p className="text-xs mt-1 text-red-500 font-medium">✕ Invalid file type. Please upload a JSON file only.</p>}
+                    </div>
                   </div>
-                  <p className={`text-xs mt-1.5 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                    Only .json files are accepted
-                  </p>
-                  {jsonError && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="text-xs mt-1 text-red-500 font-medium flex items-center gap-1"
-                    >
-                      ✕ Invalid file type. Please upload a JSON file only.
-                    </motion.p>
-                  )}
-                </div>
 
-                {/* Video File */}
-                <div>
-                  <label className={labelClass}>Upload Background Video (Optional)</label>
-                  <div className="relative">
-                    <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
-                      isDark
-                        ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
-                        : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
-                    }`}>
-                      <input
-                        type="file"
-                        accept="video/*"
-                        className="sr-only"
-                        onChange={(e) => setVideoFile(e.target.files?.[0] ?? null)}
-                      />
-                      {videoFile ? (
-                        <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                          {videoFile.name}
-                        </span>
-                      ) : (
-                        <>
-                          <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span>
-                          <span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span>
-                        </>
-                      )}
-                    </label>
-                    {videoFile && (
-                      <button
-                        type="button"
-                        onClick={() => setVideoFile(null)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors"
-                      >
-                        <X className={`w-4 h-4 ${isDark ? "text-gray-400 hover:text-red-400" : "text-gray-500 hover:text-red-500"}`} />
-                      </button>
+                  {/* Background Video */}
+                  <div>
+                    <label className={labelClass}>{isEditing ? "Replace Background Video (Optional)" : "Upload Background Video (Optional)"}</label>
+                    
+                    {isEditing && (songToEdit?.metaData as any)?.backgroundVideoUrl && (
+                      <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs text-purple-400">
+                        <Layout className="w-3 h-3" />
+                        <span>Video linked: {(songToEdit?.metaData as any).backgroundVideoUrl.split("/").pop()}</span>
+                      </div>
                     )}
+
+                    <div className="relative">
+                      <label className={`flex items-center w-full h-11 px-4 rounded-xl border text-sm cursor-pointer transition-all ${
+                        isDark
+                          ? "bg-[#243050] border-gray-600/50 text-gray-400 hover:border-[#A53860]/50"
+                          : "bg-gray-50 border-gray-200 text-gray-500 hover:border-[#A53860]/50"
+                      }`}>
+                        <input type="file" accept="video/*" className="sr-only" onChange={(e) => setVideoFile(e.target.files?.[0] ?? null)} />
+                        {videoFile ? (
+                          <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>{videoFile.name}</span>
+                        ) : (
+                          <><span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Choose file</span><span className={`ml-2 text-sm ${isDark ? "text-gray-600" : "text-gray-400"}`}>No file chosen</span></>
+                        )}
+                      </label>
+                      {videoFile && (
+                        <button type="button" onClick={() => setVideoFile(null)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/20 transition-colors">
+                          <X className={`w-4 h-4 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -614,7 +679,7 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                 <div className="flex items-center justify-end gap-3 pt-2">
                   <button
                     onClick={() => { setShowAddModal(false); resetForm(); }}
-                    disabled={uploadSong.isPending}
+                    disabled={uploadSong.isPending || updateSong.isPending}
                     className={`px-6 h-11 rounded-xl font-semibold text-sm transition-colors disabled:opacity-50 ${
                       isDark
                         ? "bg-[#243050] text-gray-300 hover:bg-gray-700"
@@ -628,13 +693,12 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                     disabled={
                       !songTitle.trim() ||
                       !selectedArtistId ||
-                      !audioFile ||
-                      !lyricsFile ||
-                      uploadSong.isPending
+                      (!isEditing && (!audioFile || !lyricsFile)) ||
+                      uploadSong.isPending || updateSong.isPending
                     }
                     className="px-6 h-11 rounded-xl font-semibold text-sm bg-gradient-to-r from-[#A53860] to-[#670D2F] text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:pointer-events-none"
                   >
-                    {uploadSong.isPending ? "Saving..." : "Save Karaoke Song"}
+                    {uploadSong.isPending || updateSong.isPending ? "Saving..." : isEditing ? "Save Changes" : "Save Karaoke Song"}
                   </button>
                 </div>
               </div>

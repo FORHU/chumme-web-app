@@ -26,11 +26,13 @@ export const useUploadSong = (isKaraoke: boolean) => {
       file,
       lyricsFile,
       videoFile,
+      imageFile,
       meta,
     }: {
       file: File;
       lyricsFile?: File | null;
       videoFile?: File | null;
+      imageFile?: File | null;
       meta: { title: string; musicArtistId?: string; album?: string; genre?: string; duration?: number };
     }) =>
       musicService.uploadSong(file, {
@@ -42,7 +44,32 @@ export const useUploadSong = (isKaraoke: boolean) => {
         duration: meta.duration,
         lyricsFile,
         videoFile,
+        imageFile,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY });
+    },
+  });
+};
+
+export const useUpdateSong = (isKaraoke: boolean) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { 
+        title?: string; 
+        musicArtistId?: string; 
+        album?: string; 
+        genre?: string; 
+        imageFile?: File | null; 
+        lyricsFile?: File | null;
+        audioFile?: File | null;
+      };
+    }) => musicService.updateSong(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: isKaraoke ? KARAOKE_KEY : SONGS_KEY });
     },

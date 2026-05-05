@@ -38,6 +38,7 @@ export type StreamHealth = "healthy" | "warning" | "critical";
 
 export interface Stream {
   id: string;
+  artistId?: string;
   title: string;
   name?: string;      // Artist name
   streamId: string;
