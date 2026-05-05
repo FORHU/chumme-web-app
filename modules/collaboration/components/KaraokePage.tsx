@@ -340,10 +340,10 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                             <td className="px-4 py-2.5 first:rounded-l-xl">
                               <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center ${isDark ? "bg-gray-700/50" : "bg-white shadow-sm"}`}>
-                                  {(song.imageUrl || (song.metaData as any)?.imageUrl) ? (
+                                  {(song.imageUrl || (song.metaData as { imageUrl?: string })?.imageUrl) ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img 
-                                      src={(song.imageUrl || (song.metaData as any)?.imageUrl) as string} 
+                                      src={(song.imageUrl || (song.metaData as { imageUrl?: string })?.imageUrl) as string} 
                                       alt="" 
                                       className="w-full h-full object-cover"
                                     />
@@ -559,18 +559,18 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                     <div>
                       <label className={labelClass}>{isEditing ? "Replace Cover Image (Optional)" : "Upload Cover Image (Optional)"}</label>
 
-                      {isEditing && (songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl) && (
+                      {isEditing && (songToEdit?.imageUrl || (songToEdit?.metaData as { imageUrl?: string })?.imageUrl) && (
                         <div className="mb-3 flex items-center gap-4 p-3 rounded-xl border border-dashed border-gray-700/50 bg-gray-800/20">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img 
-                            src={(songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl) as string} 
+                            src={(songToEdit?.imageUrl || (songToEdit?.metaData as { imageUrl?: string })?.imageUrl) as string} 
                             alt="Current cover" 
                             className="w-16 h-16 rounded-lg object-cover shadow-lg border border-gray-700"
                           />
                           <div className="flex flex-col">
                             <span className={`text-xs font-bold uppercase tracking-tight ${isDark ? "text-[#A53860]" : "text-[#A53860]"}`}>Current Image</span>
                             <span className="text-[10px] text-gray-500 italic truncate max-w-[150px]">
-                              {(songToEdit?.imageUrl || (songToEdit?.metaData as any)?.imageUrl)?.split("/").pop()}
+                              {(songToEdit?.imageUrl || (songToEdit?.metaData as { imageUrl?: string })?.imageUrl)?.split("/").pop()}
                             </span>
                           </div>
                         </div>
@@ -601,10 +601,10 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                     <div>
                       <label className={labelClass}>{isEditing ? "Replace Lyrics JSON (Optional)" : "Upload Lyrics JSON (Optional)"} <span className="text-red-500">*</span></label>
                       
-                      {isEditing && (songToEdit?.metaData as any)?.lyricsUrl && (
+                      {isEditing && (songToEdit?.metaData as { lyricsUrl?: string })?.lyricsUrl && (
                         <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400">
                           <Clock className="w-3 h-3" />
-                          <span>Lyrics linked: {(songToEdit?.metaData as any).lyricsUrl.split("/").pop()}</span>
+                          <span>Lyrics linked: {(songToEdit?.metaData as { lyricsUrl?: string }).lyricsUrl?.split("/").pop()}</span>
                         </div>
                       )}
 
@@ -639,10 +639,10 @@ export const KaraokePage = ({ isDark: isDarkProp }: KaraokePageProps) => {
                   <div>
                     <label className={labelClass}>{isEditing ? "Replace Background Video (Optional)" : "Upload Background Video (Optional)"}</label>
                     
-                    {isEditing && (songToEdit?.metaData as any)?.backgroundVideoUrl && (
+                    {isEditing && (songToEdit?.metaData as { backgroundVideoUrl?: string })?.backgroundVideoUrl && (
                       <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs text-purple-400">
                         <Layout className="w-3 h-3" />
-                        <span>Video linked: {(songToEdit?.metaData as any).backgroundVideoUrl.split("/").pop()}</span>
+                        <span>Video linked: {(songToEdit?.metaData as { backgroundVideoUrl?: string }).backgroundVideoUrl?.split("/").pop()}</span>
                       </div>
                     )}
 

@@ -146,7 +146,7 @@ export const musicService = {
         const albumsRes = await fetch(`${baseUrl}/api/v1/music-albums/list?artistId=${meta.musicArtistId}`, { headers });
         if (albumsRes.ok) {
           const albums = await albumsRes.json();
-          const existing = albums.find((a: any) => a.album?.toLowerCase() === meta.album!.toLowerCase());
+          const existing = albums.find((a: { album: string; id: string }) => a.album?.toLowerCase() === meta.album!.toLowerCase());
           if (existing) {
              finalMusicAlbumId = existing.id;
           }
@@ -174,7 +174,7 @@ export const musicService = {
     }
 
     // 3. Construct meta_data JSON Object
-    let metaDataObj: any = {};
+    let metaDataObj: Record<string, unknown> = {};
     if (meta.lyricsFile) {
       try {
         const text = await meta.lyricsFile.text();
@@ -258,7 +258,7 @@ export const musicService = {
         const albumsRes = await fetch(`${baseUrl}/api/v1/music-albums/list?artistId=${data.musicArtistId}`, { headers });
         if (albumsRes.ok) {
           const albums = await albumsRes.json();
-          const existing = albums.find((a: any) => a.album?.toLowerCase() === data.album!.toLowerCase());
+          const existing = albums.find((a: { album: string; id: string }) => a.album?.toLowerCase() === data.album!.toLowerCase());
           if (existing) {
              finalMusicAlbumId = existing.id;
           }
@@ -309,7 +309,7 @@ export const musicService = {
       } catch (err) { console.warn("Audio upload failed", err); }
     }
 
-    const payload: any = {};
+    const payload: Record<string, unknown> = {};
     if (data.title) payload.title = data.title;
     if (data.musicArtistId) payload.musicArtistId = data.musicArtistId;
     if (data.genre) payload.genre = data.genre;
@@ -320,7 +320,6 @@ export const musicService = {
       // Fetch existing metadata to merge
       try {
         const existing = await musicService.getSongById(id);
-        const currentMeta = existing?.metaData || {};
         payload.metaData = {
           ...(newLyricsData || {}),
           ...(newImageUrl ? { imageUrl: newImageUrl } : {}),
