@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Music, Mic, Disc, Layout, Clock } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSongs, useUploadSong, useDeleteSong, useArtists } from "@/modules/collaboration/hooks/useMusic";
 import { SearchBar } from "@/modules/shared/components/SearchBar";
@@ -241,54 +241,95 @@ export const MusicPage = ({ isDark: isDarkProp }: MusicPageProps) => {
           </p>
         </div>
       ) : (
-        <div className={`flex-1 min-h-0 rounded-xl border overflow-hidden shadow-sm flex flex-col ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}>
-          <div className="overflow-y-auto flex-1">
-            <table className="w-full text-left border-collapse">
-              <thead className={`sticky top-0 z-10 ${isDark ? "bg-gray-900" : "bg-gray-50"}`}>
+        <div className={`flex-1 min-h-0 rounded-2xl border overflow-hidden shadow-xl flex flex-col ${
+          isDark ? "bg-gray-900/40 border-gray-700/50 backdrop-blur-xl" : "bg-white/80 border-gray-200 backdrop-blur-md"
+        }`}>
+          <div className="overflow-y-auto flex-1 custom-scrollbar">
+            <table className="w-full text-left border-separate border-spacing-y-2 px-4">
+              <thead className={`sticky top-0 z-20 ${isDark ? "bg-gray-900/90" : "bg-gray-50/90"} backdrop-blur-md`}>
                 <tr>
-                  {["Title", "Artist", "Album", "Genre", "Duration", "Actions"].map((h) => (
+                  {[
+                    { label: "Title", icon: Music },
+                    { label: "Artist", icon: Mic },
+                    { label: "Album", icon: Disc },
+                    { label: "Genre", icon: Layout },
+                    { label: "Duration", icon: Clock },
+                    { label: "Actions", icon: null }
+                  ].map((h) => (
                     <th
-                      key={h}
-                      className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                      key={h.label}
+                      className={`px-4 py-4 text-[10px] font-semibold uppercase tracking-widest ${isDark ? "text-gray-400" : "text-gray-500"}`}
                     >
-                      {h}
+                      <div className="flex items-center gap-2">
+                        {h.icon && <h.icon className="w-3 h-3" />}
+                        {h.label}
+                      </div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className={`divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
-                {songs.map((song) => (
-                  <tr
-                    key={song.id}
-                    className={`group transition-colors text-sm ${isDark ? "hover:bg-gray-700/50" : "hover:bg-gray-50"}`}
-                  >
-                    <td className={`px-4 py-2.5 font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
-                      {song.title}
-                    </td>
-                    <td className={`px-4 py-2.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                      {song.musicArtist?.name ?? "—"}
-                    </td>
-                    <td className={`px-4 py-2.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                      {song.musicAlbum?.album ?? "—"}
-                    </td>
-                    <td className={`px-4 py-2.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                      {song.musicAlbum?.genre ?? "—"}
-                    </td>
-                    <td className={`px-4 py-2.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                      {formatDuration(song.duration)}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <button
-                        onClick={() => handleDelete(song.id)}
-                        disabled={deleteSong.isPending}
-                        className={`p-2 rounded-lg transition-all disabled:opacity-50 ${isDark ? "hover:bg-red-500/10" : "hover:bg-red-50"
-                          }`}
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              <tbody>
+                <AnimatePresence mode="popLayout">
+                  {songs.map((song, index) => (
+                    <motion.tr
+                      key={song.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2, delay: index * 0.03 }}
+                      className={`group transition-all duration-300 rounded-xl overflow-hidden ${
+                        isDark 
+                          ? "bg-gray-800/30 hover:bg-gray-700/50 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]" 
+                          : "bg-gray-50/50 hover:bg-white hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]"
+                      }`}
+                    >
+                      <td className="px-4 py-4 first:rounded-l-xl">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${isDark ? "bg-gray-700/50" : "bg-white shadow-sm"}`}>
+                            <Music className="w-4 h-4 text-[#A53860]" />
+                          </div>
+                          <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>
+                            {song.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                          <span className={isDark ? "text-gray-300" : "text-gray-700"}>
+                            {song.musicArtist?.name ?? "—"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-2 text-sm italic text-gray-400">
+                          {song.musicAlbum?.album ?? "—"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className={`px-2.5 py-1 text-[10px] font-semibold uppercase rounded-lg ${
+                          isDark ? "bg-gray-800 text-gray-400" : "bg-gray-100 text-gray-600"
+                        }`}>
+                          {song.musicAlbum?.genre ?? "—"}
+                        </span>
+                      </td>
+                      <td className={`px-4 py-4 text-sm font-mono ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                        {formatDuration(song.duration)}
+                      </td>
+                      <td className="px-4 py-4 last:rounded-r-xl">
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleDelete(song.id)}
+                            disabled={deleteSong.isPending}
+                            className={`p-2.5 rounded-xl transition-all disabled:opacity-50 ${isDark ? "bg-red-500/10 hover:bg-red-500/20" : "bg-red-50 hover:bg-red-100"
+                              }`}
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>

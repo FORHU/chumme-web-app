@@ -9,6 +9,8 @@ import { useDebounce } from "@/modules/shared/hooks/useDebounce";
 import { Pagination } from "@/modules/shared/components/Pagination";
 import { DeleteConfirmationModal } from "@/modules/shared/components/DeleteConfirmationModal";
 import { useTheme } from "next-themes";
+import { useEntertainmentCategories } from "@/modules/entertainment/hooks/useEntertainment";
+import { useMemo } from "react";
 
 interface Artist {
   id: string;
@@ -38,6 +40,25 @@ const ArtistPage = () => {
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
   const [formData, setFormData] = useState({ name: "", genre: "", description: "", imageUrl: "" });
 
+  // Fetch entertainment categories for fallback images
+  const { data: categories = [] } = useEntertainmentCategories();
+
+  const topicImageMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    categories.forEach((cat: any) => {
+      cat.chummeSubCategories?.forEach((sub: any) => {
+        sub.chummeTopicCategories?.forEach((topic: any) => {
+          if (topic.imageUrl) {
+            map[topic.name.toLowerCase()] = topic.imageUrl;
+          }
+        });
+      });
+    });
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    return map;
+  }, [categories]);
+
   const [page, setPage] = useState(1);
 
   // Reset to page 1 whenever the debounced search changes
@@ -51,7 +72,7 @@ const ArtistPage = () => {
     name: fetchedArtist.name || "Unknown Artist",
     genre: ((fetchedArtist as unknown as Record<string, unknown>).genre as string) || "", 
     description: ((fetchedArtist as unknown as Record<string, unknown>).bio as string) || "",
-    imageUrl: fetchedArtist.imageUrl || undefined
+    imageUrl: fetchedArtist.imageUrl || topicImageMap[fetchedArtist.name?.toLowerCase() || ""] || undefined
   }));
 
   const handleOpenModal = (artist?: Artist) => {
@@ -194,14 +215,14 @@ const ArtistPage = () => {
                 className="bg-white border border-gray-200 hover:bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700/50 dark:hover:bg-gray-800 rounded-xl p-6 transition-all group"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full border-2 border-[#A53860] bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                    {artist.imageUrl ? (
+                  <div className="w-16 h-16 rounded-full border-2 border-[#A53860] bg-gradient-to-br from-[#A53860] to-[#670D2F] flex items-center justify-center text-white font-bold text-lg flex-shrink-0 overflow-hidden">
+                    {artist.imageUrl || topicImageMap[artist.name.toLowerCase()] ? (
                       <Image
-                        src={artist.imageUrl}
+                        src={artist.imageUrl || topicImageMap[artist.name.toLowerCase()]}
                         alt={artist.name}
                         width={64}
                         height={64}
-                        className="rounded-full object-cover"
+                        className="w-full h-full object-cover"
                         unoptimized
                       />
                     ) : (

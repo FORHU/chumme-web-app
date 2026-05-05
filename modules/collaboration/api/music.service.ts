@@ -43,9 +43,9 @@ export const musicService = {
     isKaraoke?: boolean;
   }): Promise<MusicListResponse> => {
     const query = new URLSearchParams();
-    if (params?.page)     query.set("page",      String(params.page));
-    if (params?.limit)    query.set("limit",     String(params.limit));
-    if (params?.search)   query.set("search",    params.search);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
+    if (params?.search) query.set("search", params.search);
     if (params?.isKaraoke !== undefined)
       query.set("isKaraoke", String(params.isKaraoke));
 
@@ -61,13 +61,13 @@ export const musicService = {
 
   getArtists: async (params?: { search?: string; page?: number; limit?: number }): Promise<ArtistOption[]> => {
     const query = new URLSearchParams();
-    if (params?.page)     query.set("page",      String(params.page));
-    if (params?.limit)    query.set("limit",     String(params.limit));
-    if (params?.search)   query.set("search",    params.search);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
+    if (params?.search) query.set("search", params.search);
 
     const queryString = query.toString();
     const endpoint = queryString ? `/api/v1/artists?${queryString}` : "/api/v1/artists";
-    
+
     const res = await api.get<ArtistsResponse>(endpoint);
     if (!res.ok) {
       if (process.env.NODE_ENV === "development") {
@@ -75,9 +75,16 @@ export const musicService = {
       }
       return [];
     }
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const rawData = res.data as Record<string, unknown> | ArtistOption[] | undefined;
-    if (Array.isArray(rawData)) return rawData;
-    return (rawData?.data as ArtistOption[]) ?? [];
+    const artists = Array.isArray(rawData) ? rawData : ((rawData?.data as any[]) ?? []);
+
+    // Map nested visual design emojiIcon to imageUrl for UI compatibility
+    return artists.map((artist: any) => ({
+      ...artist,
+      imageUrl: artist.chummeVisualDesign?.emojiIcon || artist.imageUrl,
+    }));
+    /* eslint-enable @typescript-eslint/no-explicit-any */
   },
 
 
@@ -158,7 +165,13 @@ export const musicService = {
     imageUrl?: string;
     genre?: string;
   }): Promise<ArtistOption> => {
-    const res = await api.post<{ data: ArtistOption }>("/api/v1/artists", data);
+    const payload = {
+      name: data.name,
+      platform: data.platform,
+      bio: data.bio,
+      imageUrl: data.imageUrl,
+    };
+    const res = await api.post<{ data: ArtistOption }>("/api/v1/artists", payload);
     if (!res.ok) {
       throw new Error(((res.data as Record<string, unknown>)?.message as string) || "Failed to create artist");
     }
@@ -175,7 +188,13 @@ export const musicService = {
       genre?: string;
     }
   ): Promise<ArtistOption> => {
-    const res = await api.put<{ data: ArtistOption }>(`/api/v1/artists/${id}`, data);
+    const payload = {
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.platform !== undefined && { platform: data.platform }),
+      ...(data.bio !== undefined && { bio: data.bio }),
+      ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+    };
+    const res = await api.put<{ data: ArtistOption }>(`/api/v1/artists/${id}`, payload);
     if (!res.ok) {
       throw new Error(((res.data as Record<string, unknown>)?.message as string) || "Failed to update artist");
     }

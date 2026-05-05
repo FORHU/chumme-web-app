@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import { useEntertainmentCategories } from "@/modules/entertainment/hooks/useEntertainment";
 import type { ModalData } from "@/modules/entertainment/types";
@@ -27,6 +27,34 @@ export const EntertainmentPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [modalData, setModalData] = useState<ModalData>({ type: null });
   const closeModal = () => setModalData({ type: null });
+
+  useEffect(() => {
+    const main = document.querySelector("main");
+    if (main) {
+      const originalMainClass = main.className;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      
+      main.classList.add("!h-full", "!overflow-hidden", "!flex", "!flex-col", "!p-0");
+      
+      const mainColumn = main.parentElement;
+      if (mainColumn) {
+        mainColumn.classList.add("!h-screen", "!overflow-hidden");
+      }
+
+      return () => {
+        main.className = originalMainClass;
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        if (mainColumn) {
+          mainColumn.classList.remove("!h-screen", "!overflow-hidden");
+        }
+      };
+    }
+  }, []);
 
   const {
     data: categories = [],
@@ -71,23 +99,7 @@ export const EntertainmentPage = () => {
     );
 
   return (
-    <div>
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
-        <h1
-          className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
-        >
-          Entertainment Manager
-        </h1>
-        <p className={isDark ? "text-gray-400" : "text-gray-600"}>
-          Manage entertainment structure: Categories, Subcategories, and Topics
-        </p>
-      </motion.div>
-
+    <div className="w-full flex-1 flex flex-col min-h-0 p-4 lg:p-8">
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -122,6 +134,7 @@ export const EntertainmentPage = () => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
+        className="flex-1 flex flex-col min-h-0"
       >
         {activeTab === "overview" && (
           <OverviewTab isDark={isDark} stats={stats} categories={categories} />

@@ -57,7 +57,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Entertainment", href: "/dashboard/entertainment", icon: Star },
       {
         label: "Live Video API",
-        href: "/dashboard/categories/live-video",
+        href: "/dashboard/live-video",
         icon: Radio,
       },
     ],

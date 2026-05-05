@@ -5,6 +5,7 @@ export interface TopicCategory {
   isAd: boolean;
   populationCount?: number;
   discoveryKeywords?: string[];
+  imageUrl?: string;
 }
 
 export interface SubCategory {
@@ -30,4 +31,26 @@ export interface EntertainmentCategory {
 
 export interface EntertainmentResponse {
   categories: EntertainmentCategory[];
+}
+
+export type StreamStatus = "live" | "paused" | "offline";
+export type StreamHealth = "healthy" | "warning" | "critical";
+
+export interface Stream {
+  id: string;
+  title: string;
+  name?: string;      // Artist name
+  streamId: string;
+  thumbnail: string;
+  status: StreamStatus;
+  viewers: number;
+  viewCount?: number; // Support for YouTube high view counts
+  bitrate: number;
+  latency: number;
+  uptime: number;
+  health: StreamHealth;
+}
+
+export interface StreamsResponse {
+  streams: Stream[];
 }
